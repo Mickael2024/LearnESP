@@ -1,0 +1,3178 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArduinoLearn - Exercices Pratiques</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #00979c;
+      --secondary-color: #00696b;
+      --accent-color: #ff9800;
+      --light-color: #f8f9fa;
+      --dark-color: #333;
+      --gray-color: #6c757d;
+      --code-bg: #f4f4f4;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      color: var(--dark-color);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo i {
+      margin-right: 10px;
+      color: var(--accent-color);
+    }
+
+    .logo span {
+      color: var(--accent-color);
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+
+    nav ul li {
+      margin-left: 1.5rem;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+
+    nav ul li a:hover {
+      color: var(--accent-color);
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 3rem 0;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto 1.5rem;
+      opacity: 0.9;
+    }
+
+    /* Main Content */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    /* Exercise Grid */
+    .exercise-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .exercise-card {
+      background-color: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      border: 2px solid transparent;
+    }
+
+    .exercise-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .exercise-header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .exercise-header h3 {
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .exercise-difficulty {
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .difficulty-beginner {
+      background-color: var(--success-color);
+    }
+
+    .difficulty-intermediate {
+      background-color: var(--warning-color);
+      color: var(--dark-color);
+    }
+
+    .difficulty-advanced {
+      background-color: var(--danger-color);
+    }
+
+    .exercise-body {
+      padding: 1.5rem;
+    }
+
+    .exercise-description {
+      margin-bottom: 1.5rem;
+      color: var(--dark-color);
+    }
+
+    .exercise-objectives {
+      background-color: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .exercise-objectives h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .exercise-objectives ul {
+      padding-left: 1.5rem;
+      margin-bottom: 0;
+    }
+
+    .exercise-objectives li {
+      margin-bottom: 0.3rem;
+    }
+
+    /* Exercise Workspace */
+    .exercise-workspace {
+      background-color: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .workspace-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #eee;
+    }
+
+    .workspace-title {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Workspace Layout */
+    .workspace-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 992px) {
+      .workspace-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Code Editor */
+    .code-workspace {
+      background-color: #f8f9fa;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #ddd;
+    }
+
+    .code-header {
+      background-color: #2d2d2d;
+      padding: 0.8rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .code-title {
+      color: #aaa;
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+
+    .editor-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .editor-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .editor-dot.red {
+      background-color: #ff5f56;
+    }
+
+    .editor-dot.yellow {
+      background-color: #ffbd2e;
+    }
+
+    .editor-dot.green {
+      background-color: #27ca3f;
+    }
+
+    .code-area {
+      padding: 1.5rem;
+      min-height: 400px;
+      max-height: 500px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #333;
+      white-space: pre-wrap;
+      tab-size: 2;
+      background-color: #fefefe;
+    }
+
+    .code-line {
+      padding: 2px 0;
+      min-height: 20px;
+    }
+
+    .code-line:hover {
+      background-color: #f0f0f0;
+    }
+
+    .line-number {
+      display: inline-block;
+      width: 40px;
+      color: #999;
+      text-align: right;
+      padding-right: 10px;
+      user-select: none;
+    }
+
+    .code-input {
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'Courier New', monospace;
+      font-size: 0.95rem;
+      width: calc(100% - 50px);
+      color: #333;
+    }
+
+    .code-input:focus {
+      background-color: #e8f4ff;
+    }
+
+    .code-comment {
+      color: #6a9955;
+    }
+
+    .code-keyword {
+      color: #569cd6;
+      font-weight: bold;
+    }
+
+    .code-function {
+      color: #dcdcaa;
+    }
+
+    .code-value {
+      color: #ce9178;
+    }
+
+    .code-string {
+      color: #ce9178;
+    }
+
+    .code-number {
+      color: #b5cea8;
+    }
+
+    .code-preprocessor {
+      color: #c586c0;
+    }
+
+    .code-type {
+      color: #4ec9b0;
+    }
+
+    /* Simulation Area */
+    .simulation-area {
+      background-color: #f8f9fa;
+      border-radius: 10px;
+      padding: 1.5rem;
+      border: 1px solid #ddd;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .simulation-title {
+      color: var(--secondary-color);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ESP32 Board Simulation */
+    .esp32-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    .esp32-board {
+      height: 250px;
+      background-color: #1e3799;
+      border-radius: 12px;
+      position: relative;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      border: 4px solid #0c2461;
+    }
+
+    .esp32-chip {
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 80px;
+      background-color: #222;
+      border-radius: 8px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1rem;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .esp32-antenna {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #ffd32a;
+      box-shadow: 0 0 8px rgba(255, 211, 42, 0.5);
+    }
+
+    /* Pins Grid */
+    .pins-grid {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 8px;
+        margin: 28px;
+        padding: 37px;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+      }
+
+    .pin {
+      width: 35px;
+      height: 60px;
+      background-color: #d1d8e0;
+      border-radius: 4px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .pin:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .pin.active {
+      background-color: #ffd32a;
+      box-shadow: 0 0 10px #ffd32a;
+    }
+
+    .pin.input {
+      background-color: #4cd137;
+    }
+
+    .pin.output {
+      background-color: #e84118;
+    }
+
+    .pin.pwm {
+      background-color: #8c7ae6;
+    }
+
+    .pin-label {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      color: white;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      white-space: nowrap;
+    }
+
+    .pin-status {
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.6rem;
+      color: white;
+      font-weight: bold;
+    }
+
+    /* LEDs Container */
+    .leds-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 1rem;
+      padding: 1.5rem;
+      background-color: rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+    }
+
+    .led {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #ccc;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .led.on {
+      box-shadow: 0 0 25px currentColor;
+    }
+
+    .led-red.on {
+      background-color: #ff3838;
+      color: #ff3838;
+    }
+
+    .led-green.on {
+      background-color: #32ff7e;
+      color: #32ff7e;
+    }
+
+    .led-blue.on {
+      background-color: #18dcff;
+      color: #18dcff;
+    }
+
+    .led-yellow.on {
+      background-color: #ffaf40;
+      color: #ffaf40;
+    }
+
+    .led-label {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--dark-color);
+      white-space: nowrap;
+    }
+
+    .led-connected-pin {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    /* Controls */
+    .workspace-controls {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      padding: 0.7rem 1.5rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    .control-btn:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .control-btn.run {
+      background-color: var(--success-color);
+    }
+
+    .control-btn.run:hover {
+      background-color: #218838;
+    }
+
+    .control-btn.reset {
+      background-color: var(--gray-color);
+    }
+
+    .control-btn.reset:hover {
+      background-color: #5a6268;
+    }
+
+    .control-btn.check {
+      background-color: var(--accent-color);
+    }
+
+    .control-btn.check:hover {
+      background-color: #e68900;
+    }
+
+    /* Feedback Area */
+    .feedback-area {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 10px;
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      display: none;
+    }
+
+    .feedback-area.show {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+
+    .feedback-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid #eee;
+    }
+
+    .feedback-title {
+      font-size: 1.2rem;
+      color: var(--primary-color);
+    }
+
+    .feedback-content {
+      line-height: 1.6;
+    }
+
+    .feedback-success {
+      color: var(--success-color);
+      font-weight: bold;
+    }
+
+    .feedback-error {
+      color: var(--danger-color);
+      font-weight: bold;
+    }
+
+    .feedback-hint {
+      background-color: #fff3cd;
+      border-left: 4px solid var(--warning-color);
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 4px;
+    }
+
+    .feedback-hint h5 {
+      color: var(--warning-color);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Serial Monitor */
+    .serial-monitor {
+      background-color: #000;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      padding: 1rem;
+      border-radius: 6px;
+      height: 200px;
+      overflow-y: auto;
+      margin-top: 1.5rem;
+      border: 2px solid #444;
+    }
+
+    .serial-line {
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    /* Instructions */
+    .instructions {
+      background-color: #e9f7f7;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      border-left: 5px solid var(--primary-color);
+    }
+
+    .instructions h3 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .instructions ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .instructions li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      margin: 2rem 0;
+      background-color: #e9ecef;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 12px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      nav ul {
+        margin-top: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      nav ul li {
+        margin: 0.3rem 0.5rem;
+      }
+
+      .esp32-board {
+        width: 320px;
+        height: 200px;
+      }
+
+      .pin {
+        width: 25px;
+        height: 45px;
+      }
+
+      .pin-label {
+        font-size: 0.6rem;
+        top: -20px;
+      }
+
+      .exercise-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .workspace-controls {
+        justify-content: center;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    .blink {
+      animation: blink 1s infinite;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    /* Active states */
+    .active {
+      color: var(--accent-color);
+    }
+    .code-display {
+        display: inline;
+        cursor: text;
+        padding: 2px 4px;
+        border-radius: 3px;
+        min-height: 20px;
+        min-width: 10px;
+      }
+      
+      .code-display:hover {
+        background-color: #f0f0f0;
+      }
+      
+      .code-input {
+        background: transparent;
+        border: none;
+        outline: none;
+        font-family: 'Courier New', monospace;
+        font-size: 0.95rem;
+        width: calc(100% - 50px);
+        color: #333;
+        padding: 2px 4px;
+        border-radius: 3px;
+        border: 1px solid #ddd;
+      }
+      
+      .code-input:focus {
+        background-color: #e8f4ff;
+        border-color: #4dabf7;
+      }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container header-content">
+      <div class="logo">
+        <i class="fas fa-microchip"></i>
+        <div><span></span> Arduino/ESP <span>Learn</span></div>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+          <li><a href="#tutoriels"><i class="fas fa-graduation-cap"></i> Tutoriels</a></li>
+          <li><a href="exemple.html"><i class="fas fa-code"></i> Exemples</a></li>
+          <li><a href="#references"><i class="fas fa-book"></i> Référence</a></li>
+          <li><a href="exercice.html" class="active"><i class="fas fa-pencil-alt"></i> Exercices</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Exercices Pratiques Arduino/ESP</h1>
+      <p>Testez vos connaissances avec des exercices interactifs et recevez une correction instantanée</p>
+      <div style="display: flex; gap: 15px; justify-content: center; margin-top: 1.5rem;">
+        <div style="background-color: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 20px;">
+          <i class="fas fa-check-circle" style="margin-right: 8px;"></i>Correction automatique
+        </div>
+        <div style="background-color: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 20px;">
+          <i class="fas fa-bolt" style="margin-right: 8px;"></i>Simulation en temps réel
+        </div>
+        <div style="background-color: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 20px;">
+          <i class="fas fa-lightbulb" style="margin-right: 8px;"></i>Indices disponibles
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container main-content">
+    <!-- Instructions -->
+    <div class="instructions fade-in">
+      <h3><i class="fas fa-info-circle"></i> Comment utiliser les exercices</h3>
+      <ul>
+        <li>Sélectionnez un exercice dans la liste ci-dessous</li>
+        <li>Modifiez le code dans l'éditeur pour résoudre l'exercice</li>
+        <li>Configurez les broches (pins) ESP32 en cliquant dessus</li>
+        <li>Cliquez sur "Exécuter" pour tester votre solution</li>
+        <li>Utilisez "Vérifier la solution" pour obtenir une correction automatique</li>
+        <li>Consultez les indices si vous avez besoin d'aide</li>
+      </ul>
+      <p style="font-weight: bold; color: var(--primary-color);">
+        <i class="fas fa-trophy"></i> Votre progression: <span id="progress-text">0/6 exercices complétés</span>
+      </p>
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+    </div>
+
+    <!-- Exercise Selection Grid -->
+    <div class="exercise-grid" id="exercise-grid">
+      <!-- Exercise 1 -->
+      <div class="exercise-card" onclick="loadExercise(1)">
+        <div class="exercise-header">
+          <h3>LED Clignotante</h3>
+          <span class="exercise-difficulty difficulty-beginner">Débutant</span>
+        </div>
+        <div class="exercise-body">
+          <div class="exercise-description">
+            <p>Programmez une LED pour qu'elle clignote à intervalle régulier.</p>
+          </div>
+          <div class="exercise-objectives">
+            <h4><i class="fas fa-bullseye"></i> Objectifs</h4>
+            <ul>
+              <li>Utiliser la fonction delay()</li>
+              <li>Contrôler une sortie numérique</li>
+              <li>Comprendre le cycle setup/loop</li>
+            </ul>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="status-1" style="color: #6c757d;"><i class="far fa-circle"></i> Non tenté</span>
+            <span style="font-size: 0.9rem;"><i class="fas fa-clock"></i> ~10 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exercise 2 -->
+      <div class="exercise-card" onclick="loadExercise(2)">
+        <div class="exercise-header">
+          <h3>Séquence LED Chassée</h3>
+          <span class="exercise-difficulty difficulty-intermediate">Intermédiaire</span>
+        </div>
+        <div class="exercise-body">
+          <div class="exercise-description">
+            <p>Créez un effet de lumière chassée avec 4 LEDs.</p>
+          </div>
+          <div class="exercise-objectives">
+            <h4><i class="fas fa-bullseye"></i> Objectifs</h4>
+            <ul>
+              <li>Contrôler plusieurs sorties</li>
+              <li>Créer des séquences temporelles</li>
+              <li>Utiliser des tableaux pour les broches</li>
+            </ul>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="status-2" style="color: #6c757d;"><i class="far fa-circle"></i> Non tenté</span>
+            <span style="font-size: 0.9rem;"><i class="fas fa-clock"></i> ~15 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exercise 3 -->
+      <div class="exercise-card" onclick="loadExercise(3)">
+        <div class="exercise-header">
+          <h3>Contrôle PWM (Effet respiration)</h3>
+          <span class="exercise-difficulty difficulty-intermediate">Intermédiaire</span>
+        </div>
+        <div class="exercise-body">
+          <div class="exercise-description">
+            <p>Créez un effet de respiration avec modulation PWM.</p>
+          </div>
+          <div class="exercise-objectives">
+            <h4><i class="fas fa-bullseye"></i> Objectifs</h4>
+            <ul>
+              <li>Utiliser les broches PWM</li>
+              <li>Contrôler la luminosité d'une LED</li>
+              <li>Implémenter un effet de fondu</li>
+            </ul>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="status-3" style="color: #6c757d;"><i class="far fa-circle"></i> Non tenté</span>
+            <span style="font-size: 0.9rem;"><i class="fas fa-clock"></i> ~20 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exercise 4 -->
+      <div class="exercise-card" onclick="loadExercise(4)">
+        <div class="exercise-header">
+          <h3>LED RGB - Contrôle des couleurs</h3>
+          <span class="exercise-difficulty difficulty-intermediate">Intermédiaire</span>
+        </div>
+        <div class="exercise-body">
+          <div class="exercise-description">
+            <p>Contrôlez une LED RGB pour afficher différentes couleurs.</p>
+          </div>
+          <div class="exercise-objectives">
+            <h4><i class="fas fa-bullseye"></i> Objectifs</h4>
+            <ul>
+              <li>Contrôler 3 broches PWM simultanément</li>
+              <li>Créer et utiliser des fonctions</li>
+              <li>Générer des couleurs RGB</li>
+            </ul>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="status-4" style="color: #6c757d;"><i class="far fa-circle"></i> Non tenté</span>
+            <span style="font-size: 0.9rem;"><i class="fas fa-clock"></i> ~25 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exercise 5 -->
+      <div class="exercise-card" onclick="loadExercise(5)">
+        <div class="exercise-header">
+          <h3>Feu tricolore</h3>
+          <span class="exercise-difficulty difficulty-advanced">Avancé</span>
+        </div>
+        <div class="exercise-body">
+          <div class="exercise-description">
+            <p>Simulez un feu de circulation avec séquence précise.</p>
+          </div>
+          <div class="exercise-objectives">
+            <h4><i class="fas fa-bullseye"></i> Objectifs</h4>
+            <ul>
+              <li>Coordonner plusieurs LEDs</li>
+              <li>Implémenter des temporisations complexes</li>
+              <li>Utiliser millis() pour un timing précis</li>
+            </ul>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="status-5" style="color: #6c757d;"><i class="far fa-circle"></i> Non tenté</span>
+            <span style="font-size: 0.9rem;"><i class="fas fa-clock"></i> ~30 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exercise 6 -->
+      <div class="exercise-card" onclick="loadExercise(6)">
+        <div class="exercise-header">
+          <h3>Animation Lumineuse Complexe</h3>
+          <span class="exercise-difficulty difficulty-advanced">Avancé</span>
+        </div>
+        <div class="exercise-body">
+          <div class="exercise-description">
+            <p>Créez une animation complexe avec 6 LEDs et effets variés.</p>
+          </div>
+          <div class="exercise-objectives">
+            <h4><i class="fas fa-bullseye"></i> Objectifs</h4>
+            <ul>
+              <li>Gérer plusieurs patterns d'animation</li>
+              <li>Utiliser des structures de contrôle avancées</li>
+              <li>Optimiser le code pour fluidité</li>
+            </ul>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="status-6" style="color: #6c757d;"><i class="far fa-circle"></i> Non tenté</span>
+            <span style="font-size: 0.9rem;"><i class="fas fa-clock"></i> ~40 min</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise Workspace (initially hidden) -->
+    <div class="exercise-workspace" id="exercise-workspace" style="display: none;">
+      <div class="workspace-header">
+        <div class="workspace-title">
+          <i class="fas fa-code"></i>
+          <span id="workspace-title">Exercice #1: LED Clignotante</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="control-btn" onclick="showHint()">
+            <i class="fas fa-lightbulb"></i> Indice
+          </button>
+          <button class="control-btn" onclick="showSolution()">
+            <i class="fas fa-eye"></i> Solution
+          </button>
+          <button class="control-btn" onclick="closeWorkspace()">
+            <i class="fas fa-times"></i> Fermer
+          </button>
+        </div>
+      </div>
+
+      <div class="workspace-layout">
+        <!-- Code Editor -->
+        <div class="code-workspace">
+          <div class="code-header">
+            <div class="editor-dots">
+              <div class="editor-dot red"></div>
+              <div class="editor-dot yellow"></div>
+              <div class="editor-dot green"></div>
+            </div>
+            <div class="code-title" id="code-filename">exercice.ino</div>
+          </div>
+          <div class="code-area" id="code-area">
+            <!-- Code will be loaded dynamically -->
+          </div>
+        </div>
+
+        <!-- Simulation Area -->
+        <div class="simulation-area">
+          <h3 class="simulation-title"><i class="fas fa-microchip"></i> Simulation ESP32</h3>
+          
+          <!-- ESP32 Board -->
+          <div class="esp32-container">
+            <div class="esp32-board">
+              <div class="esp32-chip">ESP32</div>
+              <div class="esp32-antenna">
+                <i class="fas fa-wifi"></i>
+              </div>
+              
+              <!-- Pins Grid -->
+              <div class="pins-grid" id="pins-grid">
+                <!-- Pins will be generated dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- LEDs -->
+          <div class="leds-container" id="leds-container">
+            <!-- LEDs will be generated dynamically -->
+          </div>
+
+          <!-- Serial Monitor -->
+          <div class="serial-monitor" id="serial-monitor">
+            <div class="serial-line">Moniteur série initialisé (115200 baud)</div>
+            <div class="serial-line">Prêt pour l'exercice...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="workspace-controls">
+        <button class="control-btn run" onclick="runCode()">
+          <i class="fas fa-play"></i> Exécuter le code
+        </button>
+        <button class="control-btn reset" onclick="resetSimulation()">
+          <i class="fas fa-redo"></i> Réinitialiser
+        </button>
+        <button class="control-btn check" onclick="checkSolution()">
+          <i class="fas fa-check-double"></i> Vérifier la solution
+        </button>
+        <button class="control-btn" onclick="configureLEDs()">
+          <i class="fas fa-cog"></i> Configurer LEDs
+        </button>
+      </div>
+
+      <!-- Feedback Area -->
+      <div class="feedback-area" id="feedback-area">
+        <div class="feedback-header">
+          <i class="fas fa-comment-dots" id="feedback-icon"></i>
+          <h3 class="feedback-title" id="feedback-title">Feedback</h3>
+        </div>
+        <div class="feedback-content" id="feedback-content">
+          <!-- Feedback content will be loaded here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievement Banner -->
+    <div id="achievement-banner" style="display: none; position: fixed; top: 100px; right: 20px; 
+         background: linear-gradient(135deg, #ff9800, #ff5722); color: white; padding: 1.5rem; 
+         border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 1000; max-width: 300px;">
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <i class="fas fa-trophy" style="font-size: 2rem;"></i>
+        <div>
+          <h4 style="margin: 0; font-size: 1.2rem;">Exercice réussi!</h4>
+          <p style="margin: 5px 0 0 0; font-size: 0.9rem;" id="achievement-message"></p>
+        </div>
+      </div>
+      <button onclick="hideAchievement()" style="position: absolute; top: 5px; right: 10px; 
+              background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem;">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Global variables
+    let currentExercise = 0;
+    let exerciseData = {};
+    let pinsConfiguration = {};
+    let ledsConfiguration = {};
+    let codeLines = [];
+    let simulationInterval = null;
+    let completedExercises = JSON.parse(localStorage.getItem('completedExercises') || '[]');
+    let userCode = {};
+
+    // Exercise data
+    const exercises = {
+      1: {
+        title: "LED Clignotante",
+        difficulty: "Débutant",
+        description: "Programmez une LED pour qu'elle clignote toutes les secondes (1 seconde allumée, 1 seconde éteinte).",
+        objectives: [
+          "Utiliser pinMode() pour configurer une broche en sortie",
+          "Utiliser digitalWrite() pour contrôler la LED",
+          "Utiliser delay() pour les temporisations"
+        ],
+        template: `void setup() {
+  // TODO: Configurer la broche 13 en sortie
+  // pinMode(13, OUTPUT);
+}
+
+void loop() {
+  // TODO: Allumer la LED
+  // digitalWrite(13, HIGH);
+  
+  // TODO: Attendre 1 seconde
+  // delay(1000);
+  
+  // TODO: Éteindre la LED
+  
+  // TODO: Attendre 1 seconde
+  
+}`,
+        solution: `void setup() {
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(13, HIGH);
+  delay(1000);
+  digitalWrite(13, LOW);
+  delay(1000);
+}`,
+        pins: [13],
+        leds: [{id: 1, color: 'red', pin: 13}],
+        hints: [
+          "Utilisez pinMode(13, OUTPUT) dans setup()",
+          "Utilisez digitalWrite(13, HIGH) pour allumer",
+          "Utilisez digitalWrite(13, LOW) pour éteindre",
+          "Utilisez delay(1000) pour attendre 1 seconde"
+        ],
+        test: function(code) {
+          const tests = {
+            hasPinMode: code.includes('pinMode(13, OUTPUT)'),
+            hasDigitalWriteHigh: code.includes('digitalWrite(13, HIGH)'),
+            hasDigitalWriteLow: code.includes('digitalWrite(13, LOW)'),
+            hasDelay: code.includes('delay(1000)'),
+            hasLoopStructure: code.includes('void loop()')
+          };
+          
+          return tests;
+        }
+      },
+      2: {
+        title: "Séquence LED Chassée",
+        difficulty: "Intermédiaire",
+        description: "Créez un effet de lumière chassée avec 4 LEDs qui s'allument et s'éteignent en séquence.",
+        objectives: [
+          "Utiliser un tableau pour gérer les broches",
+          "Implémenter une boucle for pour contrôler les LEDs",
+          "Créer un délai entre chaque étape"
+        ],
+        template: `int leds[] = {2, 4, 5, 18}; // Broches des LEDs
+
+void setup() {
+  // TODO: Configurer toutes les broches en sortie
+  for(int i = 0; i < 4; i++) {
+    // pinMode(leds[i], OUTPUT);
+  }
+}
+
+void loop() {
+  // TODO: Allumer chaque LED une par une avec délai
+  for(int i = 0; i < 4; i++) {
+    // Allumer LED i
+    
+    // Attendre 200ms
+    
+    // Éteindre LED i
+  }
+}`,
+        solution: `int leds[] = {2, 4, 5, 18};
+
+void setup() {
+  for(int i = 0; i < 4; i++) {
+    pinMode(leds[i], OUTPUT);
+  }
+}
+
+void loop() {
+  for(int i = 0; i < 4; i++) {
+    digitalWrite(leds[i], HIGH);
+    delay(200);
+    digitalWrite(leds[i], LOW);
+  }
+}`,
+        pins: [2, 4, 5, 18],
+        leds: [
+          {id: 1, color: 'red', pin: 2},
+          {id: 2, color: 'green', pin: 4},
+          {id: 3, color: 'blue', pin: 5},
+          {id: 4, color: 'yellow', pin: 18}
+        ],
+        hints: [
+          "Utilisez un tableau pour stocker les numéros de broches",
+          "Utilisez une boucle for pour configurer toutes les broches",
+          "Dans loop(), allumez chaque LED avec digitalWrite(leds[i], HIGH)",
+          "Utilisez delay(200) entre chaque changement"
+        ],
+        test: function(code) {
+          const tests = {
+            hasArray: code.includes('leds[]') || code.includes('int leds'),
+            hasForLoop: code.includes('for(') && code.includes('i++'),
+            hasDigitalWriteInLoop: code.includes('digitalWrite(leds[i]'),
+            hasDelay: code.includes('delay(200)')
+          };
+          
+          return tests;
+        }
+      },
+      3: {
+        title: "Contrôle PWM (Effet respiration)",
+        difficulty: "Intermédiaire",
+        description: "Créez un effet de respiration (fade in/fade out) avec une LED en utilisant PWM.",
+        objectives: [
+          "Utiliser une broche PWM (ex: GPIO 15)",
+          "Contrôler la luminosité avec analogWrite()",
+          "Implémenter un effet de fondu progressif"
+        ],
+        template: `int ledPin = 15; // Broche PWM
+int brightness = 0;
+int fadeAmount = 5;
+
+void setup() {
+  // TODO: Pas besoin de pinMode pour PWM
+  // Mais vous pouvez initialiser Serial
+  // Serial.begin(9600);
+}
+
+void loop() {
+  // TODO: Appliquer la luminosité actuelle
+  // analogWrite(ledPin, brightness);
+  
+  // TODO: Changer la luminosité
+  
+  // TODO: Inverser la direction aux limites (0-255)
+  
+  // TODO: Petit délai pour contrôler la vitesse
+  // delay(30);
+}`,
+        solution: `int ledPin = 15;
+int brightness = 0;
+int fadeAmount = 5;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  analogWrite(ledPin, brightness);
+  
+  brightness = brightness + fadeAmount;
+  
+  if (brightness <= 0 || brightness >= 255) {
+    fadeAmount = -fadeAmount;
+  }
+  
+  delay(30);
+}`,
+        pins: [15],
+        leds: [{id: 1, color: 'red', pin: 15, pwm: true}],
+        hints: [
+          "Utilisez analogWrite(pin, valeur) pour PWM (0-255)",
+          "Augmentez brightness à chaque itération",
+          "Inversez fadeAmount quand brightness atteint 0 ou 255",
+          "Utilisez un petit delay pour contrôler la vitesse"
+        ],
+        test: function(code) {
+          const tests = {
+            hasAnalogWrite: code.includes('analogWrite('),
+            hasBrightnessChange: code.includes('brightness = brightness') || code.includes('brightness +='),
+            hasBoundaryCheck: code.includes('brightness <= 0') && code.includes('brightness >= 255'),
+            hasFadeAmountInversion: code.includes('fadeAmount = -fadeAmount')
+          };
+          
+          return tests;
+        }
+      },
+      4: {
+        title: "LED RGB - Contrôle des couleurs",
+        difficulty: "Intermédiaire",
+        description: "Contrôlez une LED RGB pour afficher différentes couleurs.",
+        objectives: [
+          "Contrôler 3 broches PWM simultanément",
+          "Créer et utiliser des fonctions",
+          "Générer des couleurs RGB"
+        ],
+        template: `// Broches RGB
+int redPin = 12;
+int greenPin = 13;
+int bluePin = 14;
+
+void setup() {
+  // TODO: Configurer les broches en sortie
+}
+
+// Fonction pour définir une couleur
+void setColor(int red, int green, int blue) {
+  // TODO: Écrire les valeurs PWM sur les broches
+}
+
+void loop() {
+  // TODO: Rouge pur
+  
+  delay(1000);
+  
+  // TODO: Vert pur
+  
+  delay(1000);
+  
+  // TODO: Bleu pur
+  
+  delay(1000);
+}`,
+        solution: `int redPin = 12;
+int greenPin = 13;
+int bluePin = 14;
+
+void setup() {
+  // Les broches PWM n'ont pas besoin de pinMode
+}
+
+void setColor(int red, int green, int blue) {
+  analogWrite(redPin, red);
+  analogWrite(greenPin, green);
+  analogWrite(bluePin, blue);
+}
+
+void loop() {
+  setColor(255, 0, 0);   // Rouge
+  delay(1000);
+  
+  setColor(0, 255, 0);   // Vert
+  delay(1000);
+  
+  setColor(0, 0, 255);   // Bleu
+  delay(1000);
+}`,
+        pins: [12, 13, 14],
+        leds: [{id: 1, color: 'red', pin: 12, rgb: true}],
+        hints: [
+          "Utilisez analogWrite() pour chaque broche PWM",
+          "Créez une fonction setColor() pour simplifier le code",
+          "Les valeurs RGB vont de 0 à 255",
+          "Rouge = (255, 0, 0), Vert = (0, 255, 0), Bleu = (0, 0, 255)"
+        ],
+        test: function(code) {
+          const tests = {
+            hasSetColorFunction: code.includes('void setColor('),
+            hasAnalogWriteRGB: code.includes('analogWrite(redPin') && code.includes('analogWrite(greenPin') && code.includes('analogWrite(bluePin'),
+            hasColorCalls: code.includes('setColor(255, 0, 0)') && code.includes('setColor(0, 255, 0)') && code.includes('setColor(0, 0, 255)'),
+            hasDelays: code.includes('delay(1000)')
+          };
+          
+          return tests;
+        }
+      }
+    };
+
+    // Arduino Code Interpreter
+    class ArduinoInterpreter {
+      constructor() {
+        this.variables = {};
+        this.pinModes = {};
+        this.pinStates = {};
+        this.serialOutput = [];
+        this.delayQueue = 0;
+        this.loopCounter = 0;
+        this.maxLoops = 10;
+        this.hasErrors = false;
+        this.errorMessages = [];
+      }
+      
+      // Parse and execute Arduino code
+      execute(code) {
+        this.variables = {};
+        this.pinModes = {};
+        this.pinStates = {};
+        this.serialOutput = [];
+        this.delayQueue = 0;
+        this.loopCounter = 0;
+        this.hasErrors = false;
+        this.errorMessages = [];
+        
+        try {
+          // Validate basic syntax first
+          this.validateBasicSyntax(code);
+          if (this.hasErrors) {
+            throw new Error("Erreurs de syntaxe détectées");
+          }
+          
+          // Split into setup and loop
+          const parts = this.splitCode(code);
+          
+          if (parts.errors && parts.errors.length > 0) {
+            this.errorMessages.push(...parts.errors);
+            this.hasErrors = true;
+            throw new Error("Erreurs dans la structure du code");
+          }
+          
+          // Check for required functions
+          if (!parts.setup || parts.setup.length === 0) {
+            this.serialOutput.push("[ERREUR: Fonction setup() vide ou absente]");
+            this.hasErrors = true;
+          }
+          
+          if (!parts.loop || parts.loop.length === 0) {
+            this.serialOutput.push("[ERREUR: Fonction loop() vide ou absente]");
+            this.hasErrors = true;
+          }
+          
+          if (this.hasErrors) {
+            throw new Error("Fonctions setup() ou loop() manquantes");
+          }
+          
+          // Execute setup
+          this.serialOutput.push("=== EXECUTION SETUP ===");
+          this.executeBlock(parts.setup);
+          
+          // Execute loop (with safety limit)
+          this.serialOutput.push("=== EXECUTION LOOP ===");
+          let hasValidOperations = false;
+          
+          while (this.loopCounter < this.maxLoops && !this.hasErrors) {
+            this.loopCounter++;
+            this.executeBlock(parts.loop);
+            
+            // Check if we executed any valid operations
+            if (this.serialOutput.some(line => line.includes('✓'))) {
+              hasValidOperations = true;
+            }
+            
+            if (this.delayQueue > 0) {
+              this.serialOutput.push(`[DELAY ${this.delayQueue}ms]`);
+              this.delayQueue = 0;
+            }
+            
+            // Break early if no meaningful operations after 3 loops
+            if (this.loopCounter >= 3 && !hasValidOperations) {
+              this.serialOutput.push("[ATTENTION: Aucune opération valide exécutée]");
+              break;
+            }
+          }
+          
+          if (this.loopCounter >= this.maxLoops) {
+            this.serialOutput.push("[ATTENTION: Boucle arrêtée pour sécurité]");
+          }
+          
+          if (!hasValidOperations) {
+            this.serialOutput.push("[ERREUR: Aucune instruction Arduino valide exécutée]");
+            this.hasErrors = true;
+          }
+          
+          return { 
+            success: !this.hasErrors, 
+            output: this.serialOutput, 
+            pinStates: this.pinStates,
+            errors: this.errorMessages
+          };
+        } catch (error) {
+          return { 
+            success: false, 
+            error: error.message,
+            output: this.serialOutput,
+            pinStates: this.pinStates,
+            errors: this.errorMessages
+          };
+        }
+      }
+      
+      // Validate basic syntax
+      validateBasicSyntax(code) {
+        const lines = code.split('\n');
+        
+        lines.forEach((line, index) => {
+          const trimmed = line.trim();
+          
+          // Check for unmatched parentheses
+          const openParen = (trimmed.match(/\(/g) || []).length;
+          const closeParen = (trimmed.match(/\)/g) || []).length;
+          if (openParen !== closeParen && trimmed.includes('(')) {
+            this.errorMessages.push(`Ligne ${index + 1}: Parenthèses non équilibrées`);
+            this.hasErrors = true;
+          }
+          
+          // Check for common typos
+          if (trimmed.includes('Mode(') && !trimmed.includes('pinMode(')) {
+            this.errorMessages.push(`Ligne ${index + 1}: 'Mode(' → 'pinMode('`);
+            this.hasErrors = true;
+          }
+          
+          if (trimmed.match(/\(\s*\d+\s*\)/) && !trimmed.includes('delay(')) {
+            this.errorMessages.push(`Ligne ${index + 1}: '(1000)' → 'delay(1000)'`);
+            this.hasErrors = true;
+          }
+          
+          if (trimmed.includes('DigitalWrite(') && !trimmed.includes('digitalWrite(')) {
+            this.errorMessages.push(`Ligne ${index + 1}: 'DigitalWrite' → 'digitalWrite'`);
+            this.hasErrors = true;
+          }
+          
+          if (trimmed.includes('AnalogWrite(') && !trimmed.includes('analogWrite(')) {
+            this.errorMessages.push(`Ligne ${index + 1}: 'AnalogWrite' → 'analogWrite'`);
+            this.hasErrors = true;
+          }
+          
+          // Check for missing semicolons in statements
+          if (trimmed && 
+              !trimmed.startsWith('//') && 
+              !trimmed.startsWith('#') && 
+              !trimmed.startsWith('/*') &&
+              !trimmed.endsWith(';') &&
+              !trimmed.endsWith('{') &&
+              !trimmed.endsWith('}') &&
+              !trimmed.includes('void ') &&
+              !trimmed.includes('if ') &&
+              !trimmed.includes('for ') &&
+              !trimmed.includes('while ') &&
+              !trimmed.includes('else') &&
+              trimmed !== '' &&
+              !trimmed.match(/^[{}]$/)) {
+            
+            const validWithoutSemicolon = [
+              /^void\s+\w+\s*\(.*\)\s*$/,
+              /^if\s*\(.*\)\s*$/,
+              /^for\s*\(.*\)\s*$/,
+              /^while\s*\(.*\)\s*$/,
+              /^else\s*$/,
+              /^{$/,
+              /^}$/,
+              /^\/\/.*$/,
+              /^#include/,
+              /^#define/
+            ];
+            
+            const needsSemicolon = !validWithoutSemicolon.some(pattern => pattern.test(trimmed));
+            if (needsSemicolon) {
+              this.errorMessages.push(`Ligne ${index + 1}: Point-virgule manquant ';'`);
+              this.hasErrors = true;
+            }
+          }
+        });
+      }
+      
+      // Split code into setup and loop functions
+      splitCode(code) {
+        const result = { setup: [], loop: [], errors: [] };
+        let currentBlock = null;
+        const lines = code.split('\n');
+        let braceCount = 0;
+        let inFunction = false;
+        let functionStartLine = 0;
+        
+        // Check for required functions
+        if (!code.includes('void setup()') && !code.includes('void setup ()')) {
+          result.errors.push("Fonction setup() manquante");
+        }
+        
+        if (!code.includes('void loop()') && !code.includes('void loop ()')) {
+          result.errors.push("Fonction loop() manquante");
+        }
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          const trimmed = line.trim();
+          
+          // Detect function start
+          if (trimmed.startsWith('void setup()') || trimmed.startsWith('void setup ()')) {
+            if (currentBlock) {
+              result.errors.push(`Ligne ${i + 1}: Fonction imbriquée ou mal fermée`);
+            }
+            currentBlock = 'setup';
+            inFunction = true;
+            braceCount = 0;
+            functionStartLine = i + 1;
+            continue;
+          } else if (trimmed.startsWith('void loop()') || trimmed.startsWith('void loop ()')) {
+            if (currentBlock) {
+              result.errors.push(`Ligne ${i + 1}: Fonction imbriquée ou mal fermée`);
+            }
+            currentBlock = 'loop';
+            inFunction = true;
+            braceCount = 0;
+            functionStartLine = i + 1;
+            continue;
+          }
+          
+          // Count braces
+          if (inFunction) {
+            const openBraces = (trimmed.match(/{/g) || []).length;
+            const closeBraces = (trimmed.match(/}/g) || []).length;
+            
+            braceCount += openBraces;
+            braceCount -= closeBraces;
+            
+            // Function ended
+            if (braceCount <= 0 && closeBraces > 0) {
+              if (braceCount < 0) {
+                result.errors.push(`Ligne ${i + 1}: Trop d'accolades fermantes`);
+              }
+              currentBlock = null;
+              inFunction = false;
+              continue;
+            }
+          }
+          
+          // Add line to current block
+          if (currentBlock && trimmed && !trimmed.match(/^void\s+\w+\s*\(.*\)/)) {
+            const withoutComments = trimmed.replace(/\/\/.*$/, '').trim();
+            if (withoutComments && !withoutComments.match(/^[{}]$/)) {
+              result[currentBlock].push(withoutComments.replace(/;$/, ''));
+            }
+          }
+        }
+        
+        // Check for unclosed functions
+        if (inFunction && currentBlock) {
+          result.errors.push(`Fonction ${currentBlock}() non fermée (commencée ligne ${functionStartLine})`);
+        }
+        
+        return result;
+      }
+      
+      // Execute a block of code
+      executeBlock(statements) {
+        for (let i = 0; i < statements.length; i++) {
+          const result = this.executeStatement(statements[i]);
+          if (result === 'skipNext') {
+            i++;
+          }
+        }
+      }
+      
+      // Execute a single statement
+      executeStatement(statement) {
+        if (!statement || statement.startsWith('//')) return;
+        
+        try {
+          statement = statement.replace(/\s+/g, ' ').trim();
+          
+          // Check for obvious syntax errors
+          if (statement.includes('(') && !statement.includes(')')) {
+            throw new Error(`Parenthèse fermante manquante: ${statement}`);
+          }
+          
+          if (statement.includes(')') && !statement.includes('(')) {
+            throw new Error(`Parenthèse ouvrante manquante: ${statement}`);
+          }
+          
+          // pinMode(pin, mode)
+          if (statement.includes('Mode(') && !statement.includes('pinMode(')) {
+            throw new Error("'Mode(' → 'pinMode('");
+          }
+          
+          const pinModeMatch = statement.match(/pinMode\s*\(\s*(\d+)\s*,\s*(OUTPUT|INPUT|INPUT_PULLUP)\s*\)/i);
+          if (pinModeMatch) {
+            const pin = parseInt(pinModeMatch[1]);
+            const mode = pinModeMatch[2];
+            this.pinModes[pin] = mode;
+            this.serialOutput.push(`✓ pinMode(${pin}, ${mode})`);
+            return;
+          }
+          
+          // digitalWrite(pin, value)
+          if (statement.includes('DigitalWrite(') && !statement.includes('digitalWrite(')) {
+            throw new Error("'DigitalWrite' → 'digitalWrite'");
+          }
+          
+          const digitalWriteMatch = statement.match(/digitalWrite\s*\(\s*(\d+)\s*,\s*(HIGH|LOW)\s*\)/i);
+          if (digitalWriteMatch) {
+            const pin = parseInt(digitalWriteMatch[1]);
+            const value = digitalWriteMatch[2];
+            this.pinStates[pin] = value === 'HIGH' ? 1 : 0;
+            this.serialOutput.push(`✓ digitalWrite(${pin}, ${value})`);
+            return;
+          }
+          
+          // analogWrite(pin, value)
+          if (statement.includes('AnalogWrite(') && !statement.includes('analogWrite(')) {
+            throw new Error("'AnalogWrite' → 'analogWrite'");
+          }
+          
+          const analogWriteMatch = statement.match(/analogWrite\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)/i);
+          if (analogWriteMatch) {
+            const pin = parseInt(analogWriteMatch[1]);
+            let value = parseInt(analogWriteMatch[2]);
+            if (value < 0 || value > 255) {
+              throw new Error(`Valeur PWM invalide: ${value} (doit être entre 0 et 255)`);
+            }
+            value = Math.min(255, Math.max(0, value));
+            this.pinStates[pin] = value / 255;
+            this.serialOutput.push(`✓ analogWrite(${pin}, ${value})`);
+            return;
+          }
+          
+          // delay(ms)
+          if (statement.match(/\(\s*\d+\s*\)/) && !statement.includes('delay(')) {
+            throw new Error("'(1000)' → 'delay(1000)'");
+          }
+          
+          const delayMatch = statement.match(/delay\s*\(\s*(\d+)\s*\)/i);
+          if (delayMatch) {
+            this.delayQueue += parseInt(delayMatch[1]);
+            this.serialOutput.push(`✓ delay(${delayMatch[1]})`);
+            return;
+          }
+          
+          // Serial.begin(baud)
+          const serialBeginMatch = statement.match(/Serial\.begin\s*\(\s*(\d+)\s*\)/i);
+          if (serialBeginMatch) {
+            this.serialOutput.push(`✓ Serial.begin(${serialBeginMatch[1]})`);
+            return;
+          }
+          
+          // Serial.print(text) or Serial.println(text)
+          const serialPrintMatch = statement.match(/Serial\.(print|println)\s*\(\s*"([^"]*)"\s*\)/i);
+          if (serialPrintMatch) {
+            const text = serialPrintMatch[2];
+            this.serialOutput.push(`✓ "${text}"`);
+            return;
+          }
+          
+          // Variable declaration
+          const varDeclareMatch = statement.match(/(int|float|bool)\s+(\w+)\s*(?:=\s*([^;]+))?/i);
+          if (varDeclareMatch) {
+            const name = varDeclareMatch[2];
+            if (varDeclareMatch[3]) {
+              const value = this.evaluateExpression(varDeclareMatch[3]);
+              this.variables[name] = value;
+              this.serialOutput.push(`✓ ${name} = ${value}`);
+            } else {
+              this.variables[name] = 0;
+            }
+            return;
+          }
+          
+          // Variable assignment
+          const assignMatch = statement.match(/^(\w+)\s*([+\-*/]?=)\s*([^;]+)/i);
+          if (assignMatch && !statement.includes('(')) {
+            const name = assignMatch[1];
+            const operator = assignMatch[2];
+            const expr = assignMatch[3];
+            
+            if (this.variables[name] === undefined) {
+              this.variables[name] = 0;
+            }
+            
+            const currentValue = this.variables[name];
+            const newValue = this.evaluateExpression(expr);
+            
+            if (operator === '=') {
+              this.variables[name] = newValue;
+            } else if (operator === '+=') {
+              this.variables[name] = currentValue + newValue;
+            } else if (operator === '-=') {
+              this.variables[name] = currentValue - newValue;
+            } else if (operator === '*=') {
+              this.variables[name] = currentValue * newValue;
+            } else if (operator === '/=') {
+              this.variables[name] = newValue !== 0 ? currentValue / newValue : 0;
+            }
+            
+            this.serialOutput.push(`✓ ${name} ${operator} ${newValue} → ${this.variables[name]}`);
+            return;
+          }
+          
+          // Increment/decrement
+          const incDecMatch = statement.match(/^(\w+)\s*(\+\+|--)/);
+          if (incDecMatch) {
+            const name = incDecMatch[1];
+            const operator = incDecMatch[2];
+            
+            if (this.variables[name] === undefined) {
+              this.variables[name] = 0;
+            }
+            
+            if (operator === '++') {
+              this.variables[name]++;
+            } else {
+              this.variables[name]--;
+            }
+            
+            return;
+          }
+          
+          // If statement
+          const ifMatch = statement.match(/if\s*\(\s*(.+)\s*\)/i);
+          if (ifMatch) {
+            const condition = this.evaluateCondition(ifMatch[1]);
+            if (!condition) {
+              return 'skipNext';
+            }
+            return;
+          }
+          
+          // For loop initialization
+          const forInitMatch = statement.match(/for\s*\(\s*int\s+(\w+)\s*=\s*(\d+)/i);
+          if (forInitMatch) {
+            const varName = forInitMatch[1];
+            const initValue = parseInt(forInitMatch[2]);
+            this.variables[varName] = initValue;
+            return;
+          }
+          
+          // Function call
+          const funcCallMatch = statement.match(/^(\w+)\s*\(\s*([^)]*)\s*\)/);
+          if (funcCallMatch && !statement.includes('=')) {
+            const funcName = funcCallMatch[1];
+            const args = funcCallMatch[2];
+            
+            if (funcName === 'setColor') {
+              const rgb = args.split(',').map(arg => parseInt(arg.trim()));
+              if (rgb.length >= 3) {
+                this.serialOutput.push(`✓ setColor(${args})`);
+              }
+            }
+            return;
+          }
+          
+          // If we get here and statement is not empty, log warning
+          if (statement.length > 2 && !statement.match(/^[{}]$/)) {
+            if (statement.includes('(')) {
+              const funcName = statement.split('(')[0].trim();
+              this.serialOutput.push(`⚠ Instruction ignorée: ${statement} (fonction '${funcName}' inconnue)`);
+            }
+          }
+          
+        } catch (error) {
+          this.errorMessages.push(error.message);
+          this.hasErrors = true;
+          this.serialOutput.push(`❌ ${error.message}`);
+        }
+      }
+      
+      // Evaluate a simple expression
+      evaluateExpression(expr) {
+        expr = expr.trim();
+        
+        // Number
+        if (/^\d+$/.test(expr)) {
+          return parseInt(expr);
+        }
+        
+        // Variable
+        if (this.variables[expr] !== undefined) {
+          return this.variables[expr];
+        }
+        
+        // Simple arithmetic
+        const arithmeticMatch = expr.match(/(\w+)\s*([+\-*/])\s*(\w+)/);
+        if (arithmeticMatch) {
+          const left = this.evaluateExpression(arithmeticMatch[1]);
+          const right = this.evaluateExpression(arithmeticMatch[3]);
+          const op = arithmeticMatch[2];
+          
+          switch(op) {
+            case '+': return left + right;
+            case '-': return left - right;
+            case '*': return left * right;
+            case '/': return right !== 0 ? Math.floor(left / right) : 0;
+          }
+        }
+        
+        // Negation
+        const negationMatch = expr.match(/-\s*(\w+)/);
+        if (negationMatch) {
+          const value = this.evaluateExpression(negationMatch[1]);
+          return -value;
+        }
+        
+        return 0;
+      }
+      
+      // Evaluate a condition
+      evaluateCondition(cond) {
+        cond = cond.trim();
+        
+        // Simple comparisons
+        const comparisonMatch = cond.match(/(\w+)\s*(<=|>=|==|!=|<|>)\s*(\w+)/);
+        if (comparisonMatch) {
+          const left = this.evaluateExpression(comparisonMatch[1]);
+          const right = this.evaluateExpression(comparisonMatch[3]);
+          const op = comparisonMatch[2];
+          
+          switch(op) {
+            case '<': return left < right;
+            case '>': return left > right;
+            case '<=': return left <= right;
+            case '>=': return left >= right;
+            case '==': return left === right;
+            case '!=': return left !== right;
+          }
+        }
+        
+        // Single variable
+        if (this.variables[cond] !== undefined) {
+          return !!this.variables[cond];
+        }
+        
+        // Direct boolean
+        if (cond === 'true') return true;
+        if (cond === 'false') return false;
+        
+        return false;
+      }
+      
+      // Get pin state for visualization
+      getPinState(pin) {
+        return this.pinStates[pin] || 0;
+      }
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      updateProgress();
+      loadExerciseStatus();
+      initPinsConfiguration();
+    });
+
+    // Load an exercise
+    function loadExercise(num) {
+      currentExercise = num;
+      const exercise = exercises[num];
+      
+      if (!exercise) {
+        console.error(`Exercise ${num} not found`);
+        return;
+      }
+      
+      // Show workspace first to ensure DOM elements exist
+      const workspace = document.getElementById('exercise-workspace');
+      workspace.style.display = 'block';
+      
+      // Update workspace
+      document.getElementById('workspace-title').textContent = `Exercice #${num}: ${exercise.title}`;
+      document.getElementById('code-filename').textContent = `ex${num}.ino`;
+      
+      // Load code template
+      loadCodeTemplate(exercise.template);
+      
+      // Configure pins and LEDs
+      configurePins(exercise.pins);
+      configureExerciseLEDs(exercise.leds);
+      
+      // Hide feedback
+      document.getElementById('feedback-area').classList.remove('show');
+      
+      // Scroll to workspace
+      workspace.scrollIntoView({ behavior: 'smooth' });
+      
+      // Clear serial monitor
+      clearSerialMonitor();
+      addSerialLine(`Chargement exercice #${num}: ${exercise.title}`);
+      addSerialLine('Prêt à coder!');
+    }
+
+    // Load code template
+    function loadCodeTemplate(template) {
+        const codeArea = document.getElementById('code-area');
+        if (!codeArea) {
+          console.error('code-area element not found');
+          return;
+        }
+        
+        codeLines = template.split('\n');
+        userCode[currentExercise] = template;
+        
+        codeArea.innerHTML = '';
+        codeLines.forEach((line, index) => {
+          const lineDiv = document.createElement('div');
+          lineDiv.className = 'code-line';
+          
+          // Create line number
+          const lineNumber = document.createElement('span');
+          lineNumber.className = 'line-number';
+          lineNumber.textContent = index + 1;
+          
+          // Create code display span
+          const codeSpan = document.createElement('span');
+          codeSpan.className = 'code-display';
+          codeSpan.innerHTML = highlightSyntax(line);
+          
+          // Create hidden input for editing
+          const codeInput = document.createElement('input');
+          codeInput.type = 'text';
+          codeInput.className = 'code-input';
+          codeInput.value = line;
+          codeInput.dataset.line = index;
+          codeInput.style.display = 'none';
+          
+          lineDiv.appendChild(lineNumber);
+          lineDiv.appendChild(codeSpan);
+          lineDiv.appendChild(codeInput);
+          codeArea.appendChild(lineDiv);
+          
+          // Add click event to code span for editing
+          codeSpan.addEventListener('click', function() {
+            this.style.display = 'none';
+            codeInput.style.display = 'inline';
+            codeInput.focus();
+            codeInput.setSelectionRange(codeInput.value.length, codeInput.value.length);
+          });
+          
+          // Add blur event to code input
+          codeInput.addEventListener('blur', function() {
+            updateCodeLine(parseInt(this.dataset.line), this.value);
+            codeSpan.innerHTML = highlightSyntax(this.value);
+            codeSpan.style.display = 'inline';
+            this.style.display = 'none';
+          });
+          
+          // Add enter key support
+          codeInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+              this.blur();
+            }
+          });
+        });
+      }
+      
+    // Highlight syntax for a single line
+    function highlightSyntax(line) {
+      let html = '';
+      let inComment = false;
+      let inString = false;
+      let current = '';
+      
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = i + 1 < line.length ? line[i + 1] : '';
+        
+        // Check for comment start
+        if (!inString && char === '/' && nextChar === '/') {
+          html += wrapCurrent(current);
+          current = '//';
+          inComment = true;
+          i++; // Skip next char
+          continue;
+        }
+        
+        // Check for string start/end
+        if (!inComment && char === '"') {
+          html += wrapCurrent(current);
+          current = '"';
+          inString = !inString;
+          continue;
+        }
+        
+        current += char;
+        
+        // If at end of line, wrap what's left
+        if (i === line.length - 1) {
+          html += wrapCurrent(current, inComment, inString);
+        }
+      }
+      
+      return html;
+    }
+    
+    function wrapCurrent(text, isComment = false, isString = false) {
+      if (!text) return '';
+      
+      // Escape HTML
+      const escaped = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      
+      if (isComment) {
+        // Highlight numbers in comments
+        const withNumbers = escaped.replace(/\b(\d+)\b/g, 
+          '<span class="code-number">$1</span>');
+        return '<span class="code-comment">' + withNumbers + '</span>';
+      }
+      
+      if (isString) {
+        return '<span class="code-string">' + escaped + '</span>';
+      }
+      
+      // Apply highlighting to non-comment, non-string text
+      let result = escaped;
+      
+      // Simple keyword matching
+      const keywords = ['void', 'setup', 'loop', 'int', 'float', 'if', 'else', 
+                        'for', 'while', 'return', 'const', 'bool', 'true', 'false'];
+      keywords.forEach(keyword => {
+        const regex = new RegExp('\\b' + keyword + '\\b', 'g');
+        result = result.replace(regex, '<span class="code-keyword">$&</span>');
+      });
+      
+      // Functions
+      const functions = ['pinMode', 'digitalWrite', 'digitalRead', 'analogWrite', 
+                         'analogRead', 'delay', 'millis', 'Serial.begin', 
+                         'Serial.print', 'Serial.println'];
+      functions.forEach(func => {
+        const regex = new RegExp('\\b' + func.replace('.', '\\.') + '\\b', 'g');
+        result = result.replace(regex, '<span class="code-function">$&</span>');
+      });
+      
+      // Values
+      result = result.replace(/\b(HIGH|LOW|OUTPUT|INPUT|INPUT_PULLUP)\b/g, 
+        '<span class="code-value">$&</span>');
+      
+      // Numbers (but not inside HTML tags)
+      result = result.replace(/\b(\d+)\b(?![\w-]*>)/g, 
+        '<span class="code-number">$1</span>');
+      
+      return result;
+    }
+
+    // Update a code line
+    function updateCodeLine(lineNum, value) {
+      if (lineNum >= 0 && lineNum < codeLines.length) {
+        codeLines[lineNum] = value;
+        userCode[currentExercise] = codeLines.join('\n');
+      }
+    }
+
+    // Configure pins on ESP32 board
+    function configurePins(pinNumbers) {
+      const pinsGrid = document.getElementById('pins-grid');
+      if (!pinsGrid) {
+        console.error('pins-grid element not found');
+        return;
+      }
+      
+      pinsGrid.innerHTML = '';
+      
+      // Create pins - ESP32 typically has pins 0-19 on each side
+      for (let i = 0; i < 20; i++) {
+        const pin = document.createElement('div');
+        const pinNum = i;
+        
+        pin.className = 'pin';
+        pin.id = `pin-${pinNum}`;
+        
+        // Create label and status elements
+        const label = document.createElement('div');
+        label.className = 'pin-label';
+        label.textContent = `GPIO${pinNum}`;
+        
+        const status = document.createElement('div');
+        status.className = 'pin-status';
+        status.id = `pin-status-${pinNum}`;
+        
+        // Check if this pin is used in exercise
+        if (pinNumbers.includes(pinNum)) {
+          pin.classList.add('output');
+          pin.dataset.mode = 'output';
+          pin.dataset.state = 'low';
+          status.textContent = 'OUT';
+        } else {
+          pin.dataset.mode = 'input';
+          status.textContent = 'IN';
+        }
+        
+        pin.appendChild(label);
+        pin.appendChild(status);
+        
+        // Click to toggle mode
+        pin.addEventListener('click', function() {
+          togglePinMode(pinNum);
+        });
+        
+        pinsGrid.appendChild(pin);
+      }
+    }
+
+    // Toggle pin mode
+    function togglePinMode(pinNum) {
+      const pin = document.getElementById(`pin-${pinNum}`);
+      const status = document.getElementById(`pin-status-${pinNum}`);
+      
+      if (!pin || !status) return;
+      
+      if (pin.dataset.mode === 'output') {
+        pin.className = 'pin input';
+        pin.dataset.mode = 'input';
+        status.textContent = 'IN';
+      } else {
+        pin.className = 'pin output';
+        pin.dataset.mode = 'output';
+        pin.dataset.state = 'low';
+        status.textContent = 'OUT';
+      }
+    }
+
+    // Configure LEDs for exercise
+    function configureExerciseLEDs(leds) {
+      const ledsContainer = document.getElementById('leds-container');
+      if (!ledsContainer) {
+        console.error('leds-container element not found');
+        return;
+      }
+      
+      ledsContainer.innerHTML = '';
+      
+      leds.forEach(led => {
+        const ledDiv = document.createElement('div');
+        ledDiv.className = `led led-${led.color}`;
+        ledDiv.id = `led-${led.id}`;
+        
+        // Create connected pin label
+        const pinLabel = document.createElement('div');
+        pinLabel.className = 'led-connected-pin';
+        pinLabel.textContent = `GPIO${led.pin}`;
+        
+        // Create LED label
+        const ledLabel = document.createElement('div');
+        ledLabel.className = 'led-label';
+        ledLabel.textContent = `LED ${led.id}`;
+        
+        ledDiv.appendChild(pinLabel);
+        ledDiv.appendChild(ledLabel);
+        
+        if (led.pwm || led.rgb) {
+          ledDiv.dataset.pwm = 'true';
+          ledDiv.dataset.brightness = '0';
+        }
+        
+        ledsContainer.appendChild(ledDiv);
+      });
+    }
+
+    // Run user code with interpreter
+    function runCode() {
+      clearSerialMonitor();
+      addSerialLine('⚡ Analyse du code Arduino...');
+      addSerialLine('--------------------------------');
+      
+      // Stop any running simulation
+      if (simulationInterval) {
+        clearInterval(simulationInterval);
+        simulationInterval = null;
+      }
+      
+      // Get user code
+      const code = userCode[currentExercise] || '';
+      const exercise = exercises[currentExercise];
+      
+      if (!exercise) {
+        addSerialLine('❌ ERREUR: Exercice non chargé');
+        return;
+      }
+      
+      // Check if code is empty or too short
+      const codeWithoutComments = code.replace(/\/\/.*/g, '').replace(/\s/g, '');
+      if (codeWithoutComments.length < 30) {
+        addSerialLine('⚠️  Code trop court ou vide. Écrivez du code Arduino valide!');
+        addSerialLine('➡️  Exemple: pinMode(13, OUTPUT); digitalWrite(13, HIGH); delay(1000);');
+        return;
+      }
+      
+      // Check if it's just the template
+      const isModified = isCodeModified(code, exercise.template);
+      if (!isModified) {
+        addSerialLine('⚠️  Code non modifié. Modifiez le template avant d\'exécuter.');
+        addSerialLine('➡️  Remplacez les commentaires TODO par votre code Arduino.');
+        return;
+      }
+      
+      // Manual validation for common errors
+      const validationErrors = validateArduinoCode(code);
+      if (validationErrors.length > 0) {
+        addSerialLine('❌ ERREURS DE SYNTAXE DÉTECTÉES:');
+        validationErrors.forEach(error => {
+          addSerialLine(`   • ${error}`);
+        });
+        addSerialLine('--------------------------------');
+        addSerialLine('➡️  Corrigez les erreurs avant de ré-exécuter.');
+        return;
+      }
+      
+      // Create and execute interpreter
+      const interpreter = new ArduinoInterpreter();
+      const result = interpreter.execute(code);
+      
+      // Display results
+      if (result.success && !interpreter.hasErrors) {
+        addSerialLine('✅ Code exécuté avec succès');
+        addSerialLine('--------------------------------');
+        
+        // Display execution output
+        result.output.forEach(line => {
+          if (line.startsWith('===') || line.startsWith('[') || line.startsWith('✓') || line.startsWith('❌') || line.startsWith('⚠')) {
+            addSerialLine(line);
+          } else if (line.trim()) {
+            addSerialLine(`→ ${line}`);
+          }
+        });
+        
+        // Update visualization based on interpreter results
+        updateVisualizationFromInterpreter(interpreter, exercise);
+        
+        // Start animation only if code has valid operations
+        const hasValidOperations = result.output.some(line => 
+          line.startsWith('✓ pinMode') || 
+          line.startsWith('✓ digitalWrite') || 
+          line.startsWith('✓ analogWrite') ||
+          line.startsWith('✓ delay')
+        );
+        
+        if (hasValidOperations) {
+          startSmartAnimation(exercise, interpreter);
+        } else {
+          addSerialLine('[INFO] Pas d\'animation: aucune opération Arduino valide exécutée');
+        }
+      } else {
+        addSerialLine('❌ EXÉCUTION ÉCHOUÉE:');
+        addSerialLine('--------------------------------');
+        
+        // Show all errors
+        if (result.error) {
+          addSerialLine(`Erreur principale: ${result.error}`);
+        }
+        
+        if (result.errors && result.errors.length > 0) {
+          result.errors.forEach(error => {
+            addSerialLine(`• ${error}`);
+          });
+        }
+        
+        // Show execution output
+        result.output.forEach(line => {
+          if (line.trim()) {
+            addSerialLine(line);
+          }
+        });
+        
+        addSerialLine('--------------------------------');
+        addSerialLine('➡️  Corrigez les erreurs et ré-exécutez.');
+      }
+    }
+
+    // Helper function to check if code has been modified from template
+    function isCodeModified(code, template) {
+      // Remove comments and whitespace for comparison
+      const cleanCode = code.replace(/\/\/.*/g, '').replace(/\s/g, '');
+      const cleanTemplate = template.replace(/\/\/.*/g, '').replace(/\s/g, '');
+      
+      // Check if code contains actual Arduino functions
+      const hasArduinoFunctions = 
+        code.includes('pinMode') || 
+        code.includes('digitalWrite') || 
+        code.includes('analogWrite') || 
+        code.includes('delay(');
+      
+      return cleanCode !== cleanTemplate && hasArduinoFunctions;
+    }
+
+    // Manual validation for common errors
+    function validateArduinoCode(code) {
+      const errors = [];
+      const lines = code.split('\n');
+      
+      lines.forEach((line, index) => {
+        const trimmed = line.trim();
+        const lineNum = index + 1;
+        
+        // Detect common errors
+        if (trimmed.includes('Mode(') && !trimmed.includes('pinMode(')) {
+          errors.push(`Ligne ${lineNum}: 'Mode(' → 'pinMode('`);
+        }
+        
+        if (trimmed.match(/\(\s*\d+\s*\)/) && !trimmed.includes('delay(')) {
+          errors.push(`Ligne ${lineNum}: '(1000)' → 'delay(1000)'`);
+        }
+        
+        if (trimmed.includes('DigitalWrite(') && !trimmed.includes('digitalWrite(')) {
+          errors.push(`Ligne ${lineNum}: 'DigitalWrite' → 'digitalWrite'`);
+        }
+        
+        if (trimmed.includes('AnalogWrite(') && !trimmed.includes('analogWrite(')) {
+          errors.push(`Ligne ${lineNum}: 'AnalogWrite' → 'analogWrite'`);
+        }
+        
+        // Check parentheses
+        const openParen = (trimmed.match(/\(/g) || []).length;
+        const closeParen = (trimmed.match(/\)/g) || []).length;
+        if (openParen !== closeParen && trimmed.includes('(')) {
+          errors.push(`Ligne ${lineNum}: Parenthèses non équilibrées`);
+        }
+      });
+      
+      return errors;
+    }
+
+    // Update visualization based on interpreter results
+    function updateVisualizationFromInterpreter(interpreter, exercise) {
+      // First reset everything
+      document.querySelectorAll('.led').forEach(led => {
+        led.classList.remove('on');
+        led.style.opacity = '1';
+        led.style.backgroundColor = '';
+      });
+      
+      document.querySelectorAll('.pin').forEach(pin => {
+        pin.classList.remove('active');
+      });
+      
+      // Update based on pin states from interpreter
+      exercise.leds.forEach(led => {
+        const ledElement = document.getElementById(`led-${led.id}`);
+        const pinElement = document.getElementById(`pin-${led.pin}`);
+        
+        if (ledElement && pinElement) {
+          const pinState = interpreter.getPinState(led.pin);
+          
+          if (pinState > 0) {
+            ledElement.classList.add('on');
+            pinElement.classList.add('active');
+            
+            // Handle PWM brightness
+            if (led.pwm) {
+              const brightness = Math.min(1, Math.max(0, pinState));
+              ledElement.style.opacity = brightness;
+            }
+            
+            // Handle RGB
+            if (led.rgb) {
+              const r = Math.round((interpreter.getPinState(led.pin) || 0) * 255);
+              const g = Math.round((interpreter.getPinState(led.pin + 1) || 0) * 255);
+              const b = Math.round((interpreter.getPinState(led.pin + 2) || 0) * 255);
+              
+              ledElement.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+            }
+          }
+        }
+      });
+    }
+
+    // Check if we should animate
+    function shouldAnimate(exercise, interpreter) {
+      const code = userCode[currentExercise] || '';
+      
+      // Very strict checks
+      const hasValidLoop = /void\s+loop\s*\(\s*\)\s*\{/.test(code);
+      const hasValidSetup = /void\s+setup\s*\(\s*\)\s*\{/.test(code);
+      const hasPinMode = code.includes('pinMode(');
+      const hasDigitalWrite = code.includes('digitalWrite(') || code.includes('analogWrite(');
+      const hasDelay = code.includes('delay(');
+      
+      // Check interpreter results
+      const hasNoErrors = !interpreter.hasErrors && interpreter.errorMessages.length === 0;
+      const executedValidOperations = interpreter.serialOutput.some(line => 
+        line.startsWith('✓ pinMode') || 
+        line.startsWith('✓ digitalWrite') || 
+        line.startsWith('✓ analogWrite')
+      );
+      
+      return hasValidLoop && hasValidSetup && hasPinMode && hasDigitalWrite && hasDelay && hasNoErrors && executedValidOperations;
+    }
+
+    // Smart animation based on interpreter results
+    function startSmartAnimation(exercise, interpreter) {
+      if (simulationInterval) {
+        clearInterval(simulationInterval);
+        simulationInterval = null;
+      }
+      
+      const code = userCode[currentExercise] || '';
+      
+      // Don't animate if there are errors
+      if (interpreter.hasErrors || interpreter.errorMessages.length > 0) {
+        addSerialLine('[ANIM] Animation désactivée: erreurs dans le code');
+        return;
+      }
+      
+      // Don't animate if no valid operations
+      const hasValidOps = interpreter.serialOutput.some(line => 
+        line.startsWith('✓ pinMode') || 
+        line.startsWith('✓ digitalWrite') || 
+        line.startsWith('✓ analogWrite')
+      );
+      
+      if (!hasValidOps) {
+        addSerialLine('[ANIM] Animation désactivée: aucune opération valide');
+        return;
+      }
+      
+      // Analyze code to determine animation type
+      if (code.includes('digitalWrite(13, HIGH)') && code.includes('digitalWrite(13, LOW)') && code.includes('delay(1000)')) {
+        startBlinkAnimation(exercise);
+      } else if (code.includes('leds[') && code.includes('digitalWrite(leds[i]')) {
+        startChaseAnimation(exercise);
+      } else if (code.includes('analogWrite(') && code.includes('brightness')) {
+        startPWMAnimation(exercise);
+      } else if (code.includes('setColor(')) {
+        startRGBAnimation(exercise);
+      } else if (shouldAnimate(exercise, interpreter)) {
+        startGenericAnimation(exercise, interpreter);
+      } else {
+        addSerialLine('[ANIM] Pas d\'animation spécifique détectée');
+      }
+    }
+
+    // Animation for Exercise 1
+    function startBlinkAnimation(exercise) {
+      const led = document.getElementById('led-1');
+      const pin = document.getElementById('pin-13');
+      
+      if (!led || !pin) return;
+      
+      let state = false;
+      
+      simulationInterval = setInterval(() => {
+        state = !state;
+        
+        if (state) {
+          led.classList.add('on');
+          pin.classList.add('active');
+          addSerialLine('[ANIM] LED allumée');
+        } else {
+          led.classList.remove('on');
+          pin.classList.remove('active');
+          addSerialLine('[ANIM] LED éteinte');
+        }
+      }, 1000);
+      
+      addSerialLine('[ANIM] Animation LED clignotante démarrée');
+    }
+
+    // Animation for Exercise 2
+    function startChaseAnimation(exercise) {
+      let currentIndex = 0;
+      
+      simulationInterval = setInterval(() => {
+        // Turn off all LEDs
+        exercise.leds.forEach((led, idx) => {
+          const ledEl = document.getElementById(`led-${led.id}`);
+          const pinEl = document.getElementById(`pin-${led.pin}`);
+          
+          if (ledEl) ledEl.classList.remove('on');
+          if (pinEl) pinEl.classList.remove('active');
+        });
+        
+        // Turn on current LED
+        const currentLED = exercise.leds[currentIndex];
+        if (currentLED) {
+          const ledEl = document.getElementById(`led-${currentLED.id}`);
+          const pinEl = document.getElementById(`pin-${currentLED.pin}`);
+          
+          if (ledEl) ledEl.classList.add('on');
+          if (pinEl) pinEl.classList.add('active');
+          
+          addSerialLine(`[ANIM] LED ${currentIndex + 1} allumée`);
+        }
+        
+        // Move to next LED
+        currentIndex = (currentIndex + 1) % exercise.leds.length;
+      }, 500);
+      
+      addSerialLine('[ANIM] Animation séquence LED démarrée');
+    }
+
+    // Animation for Exercise 3
+    function startPWMAnimation(exercise) {
+      let brightness = 0;
+      let direction = 5;
+      
+      simulationInterval = setInterval(() => {
+        brightness += direction;
+        
+        if (brightness >= 255) {
+          brightness = 255;
+          direction = -5;
+          addSerialLine('[ANIM] Maximum luminosité');
+        } else if (brightness <= 0) {
+          brightness = 0;
+          direction = 5;
+          addSerialLine('[ANIM] LED éteinte');
+        }
+        
+        const led = document.getElementById('led-1');
+        const pin = document.getElementById('pin-15');
+        
+        if (led) {
+          const opacity = brightness / 255;
+          led.style.opacity = opacity;
+          
+          if (brightness > 0) {
+            led.classList.add('on');
+          } else {
+            led.classList.remove('on');
+          }
+        }
+        
+        if (pin) {
+          if (brightness > 0) {
+            pin.classList.add('active');
+          } else {
+            pin.classList.remove('active');
+          }
+        }
+      }, 50);
+      
+      addSerialLine('[ANIM] Animation PWM démarrée');
+    }
+
+    // Animation for Exercise 4
+    function startRGBAnimation(exercise) {
+      const colors = [
+        {name: "Rouge", r: 255, g: 0, b: 0},
+        {name: "Vert", r: 0, g: 255, b: 0},
+        {name: "Bleu", r: 0, g: 0, b: 255}
+      ];
+      
+      let currentColor = 0;
+      
+      simulationInterval = setInterval(() => {
+        const color = colors[currentColor];
+        const led = document.getElementById('led-1');
+        
+        if (led) {
+          led.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
+          led.classList.add('on');
+          
+          // Update pins
+          [12, 13, 14].forEach(pinNum => {
+            const pin = document.getElementById(`pin-${pinNum}`);
+            if (pin) {
+              if ((pinNum === 12 && color.r > 0) || 
+                  (pinNum === 13 && color.g > 0) || 
+                  (pinNum === 14 && color.b > 0)) {
+                pin.classList.add('active');
+              } else {
+                pin.classList.remove('active');
+              }
+            }
+          });
+          
+          addSerialLine(`[ANIM] ${color.name}`);
+        }
+        
+        currentColor = (currentColor + 1) % colors.length;
+      }, 1500);
+      
+      addSerialLine('[ANIM] Animation RGB démarrée');
+    }
+
+    // Generic animation - ONLY if code is valid
+    function startGenericAnimation(exercise, interpreter) {
+      // Don't animate if interpreter has errors
+      if (interpreter.hasErrors || interpreter.errorMessages.length > 0) {
+        addSerialLine('[ANIM] Pas d\'animation générique: erreurs détectées');
+        return;
+      }
+      
+      // Check if we have valid operations
+      const hasValidOps = interpreter.serialOutput.some(line => 
+        line.startsWith('✓ pinMode') || 
+        line.startsWith('✓ digitalWrite') || 
+        line.startsWith('✓ analogWrite')
+      );
+      
+      if (!hasValidOps) {
+        addSerialLine('[ANIM] Pas d\'animation: aucune opération valide');
+        return;
+      }
+      
+      // Simple toggle animation
+      let state = false;
+      const hasLEDs = exercise.leds && exercise.leds.length > 0;
+      
+      if (!hasLEDs) {
+        addSerialLine('[ANIM] Pas d\'animation: aucune LED configurée');
+        return;
+      }
+      
+      simulationInterval = setInterval(() => {
+        state = !state;
+        
+        exercise.leds.forEach(led => {
+          const ledEl = document.getElementById(`led-${led.id}`);
+          const pinEl = document.getElementById(`pin-${led.pin}`);
+          
+          if (ledEl && pinEl) {
+            if (state) {
+              ledEl.classList.add('on');
+              pinEl.classList.add('active');
+            } else {
+              ledEl.classList.remove('on');
+              pinEl.classList.remove('active');
+            }
+          }
+        });
+        
+        addSerialLine(state ? '[ANIM] LEDs allumées' : '[ANIM] LEDs éteintes');
+      }, 800);
+      
+      addSerialLine('[ANIM] Animation générique démarrée');
+    }
+
+    // Reset simulation
+    function resetSimulation() {
+      if (simulationInterval) {
+        clearInterval(simulationInterval);
+        simulationInterval = null;
+      }
+      
+      // Turn off all LEDs
+      document.querySelectorAll('.led').forEach(led => {
+        led.classList.remove('on');
+        led.style.opacity = '1';
+        led.style.backgroundColor = '';
+      });
+      
+      // Reset pins
+      document.querySelectorAll('.pin').forEach(pin => {
+        pin.classList.remove('active');
+      });
+      
+      // Clear serial monitor
+      clearSerialMonitor();
+      addSerialLine('Simulation réinitialisée');
+    }
+
+    // Check solution
+    function checkSolution() {
+      const exercise = exercises[currentExercise];
+      if (!exercise) {
+        console.error('No exercise loaded');
+        return;
+      }
+      
+      const code = userCode[currentExercise] || '';
+      
+      // Run interpreter to check if code works
+      const interpreter = new ArduinoInterpreter();
+      const executionResult = interpreter.execute(code);
+      
+      // Run exercise-specific tests
+      const tests = exercise.test ? exercise.test(code) : {};
+      
+      // Calculate score
+      const totalTests = Object.keys(tests).length;
+      const passedTests = Object.values(tests).filter(Boolean).length;
+      const syntaxValid = executionResult.success && !interpreter.hasErrors;
+      const hasMeaningfulOutput = executionResult.output.some(line => line.includes('✓'));
+      
+      const score = Math.round((passedTests / totalTests) * 100);
+      const finalScore = syntaxValid ? Math.min(100, score + 20) : score;
+      
+      const feedbackArea = document.getElementById('feedback-area');
+      const feedbackContent = document.getElementById('feedback-content');
+      const feedbackTitle = document.getElementById('feedback-title');
+      const feedbackIcon = document.getElementById('feedback-icon');
+      
+      if (!feedbackArea || !feedbackContent || !feedbackTitle || !feedbackIcon) {
+        console.error('Feedback elements not found');
+        return;
+      }
+      
+      // Generate feedback
+      let feedback = `<p>Score: <strong>${finalScore}%</strong></p>`;
+      feedback += `<p>Syntaxe: ${syntaxValid ? '✅ Valide' : '❌ Erreur'}</p>`;
+      feedback += `<p>Tests: ${passedTests}/${totalTests} réussis</p>`;
+      
+      if (finalScore >= 80) {
+        feedback += `<p class="feedback-success">✓ Bon travail! Votre solution fonctionne.</p>`;
+        feedbackTitle.textContent = "Félicitations!";
+        feedbackIcon.className = "fas fa-check-circle";
+        feedbackIcon.style.color = "var(--success-color)";
+        
+        // Mark exercise as completed
+        if (!completedExercises.includes(currentExercise)) {
+          completedExercises.push(currentExercise);
+          localStorage.setItem('completedExercises', JSON.stringify(completedExercises));
+          updateProgress();
+          showAchievement(`Exercice #${currentExercise} réussi!`);
+        }
+      } else {
+        feedback += `<p class="feedback-error">✗ Il reste des améliorations à faire.</p>`;
+        feedbackTitle.textContent = "À améliorer";
+        feedbackIcon.className = "fas fa-exclamation-triangle";
+        feedbackIcon.style.color = "var(--warning-color)";
+        
+        // Add specific feedback
+        feedback += `<div class="feedback-hint">
+          <h5><i class="fas fa-lightbulb"></i> Points à vérifier:</h5>
+          <ul>`;
+        
+        if (!syntaxValid) {
+          if (executionResult.errors && executionResult.errors.length > 0) {
+            executionResult.errors.forEach(error => {
+              feedback += `<li>${error}</li>`;
+            });
+          } else if (executionResult.error) {
+            feedback += `<li>${executionResult.error}</li>`;
+          }
+        }
+        
+        Object.entries(tests).forEach(([test, passed]) => {
+          if (!passed) {
+            let hint = "";
+            switch(test) {
+              case 'hasPinMode':
+                hint = "Utilisez pinMode() pour configurer la broche en sortie";
+                break;
+              case 'hasDigitalWriteHigh':
+                hint = "Utilisez digitalWrite(pin, HIGH) pour allumer";
+                break;
+              case 'hasDigitalWriteLow':
+                hint = "Utilisez digitalWrite(pin, LOW) pour éteindre";
+                break;
+              case 'hasDelay':
+                hint = "Utilisez delay() pour les temporisations";
+                break;
+              case 'hasLoopStructure':
+                hint = "Assurez-vous d'avoir une fonction loop()";
+                break;
+              case 'hasArray':
+                hint = "Utilisez un tableau pour les broches";
+                break;
+              case 'hasForLoop':
+                hint = "Utilisez une boucle for";
+                break;
+              case 'hasDigitalWriteInLoop':
+                hint = "digitalWrite() doit être dans la boucle";
+                break;
+              case 'hasAnalogWrite':
+                hint = "Pour PWM, utilisez analogWrite()";
+                break;
+              case 'hasSetColorFunction':
+                hint = "Créez une fonction setColor()";
+                break;
+            }
+            if (hint) feedback += `<li>${hint}</li>`;
+          }
+        });
+        
+        feedback += `</ul></div>`;
+      }
+      
+      feedbackContent.innerHTML = feedback;
+      feedbackArea.classList.add('show');
+    }
+
+    // Show hint
+    function showHint() {
+      const exercise = exercises[currentExercise];
+      if (!exercise) return;
+      
+      const feedbackArea = document.getElementById('feedback-area');
+      const feedbackContent = document.getElementById('feedback-content');
+      const feedbackTitle = document.getElementById('feedback-title');
+      const feedbackIcon = document.getElementById('feedback-icon');
+      
+      if (!feedbackArea || !feedbackContent || !feedbackTitle || !feedbackIcon) return;
+      
+      feedbackTitle.textContent = "Indices";
+      feedbackIcon.className = "fas fa-lightbulb";
+      feedbackIcon.style.color = "var(--warning-color)";
+      
+      let feedback = `<div class="feedback-hint">
+        <h5><i class="fas fa-lightbulb"></i> Conseils pour cet exercice:</h5>
+        <ul>`;
+      
+      exercise.hints.forEach(hint => {
+        feedback += `<li>${hint}</li>`;
+      });
+      
+      feedback += `</ul></div>`;
+      
+      feedbackContent.innerHTML = feedback;
+      feedbackArea.classList.add('show');
+    }
+
+    // Show solution
+    function showSolution() {
+      const exercise = exercises[currentExercise];
+      if (!exercise) return;
+      
+      loadCodeTemplate(exercise.solution);
+      
+      const feedbackArea = document.getElementById('feedback-area');
+      const feedbackContent = document.getElementById('feedback-content');
+      const feedbackTitle = document.getElementById('feedback-title');
+      const feedbackIcon = document.getElementById('feedback-icon');
+      
+      if (!feedbackArea || !feedbackContent || !feedbackTitle || !feedbackIcon) return;
+      
+      feedbackTitle.textContent = "Solution";
+      feedbackIcon.className = "fas fa-eye";
+      feedbackIcon.style.color = "var(--primary-color)";
+      
+      let feedback = `<p>Voici la solution complète:</p>
+                     <p><small>Essayez de comprendre chaque ligne avant de copier!</small></p>`;
+      
+      feedbackContent.innerHTML = feedback;
+      feedbackArea.classList.add('show');
+    }
+
+    // Close workspace
+    function closeWorkspace() {
+      const workspace = document.getElementById('exercise-workspace');
+      if (workspace) {
+        workspace.style.display = 'none';
+      }
+      if (simulationInterval) {
+        clearInterval(simulationInterval);
+        simulationInterval = null;
+      }
+    }
+
+    // Update progress
+    function updateProgress() {
+      const totalExercises = Object.keys(exercises).length;
+      const completed = completedExercises.length;
+      const progress = (completed / totalExercises) * 100;
+      
+      const progressText = document.getElementById('progress-text');
+      const progressBar = document.getElementById('progress-bar');
+      
+      if (progressText) {
+        progressText.textContent = `${completed}/${totalExercises} exercices complétés`;
+      }
+      if (progressBar) {
+        progressBar.style.width = `${progress}%`;
+      }
+      
+      // Update status indicators
+      for (let i = 1; i <= totalExercises; i++) {
+        const statusElem = document.getElementById(`status-${i}`);
+        if (statusElem) {
+          if (completedExercises.includes(i)) {
+            statusElem.innerHTML = '<i class="fas fa-check-circle" style="color: var(--success-color)"></i> Complété';
+            statusElem.style.color = "var(--success-color)";
+          } else {
+            statusElem.innerHTML = '<i class="far fa-circle"></i> Non tenté';
+            statusElem.style.color = "#6c757d";
+          }
+        }
+      }
+    }
+
+    // Load exercise status
+    function loadExerciseStatus() {
+      updateProgress();
+    }
+
+    // Configure LEDs dialog
+    function configureLEDs() {
+      const exercise = exercises[currentExercise];
+      if (!exercise) return;
+      
+      const feedbackArea = document.getElementById('feedback-area');
+      const feedbackContent = document.getElementById('feedback-content');
+      const feedbackTitle = document.getElementById('feedback-title');
+      const feedbackIcon = document.getElementById('feedback-icon');
+      
+      if (!feedbackArea || !feedbackContent || !feedbackTitle || !feedbackIcon) return;
+      
+      let configHTML = '<h4>Configuration des LEDs</h4>';
+      configHTML += '<p>Associez chaque LED à une broche GPIO:</p>';
+      
+      exercise.leds.forEach(led => {
+        configHTML += `
+          <div style="margin: 10px 0; display: flex; align-items: center; gap: 10px;">
+            <div class="led led-${led.color}" style="width: 30px; height: 30px;"></div>
+            <span>LED ${led.id}:</span>
+            <select id="led-pin-${led.id}" style="padding: 5px; border-radius: 4px;">
+              ${exercise.pins.map(pin => `<option value="${pin}" ${pin === led.pin ? 'selected' : ''}>GPIO${pin}</option>`).join('')}
+            </select>
+          </div>
+        `;
+      });
+      
+      configHTML += '<button onclick="saveLEDsConfiguration()" style="margin-top: 15px; padding: 8px 16px; background-color: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">Sauvegarder</button>';
+      
+      feedbackTitle.textContent = "Configuration LEDs";
+      feedbackIcon.className = "fas fa-cog";
+      feedbackIcon.style.color = "var(--primary-color)";
+      
+      feedbackContent.innerHTML = configHTML;
+      feedbackArea.classList.add('show');
+    }
+
+    // Save LEDs configuration
+    function saveLEDsConfiguration() {
+      const exercise = exercises[currentExercise];
+      if (!exercise) return;
+      
+      exercise.leds.forEach(led => {
+        const select = document.getElementById(`led-pin-${led.id}`);
+        if (select) {
+          led.pin = parseInt(select.value);
+        }
+      });
+      
+      // Reconfigure LEDs
+      configureExerciseLEDs(exercise.leds);
+      
+      const feedbackArea = document.getElementById('feedback-area');
+      if (feedbackArea) {
+        feedbackArea.classList.remove('show');
+      }
+      addSerialLine('Configuration LEDs mise à jour');
+    }
+
+    // Clear serial monitor
+    function clearSerialMonitor() {
+      const monitor = document.getElementById('serial-monitor');
+      if (monitor) {
+        monitor.innerHTML = '<div class="serial-line">Moniteur série initialisé (115200 baud)</div>';
+      }
+    }
+
+    // Add line to serial monitor
+    function addSerialLine(text) {
+      const monitor = document.getElementById('serial-monitor');
+      if (!monitor) return;
+      
+      const line = document.createElement('div');
+      line.className = 'serial-line';
+      line.textContent = `> ${text}`;
+      monitor.appendChild(line);
+      monitor.scrollTop = monitor.scrollHeight;
+    }
+
+    // Show achievement
+    function showAchievement(message) {
+      const banner = document.getElementById('achievement-banner');
+      const achievementMessage = document.getElementById('achievement-message');
+      
+      if (banner && achievementMessage) {
+        achievementMessage.textContent = message;
+        banner.style.display = 'block';
+        
+        // Auto-hide after 5 seconds
+        setTimeout(hideAchievement, 5000);
+      }
+    }
+
+    // Hide achievement
+    function hideAchievement() {
+      const banner = document.getElementById('achievement-banner');
+      if (banner) {
+        banner.style.display = 'none';
+      }
+    }
+
+    // Initialize pins configuration
+    function initPinsConfiguration() {
+      for (let i = 0; i <= 39; i++) {
+        pinsConfiguration[i] = {
+          mode: 'input',
+          state: 'low',
+          pwm: [2, 4, 12, 13, 14, 15, 18, 19, 21, 22, 23, 25, 26, 27, 32, 33].includes(i)
+        };
+      }
+    }
+  </script>
+
+
+</body>
+</html>
