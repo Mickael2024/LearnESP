@@ -684,7 +684,7 @@
       <nav>
         <ul>
           <li><a href="index.html" class="active"><i class="fas fa-home"></i> Accueil</a></li>
-          <li><a href="#tutoriels"><i class="fas fa-graduation-cap"></i> Tutoriels</a></li>
+          <li><a href="./pratique.html"><i class="fas fa-graduation-cap"></i> pratique</a></li>
           <li><a href="./exemple.html"><i class="fas fa-code"></i> Exemples</a></li>
           <li><a href="#references"><i class="fas fa-book"></i> Référence</a></li>
           <li><a href="./exercice.html"><i class="fas fa-pencil-alt"></i> Exercices</a></li>
@@ -1244,6 +1244,147 @@ http://arduino.esp8266.com/stable/package_esp8266com_index.json</code></pre>
 <span class="code-keyword">static</span> <span class="code-keyword">int</span> variableFichier = 100;</code></pre>
         </div>
 
+       
+       
+       <!-- Constantes -->
+       <section id="constantes">
+        <h3>Constantes en Arduino/C++</h3>
+        <p>Les constantes sont des valeurs qui ne peuvent pas être modifiées pendant l'exécution du programme.</p>
+
+        <div class="code-example">
+          <h4>Différentes façons de définir des constantes</h4>
+          <pre><code><span class="code-comment">// 1. Avec le mot-clé const (recommandé)</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> LED_PIN = 13;
+<span class="code-keyword">const</span> <span class="code-keyword">float</span> PI = 3.14159;
+<span class="code-keyword">const</span> <span class="code-type">String</span> NOM_PROGRAMME = <span class="code-string">"Controle LED"</span>;
+
+<span class="code-comment">// 2. Avec #define (préprocesseur)</span>
+<span class="code-keyword">#define</span> DELAI_MAX 1000
+<span class="code-keyword">#define</span> MESSAGE_ERREUR <span class="code-string">"Erreur de connexion"</span>
+<span class="code-keyword">#define</span> SEUIL_TEMPERATURE 30.5
+
+<span class="code-comment">// 3. Constantes prédéfinies d'Arduino</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> led = LED_BUILTIN;  <span class="code-comment">// LED intégrée</span>
+<span class="code-keyword">const</span> <span class="code-keyword">bool</span> etat = <span class="code-keyword">true</span>;        <span class="code-comment">// true et false sont des constantes</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> haut = HIGH;        <span class="code-comment">// HIGH et LOW sont des constantes</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> entree = INPUT;     <span class="code-comment">// INPUT, OUTPUT, INPUT_PULLUP</span>
+
+<span class="code-comment">// 4. Enumérations (groupes de constantes)</span>
+<span class="code-keyword">enum</span> Etats {
+ATTENTE,
+DEMARRAGE,
+FONCTIONNEMENT,
+ERREUR
+};
+
+<span class="code-keyword">enum</span> Couleurs {
+ROUGE = 0xFF0000,
+VERT = 0x00FF00,
+BLEU = 0x0000FF,
+JAUNE = 0xFFFF00
+};</code></pre>
+        </div>
+
+        <div class="info-box">
+          <p><strong>const vs #define :</strong> Utilisez <code>const</code> pour les constantes typées (le
+            compilateur vérifie le type). Utilisez <code>#define</code> pour les macros et valeurs simples.</p>
+        </div>
+
+        <h4>Exemple d'utilisation des constantes</h4>
+        <div class="code-example">
+          <pre><code><span class="code-comment">/*
+Programme démontrant l'utilisation des constantes
+*/</span>
+
+<span class="code-comment">// Constantes de configuration</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> PIN_LED_ROUGE = 9;
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> PIN_LED_VERTE = 10;
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> PIN_BOUTON = 2;
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> DELAI_CLIGNOTEMENT = 500;
+<span class="code-keyword">const</span> <span class="code-keyword">float</span> TEMPERATURE_MAX = 85.5;
+
+<span class="code-comment">// Définition avec #define</span>
+<span class="code-keyword">#define</span> NOMBRE_CYCLES 10
+<span class="code-keyword">#define</span> VERSION <span class="code-string">"1.0.2"</span>
+
+<span class="code-comment">// Énumération pour les états</span>
+<span class="code-keyword">enum</span> ModeFonctionnement {
+MODE_NORMAL,
+MODE_RAPIDE,
+MODE_TEST
+};
+
+ModeFonctionnement modeActuel = MODE_NORMAL;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+Serial.<span class="code-function">begin</span>(9600);
+
+<span class="code-comment">// Configuration des broches avec constantes</span>
+<span class="code-function">pinMode</span>(PIN_LED_ROUGE, OUTPUT);
+<span class="code-function">pinMode</span>(PIN_LED_VERTE, OUTPUT);
+<span class="code-function">pinMode</span>(PIN_BOUTON, INPUT_PULLUP);
+
+<span class="code-comment">// Affichage des informations de configuration</span>
+Serial.<span class="code-function">print</span>(<span class="code-string">"Version: "</span>);
+Serial.<span class="code-function">println</span>(VERSION);
+Serial.<span class="code-function">print</span>(<span class="code-string">"Temperature max: "</span>);
+Serial.<span class="code-function">println</span>(TEMPERATURE_MAX);
+Serial.<span class="code-function">print</span>(<span class="code-string">"Delai: "</span>);
+Serial.<span class="code-function">println</span>(DELAI_CLIGNOTEMENT);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+<span class="code-comment">// Utilisation des constantes dans le code</span>
+<span class="code-keyword">static</span> <span class="code-keyword">int</span> compteur = 0;
+
+<span class="code-keyword">switch</span> (modeActuel) {
+  <span class="code-keyword">case</span> MODE_NORMAL:
+    <span class="code-function">clignoterLED</span>(PIN_LED_VERTE, DELAI_CLIGNOTEMENT);
+    <span class="code-keyword">break</span>;
+    
+  <span class="code-keyword">case</span> MODE_RAPIDE:
+    <span class="code-function">clignoterLED</span>(PIN_LED_VERTE, DELAI_CLIGNOTEMENT / 2);
+    <span class="code-keyword">break</span>;
+    
+  <span class="code-keyword">case</span> MODE_TEST:
+    <span class="code-function">clignoterLED</span>(PIN_LED_ROUGE, 100);
+    <span class="code-keyword">break</span>;
+}
+
+compteur++;
+<span class="code-keyword">if</span> (compteur >= NOMBRE_CYCLES) {
+  compteur = 0;
+  <span class="code-function">changerMode</span>();
+}
+
+<span class="code-comment">// Vérification d'une condition avec constante</span>
+<span class="code-keyword">float</span> temperature = <span class="code-function">lireTemperature</span>();
+<span class="code-keyword">if</span> (temperature > TEMPERATURE_MAX) {
+  <span class="code-function">digitalWrite</span>(PIN_LED_ROUGE, HIGH);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"ALERTE: Temperature trop elevee!"</span>);
+}
+}
+
+<span class="code-keyword">void</span> <span class="code-function">clignoterLED</span>(<span class="code-keyword">int</span> pin, <span class="code-keyword">int</span> delai) {
+<span class="code-function">digitalWrite</span>(pin, HIGH);
+<span class="code-function">delay</span>(delai);
+<span class="code-function">digitalWrite</span>(pin, LOW);
+<span class="code-function">delay</span>(delai);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">changerMode</span>() {
+modeActuel = <span class="code-keyword">static_cast</span>&lt;ModeFonctionnement&gt;((modeActuel + 1) % 3);
+Serial.<span class="code-function">print</span>(<span class="code-string">"Mode change: "</span>);
+Serial.<span class="code-function">println</span>(modeActuel);
+}
+
+<span class="code-keyword">float</span> <span class="code-function">lireTemperature</span>() {
+<span class="code-comment">// Simulation de lecture de température</span>
+<span class="code-keyword">return</span> <span class="code-function">random</span>(20, 90) + <span class="code-function">random</span>(0, 100) / 100.0;
+}</code></pre>
+        </div>
+      </section>
+       
         <h3 id="tableaux">Tableaux (Arrays)</h3>
         <div class="code-example">
           <pre><code><span class="code-comment">// Déclaration de tableaux</span>
@@ -1283,144 +1424,7 @@ http://arduino.esp8266.com/stable/package_esp8266com_index.json</code></pre>
 }</code></pre>
         </div>
 
-        <!-- Constantes -->
-        <section id="constantes">
-          <h3>Constantes en Arduino/C++</h3>
-          <p>Les constantes sont des valeurs qui ne peuvent pas être modifiées pendant l'exécution du programme.</p>
-
-          <div class="code-example">
-            <h4>Différentes façons de définir des constantes</h4>
-            <pre><code><span class="code-comment">// 1. Avec le mot-clé const (recommandé)</span>
-<span class="code-keyword">const</span> <span class="code-keyword">int</span> LED_PIN = 13;
-<span class="code-keyword">const</span> <span class="code-keyword">float</span> PI = 3.14159;
-<span class="code-keyword">const</span> <span class="code-type">String</span> NOM_PROGRAMME = <span class="code-string">"Controle LED"</span>;
-
-<span class="code-comment">// 2. Avec #define (préprocesseur)</span>
-<span class="code-keyword">#define</span> DELAI_MAX 1000
-<span class="code-keyword">#define</span> MESSAGE_ERREUR <span class="code-string">"Erreur de connexion"</span>
-<span class="code-keyword">#define</span> SEUIL_TEMPERATURE 30.5
-
-<span class="code-comment">// 3. Constantes prédéfinies d'Arduino</span>
-<span class="code-keyword">const</span> <span class="code-keyword">int</span> led = LED_BUILTIN;  <span class="code-comment">// LED intégrée</span>
-<span class="code-keyword">const</span> <span class="code-keyword">bool</span> etat = <span class="code-keyword">true</span>;        <span class="code-comment">// true et false sont des constantes</span>
-<span class="code-keyword">const</span> <span class="code-keyword">int</span> haut = HIGH;        <span class="code-comment">// HIGH et LOW sont des constantes</span>
-<span class="code-keyword">const</span> <span class="code-keyword">int</span> entree = INPUT;     <span class="code-comment">// INPUT, OUTPUT, INPUT_PULLUP</span>
-
-<span class="code-comment">// 4. Enumérations (groupes de constantes)</span>
-<span class="code-keyword">enum</span> Etats {
-  ATTENTE,
-  DEMARRAGE,
-  FONCTIONNEMENT,
-  ERREUR
-};
-
-<span class="code-keyword">enum</span> Couleurs {
-  ROUGE = 0xFF0000,
-  VERT = 0x00FF00,
-  BLEU = 0x0000FF,
-  JAUNE = 0xFFFF00
-};</code></pre>
-          </div>
-
-          <div class="info-box">
-            <p><strong>const vs #define :</strong> Utilisez <code>const</code> pour les constantes typées (le
-              compilateur vérifie le type). Utilisez <code>#define</code> pour les macros et valeurs simples.</p>
-          </div>
-
-          <h4>Exemple d'utilisation des constantes</h4>
-          <div class="code-example">
-            <pre><code><span class="code-comment">/*
-  Programme démontrant l'utilisation des constantes
-*/</span>
-
-<span class="code-comment">// Constantes de configuration</span>
-<span class="code-keyword">const</span> <span class="code-keyword">int</span> PIN_LED_ROUGE = 9;
-<span class="code-keyword">const</span> <span class="code-keyword">int</span> PIN_LED_VERTE = 10;
-<span class="code-keyword">const</span> <span class="code-keyword">int</span> PIN_BOUTON = 2;
-<span class="code-keyword">const</span> <span class="code-keyword">int</span> DELAI_CLIGNOTEMENT = 500;
-<span class="code-keyword">const</span> <span class="code-keyword">float</span> TEMPERATURE_MAX = 85.5;
-
-<span class="code-comment">// Définition avec #define</span>
-<span class="code-keyword">#define</span> NOMBRE_CYCLES 10
-<span class="code-keyword">#define</span> VERSION <span class="code-string">"1.0.2"</span>
-
-<span class="code-comment">// Énumération pour les états</span>
-<span class="code-keyword">enum</span> ModeFonctionnement {
-  MODE_NORMAL,
-  MODE_RAPIDE,
-  MODE_TEST
-};
-
-ModeFonctionnement modeActuel = MODE_NORMAL;
-
-<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
-  Serial.<span class="code-function">begin</span>(9600);
-  
-  <span class="code-comment">// Configuration des broches avec constantes</span>
-  <span class="code-function">pinMode</span>(PIN_LED_ROUGE, OUTPUT);
-  <span class="code-function">pinMode</span>(PIN_LED_VERTE, OUTPUT);
-  <span class="code-function">pinMode</span>(PIN_BOUTON, INPUT_PULLUP);
-  
-  <span class="code-comment">// Affichage des informations de configuration</span>
-  Serial.<span class="code-function">print</span>(<span class="code-string">"Version: "</span>);
-  Serial.<span class="code-function">println</span>(VERSION);
-  Serial.<span class="code-function">print</span>(<span class="code-string">"Temperature max: "</span>);
-  Serial.<span class="code-function">println</span>(TEMPERATURE_MAX);
-  Serial.<span class="code-function">print</span>(<span class="code-string">"Delai: "</span>);
-  Serial.<span class="code-function">println</span>(DELAI_CLIGNOTEMENT);
-}
-
-<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
-  <span class="code-comment">// Utilisation des constantes dans le code</span>
-  <span class="code-keyword">static</span> <span class="code-keyword">int</span> compteur = 0;
-  
-  <span class="code-keyword">switch</span> (modeActuel) {
-    <span class="code-keyword">case</span> MODE_NORMAL:
-      <span class="code-function">clignoterLED</span>(PIN_LED_VERTE, DELAI_CLIGNOTEMENT);
-      <span class="code-keyword">break</span>;
-      
-    <span class="code-keyword">case</span> MODE_RAPIDE:
-      <span class="code-function">clignoterLED</span>(PIN_LED_VERTE, DELAI_CLIGNOTEMENT / 2);
-      <span class="code-keyword">break</span>;
-      
-    <span class="code-keyword">case</span> MODE_TEST:
-      <span class="code-function">clignoterLED</span>(PIN_LED_ROUGE, 100);
-      <span class="code-keyword">break</span>;
-  }
-  
-  compteur++;
-  <span class="code-keyword">if</span> (compteur >= NOMBRE_CYCLES) {
-    compteur = 0;
-    <span class="code-function">changerMode</span>();
-  }
-  
-  <span class="code-comment">// Vérification d'une condition avec constante</span>
-  <span class="code-keyword">float</span> temperature = <span class="code-function">lireTemperature</span>();
-  <span class="code-keyword">if</span> (temperature > TEMPERATURE_MAX) {
-    <span class="code-function">digitalWrite</span>(PIN_LED_ROUGE, HIGH);
-    Serial.<span class="code-function">println</span>(<span class="code-string">"ALERTE: Temperature trop elevee!"</span>);
-  }
-}
-
-<span class="code-keyword">void</span> <span class="code-function">clignoterLED</span>(<span class="code-keyword">int</span> pin, <span class="code-keyword">int</span> delai) {
-  <span class="code-function">digitalWrite</span>(pin, HIGH);
-  <span class="code-function">delay</span>(delai);
-  <span class="code-function">digitalWrite</span>(pin, LOW);
-  <span class="code-function">delay</span>(delai);
-}
-
-<span class="code-keyword">void</span> <span class="code-function">changerMode</span>() {
-  modeActuel = <span class="code-keyword">static_cast</span>&lt;ModeFonctionnement&gt;((modeActuel + 1) % 3);
-  Serial.<span class="code-function">print</span>(<span class="code-string">"Mode change: "</span>);
-  Serial.<span class="code-function">println</span>(modeActuel);
-}
-
-<span class="code-keyword">float</span> <span class="code-function">lireTemperature</span>() {
-  <span class="code-comment">// Simulation de lecture de température</span>
-  <span class="code-keyword">return</span> <span class="code-function">random</span>(20, 90) + <span class="code-function">random</span>(0, 100) / 100.0;
-}</code></pre>
-          </div>
-        </section>
+        
 
         <!-- Structures (struct) -->
         <section id="structures">
