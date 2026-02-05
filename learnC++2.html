@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArduinoLearn - Premier Programme</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #00979c;
+            --secondary-color: #00696b;
+            --accent-color: #ff9800;
+            --light-color: #f8f9fa;
+            --dark-color: #333;
+            --gray-color: #6c757d;
+            --code-bg: #f4f4f4;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+        
+        .logo span {
+            color: var(--accent-color);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        nav ul li a:hover {
+            color: var(--accent-color);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            color: white;
+        }
+        
+        /* Main Content */
+        .main-content {
+            display: flex;
+            margin-bottom: 3rem;
+            gap: 2rem;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            flex: 0 0 280px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            align-self: flex-start;
+            position: sticky;
+            top: 100px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar ul li a {
+            color: var(--dark-color);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem 0.8rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+        
+        .sidebar ul li a:hover, .sidebar ul li a.active {
+            background-color: #e9f7f7;
+            color: var(--primary-color);
+            padding-left: 1.2rem;
+        }
+        
+        .sidebar ul li a i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Sub-menu */
+        .sub-menu {
+            margin-left: 1.5rem;
+            border-left: 2px solid #eee;
+            padding-left: 0.5rem;
+            margin-top: 0.3rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .sub-menu li {
+            margin-bottom: 0.3rem !important;
+        }
+        
+        .sub-menu a {
+            font-size: 0.9rem !important;
+            padding: 0.3rem 0.8rem !important;
+        }
+        
+        /* Content */
+        .content {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .content h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .content h3 {
+            color: var(--secondary-color);
+            margin: 2rem 0 1rem;
+            padding-top: 1rem;
+        }
+        
+        .content h4 {
+            color: var(--primary-color);
+            margin: 1.5rem 0 0.8rem;
+        }
+        
+        .content p {
+            margin-bottom: 1.2rem;
+        }
+        
+        .content ul, .content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Code examples */
+        .code-example {
+            background-color: var(--code-bg);
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            overflow-x: auto;
+        }
+        
+        .code-example h4 {
+            color: var(--secondary-color);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+        
+        pre {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+        
+        .code-comment {
+            color: #6a9955;
+        }
+        
+        .code-keyword {
+            color: #569cd6;
+        }
+        
+        .code-function {
+            color: #dcdcaa;
+        }
+        
+        .code-value {
+            color: #ce9178;
+        }
+        
+        .code-type {
+            color: #4ec9b0;
+        }
+        
+        .code-string {
+            color: #ce9178;
+        }
+        
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid var(--primary-color);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+        }
+        
+        /* Info boxes */
+        .info-box {
+            background-color: #e9f7f7;
+            border-left: 4px solid var(--primary-color);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 3rem 0 1.5rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-section h3 {
+            color: var(--accent-color);
+            margin-bottom: 1.2rem;
+            font-size: 1.3rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.6rem;
+        }
+        
+        .footer-section ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section ul li a:hover {
+            color: var(--accent-color);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #444;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                flex: 0 0 220px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            nav ul li {
+                margin: 0.3rem 0.5rem;
+            }
+            
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                flex: none;
+                width: 100%;
+                position: static;
+                max-height: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 0.8rem 1.5rem;
+            background-color: #f1f1f1;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--gray-color);
+            transition: all 0.3s;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        
+        .tab:hover {
+            background-color: #e9e9e9;
+        }
+        
+        .tab.active {
+            background-color: white;
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Breadcrumb */
+        .breadcrumb {
+            background-color: #e9f7f7;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .breadcrumb span {
+            color: var(--gray-color);
+        }
+        
+        .breadcrumb i {
+            margin: 0 8px;
+            color: var(--gray-color);
+        }
+        
+        /* Exercise section */
+        .exercise {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .exercise h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .exercise h4 i {
+            margin-right: 10px;
+        }
+        
+        /* Next/Prev buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-button:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .nav-button.prev i {
+            margin-right: 8px;
+        }
+        
+        .nav-button.next i {
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-microchip"></i>
+                <div>Arduino<span>Learn</span></div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                    <li><a href="#tutoriels" class="active"><i class="fas fa-graduation-cap"></i> Tutoriels</a></li>
+                    <li><a href="#exemples"><i class="fas fa-code"></i> Exemples</a></li>
+                    <li><a href="#references"><i class="fas fa-book"></i> Référence</a></li>
+                    <li><a href="#exercices"><i class="fas fa-pencil-alt"></i> Exercices</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Premier Programme Arduino</h1>
+            <p>Apprenez à créer votre premier programme Arduino pas à pas avec des exemples concrets</p>
+            <a href="#premier-exemple" class="cta-button">Voir les exemples <i class="fas fa-arrow-down"></i></a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <!-- Sidebar avec navigation complète -->
+        <aside class="sidebar">
+            <h3><i class="fas fa-list"></i> Navigation</h3>
+            <ul>
+                <li><a href="#introduction"><i class="fas fa-play"></i> Introduction</a></li>
+                <li><a href="#installation"><i class="fas fa-download"></i> Installation IDE</a></li>
+                
+                <li>
+                    <a href="#premier-programme" class="active"><i class="fas fa-code"></i> Premier programme</a>
+                    <ul class="sub-menu">
+                        <li><a href="#structure-de-base">Structure de base</a></li>
+                        <li><a href="#premier-exemple">Premier exemple</a></li>
+                        <li><a href="#commentaires">Commentaires</a></li>
+                        <li><a href="#compilation-upload">Compilation/Upload</a></li>
+                        <li><a href="#debug-serial">Débogage série</a></li>
+                        <li><a href="#variables-premier">Variables</a></li>
+                        <li><a href="#boucles-premier">Boucles simples</a></li>
+                        <li><a href="#conditions-premier">Conditions</a></li>
+                        <li><a href="#fonctions-premier">Fonctions</a></li>
+                        <li><a href="#exemples-complets">Exemples complets</a></li>
+                    </ul>
+                </li>
+                
+                <li><a href="#structure"><i class="fas fa-sitemap"></i> Structure avancée</a></li>
+                <li><a href="#variables"><i class="fas fa-memory"></i> Variables et types</a></li>
+                <li><a href="#fonctions"><i class="fas fa-cogs"></i> Fonctions de base</a></li>
+                <li><a href="#entrees-sorties"><i class="fas fa-exchange-alt"></i> Entrées/Sorties</a></li>
+                <li><a href="#allumer-led"><i class="fas fa-lightbulb"></i> Allumer une LED</a></li>
+                <li><a href="#bibliotheques"><i class="fas fa-book"></i> Bibliothèques (.h)</a></li>
+                <li><a href="#structures-controle"><i class="fas fa-project-diagram"></i> Structures de contrôle</a></li>
+                <li><a href="#communication"><i class="fas fa-wifi"></i> Communication ESP</a></li>
+                <li><a href="#projets"><i class="fas fa-rocket"></i> Projets pratiques</a></li>
+            </ul>
+        </aside>
+
+        <!-- Content -->
+        <main class="content">
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a href="index.html">Accueil</a> <i class="fas fa-chevron-right"></i>
+                <a href="#tutoriels">Tutoriels</a> <i class="fas fa-chevron-right"></i>
+                <span>Premier programme</span>
+            </div>
+
+            <h2>Votre premier programme Arduino</h2>
+            <p>Dans cette section, vous apprendrez à créer votre premier programme Arduino étape par étape, avec de nombreux exemples de code.</p>
+
+            <!-- Structure de base -->
+            <section id="structure-de-base">
+                <h3>Structure de base d'un programme Arduino</h3>
+                <p>Tout programme Arduino (appelé "sketch") doit contenir deux fonctions essentielles :</p>
+                
+                <div class="code-example">
+                    <h4>Structure minimale d'un sketch Arduino</h4>
+                    <pre><code><span class="code-comment">// La fonction setup() s'exécute une fois au démarrage</span>
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-comment">// Code d'initialisation ici</span>
+}
+
+<span class="code-comment">// La fonction loop() s'exécute en boucle indéfiniment</span>
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Code principal ici</span>
+}</code></pre>
+                </div>
+                
+                <div class="info-box">
+                    <p><strong>Note importante :</strong> Les fonctions <code>setup()</code> et <code>loop()</code> sont obligatoires dans tout programme Arduino, même si elles sont vides.</p>
+                </div>
+            </section>
+
+            <!-- Premier exemple -->
+            <section id="premier-exemple">
+                <h3>Premier exemple : Hello World (LED clignotante)</h3>
+                <p>Le programme "Hello World" traditionnel en Arduino consiste à faire clignoter la LED intégrée à la carte.</p>
+                
+                <div class="code-example">
+                    <h4>LED clignotante - Blink</h4>
+                    <pre><code><span class="code-comment">/*
+  Premier programme Arduino
+  Fait clignoter la LED intégrée à la carte
+  Broche 13 sur la plupart des cartes Arduino
+*/</span>
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-comment">// Initialise la broche numérique 13 (LED intégrée) comme sortie</span>
+  <span class="code-function">pinMode</span>(LED_BUILTIN, OUTPUT);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Allume la LED (HIGH = tension haute = 5V ou 3.3V)</span>
+  <span class="code-function">digitalWrite</span>(LED_BUILTIN, HIGH);
+  
+  <span class="code-comment">// Attend 1000 millisecondes = 1 seconde</span>
+  <span class="code-function">delay</span>(1000);
+  
+  <span class="code-comment">// Éteint la LED (LOW = tension basse = 0V)</span>
+  <span class="code-function">digitalWrite</span>(LED_BUILTIN, LOW);
+  
+  <span class="code-comment">// Attend à nouveau 1 seconde</span>
+  <span class="code-function">delay</span>(1000);
+  
+  <span class="code-comment">// La boucle recommence, créant un effet de clignotement</span>
+}</code></pre>
+                </div>
+                
+                <h4>Explication détaillée :</h4>
+                <ol>
+                    <li><strong>pinMode(LED_BUILTIN, OUTPUT)</strong> : Configure la broche de la LED intégrée comme sortie.</li>
+                    <li><strong>digitalWrite(LED_BUILTIN, HIGH)</strong> : Applique une tension haute (5V ou 3.3V) pour allumer la LED.</li>
+                    <li><strong>delay(1000)</strong> : Met le programme en pause pendant 1000ms (1 seconde).</li>
+                    <li><strong>digitalWrite(LED_BUILTIN, LOW)</strong> : Coupe la tension pour éteindre la LED.</li>
+                </ol>
+            </section>
+
+            <!-- Commentaires -->
+            <section id="commentaires">
+                <h3>Les commentaires en C/C++</h3>
+                <p>Les commentaires sont essentiels pour documenter votre code. Ils ne sont pas exécutés par l'Arduino.</p>
+                
+                <div class="code-example">
+                    <h4>Types de commentaires</h4>
+                    <pre><code><span class="code-comment">// Ceci est un commentaire sur une seule ligne
+// Chaque ligne doit commencer par //</span>
+
+<span class="code-comment">/*
+  Ceci est un commentaire multi-lignes
+  Il peut s'étendre sur plusieurs lignes
+  Sans avoir à mettre // au début de chaque ligne
+*/</span>
+
+<span class="code-comment">/**
+ * Ce format est souvent utilisé pour la documentation
+ * Il est reconnu par certains générateurs de documentation
+ */</span>
+
+<span class="code-keyword">int</span> variable; <span class="code-comment">// Commentaire en fin de ligne</span></code></pre>
+                </div>
+            </section>
+
+            <!-- Compilation et Upload -->
+            <section id="compilation-upload">
+                <h3>Compilation et Upload du programme</h3>
+                <p>Voici les étapes pour compiler et transférer votre programme sur l'Arduino :</p>
+                
+                <div class="cards">
+                    <div class="card">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>1. Vérification</h3>
+                        <p>Cliquez sur la coche (✓) pour vérifier/compiler votre code. Corrigez les erreurs s'il y en a.</p>
+                    </div>
+                    <div class="card">
+                        <i class="fas fa-upload"></i>
+                        <h3>2. Upload</h3>
+                        <p>Cliquez sur la flèche (→) pour transférer le programme compilé vers la carte Arduino.</p>
+                    </div>
+                    <div class="card">
+                        <i class="fas fa-plug"></i>
+                        <h3>3. Sélection du port</h3>
+                        <p>Assurez-vous que le bon port COM est sélectionné dans Outils → Port.</p>
+                    </div>
+                    <div class="card">
+                        <i class="fas fa-microchip"></i>
+                        <h3>4. Sélection de la carte</h3>
+                        <p>Choisissez votre modèle de carte dans Outils → Type de carte.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Débogage série -->
+            <section id="debug-serial">
+                <h3>Débogage avec le moniteur série</h3>
+                <p>Le moniteur série permet d'envoyer et recevoir des données entre l'ordinateur et l'Arduino.</p>
+                
+                <div class="code-example">
+                    <h4>Exemple d'utilisation du moniteur série</h4>
+                    <pre><code><span class="code-comment">/*
+  Programme d'exemple pour le moniteur série
+  Affiche "Hello Arduino!" et lit les entrées utilisateur
+*/</span>
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-comment">// Initialise la communication série à 9600 bauds</span>
+  Serial.<span class="code-function">begin</span>(9600);
+  
+  <span class="code-comment">// Affiche un message de bienvenue</span>
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Bienvenue sur ArduinoLearn!"</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Tapez quelque chose..."</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Vérifie si des données sont disponibles sur le port série</span>
+  <span class="code-keyword">if</span> (Serial.<span class="code-function">available</span>() > 0) {
+    <span class="code-comment">// Lit l'entrée de l'utilisateur</span>
+    <span class="code-type">String</span> input = Serial.<span class="code-function">readString</span>();
+    
+    <span class="code-comment">// Affiche ce que l'utilisateur a tapé</span>
+    Serial.<span class="code-function">print</span>(<span class="code-string">"Vous avez tape: "</span>);
+    Serial.<span class="code-function">println</span>(input);
+  }
+  
+  <span class="code-comment">// Affiche un point toutes les secondes pour montrer que le programme tourne</span>
+  Serial.<span class="code-function">print</span>(<span class="code-string">"."</span>);
+  <span class="code-function">delay</span>(1000);
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Variables dans premier programme -->
+            <section id="variables-premier">
+                <h3>Utilisation des variables dans votre premier programme</h3>
+                <p>Les variables permettent de stocker des données que vous pouvez réutiliser et modifier.</p>
+                
+                <div class="code-example">
+                    <h4>Exemple avec variables</h4>
+                    <pre><code><span class="code-comment">/*
+  Programme avec variables pour contrôler le clignotement
+*/</span>
+
+<span class="code-comment">// Déclaration des variables en dehors des fonctions pour être accessibles partout</span>
+<span class="code-keyword">int</span> ledPin = LED_BUILTIN;  <span class="code-comment">// Broche de la LED</span>
+<span class="code-keyword">int</span> delaiAllume = 500;     <span class="code-comment">// Temps allumé en ms</span>
+<span class="code-keyword">int</span> delaiEteint = 500;     <span class="code-comment">// Temps éteint en ms</span>
+<span class="code-keyword">int</span> compteur = 0;          <span class="code-comment">// Compteur de cycles</span>
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(9600);           <span class="code-comment">// Initialise communication série</span>
+  <span class="code-function">pinMode</span>(ledPin, OUTPUT);   <span class="code-comment">// Configure la broche LED</span>
+  
+  <span class="code-comment">// Affiche les valeurs initiales</span>
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Programme LED avec variables"</span>);
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Delai allume: "</span>);
+  Serial.<span class="code-function">println</span>(delaiAllume);
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Delai eteint: "</span>);
+  Serial.<span class="code-function">println</span>(delaiEteint);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Allume la LED</span>
+  <span class="code-function">digitalWrite</span>(ledPin, HIGH);
+  <span class="code-function">delay</span>(delaiAllume);
+  
+  <span class="code-comment">// Éteint la LED</span>
+  <span class="code-function">digitalWrite</span>(ledPin, LOW);
+  <span class="code-function">delay</span>(delaiEteint);
+  
+  <span class="code-comment">// Incrémente le compteur</span>
+  compteur = compteur + 1;
+  
+  <span class="code-comment">// Affiche le compteur toutes les 10 itérations</span>
+  <span class="code-keyword">if</span> (compteur % 10 == 0) {
+    Serial.<span class="code-function">print</span>(<span class="code-string">"Cycles completes: "</span>);
+    Serial.<span class="code-function">println</span>(compteur);
+  }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Boucles simples -->
+            <section id="boucles-premier">
+                <h3>Boucles et répétitions dans votre premier programme</h3>
+                <p>Les boucles permettent de répéter des instructions plusieurs fois.</p>
+                
+                <div class="code-example">
+                    <h4>Exemple avec boucle for</h4>
+                    <pre><code><span class="code-comment">/*
+  Programme avec boucle for pour clignoter 10 fois rapidement
+*/</span>
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-function">pinMode</span>(LED_BUILTIN, OUTPUT);
+  Serial.<span class="code-function">begin</span>(9600);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Debut du clignotement rapide"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Boucle for qui s'exécute 10 fois</span>
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 1; i <= 10; i = i + 1) {
+    Serial.<span class="code-function">print</span>(<span class="code-string">"Clignotement "</span>);
+    Serial.<span class="code-function">println</span>(i);
+    
+    <span class="code-function">digitalWrite</span>(LED_BUILTIN, HIGH);
+    <span class="code-function">delay</span>(100);  <span class="code-comment">// 100ms = 0.1 seconde</span>
+    
+    <span class="code-function">digitalWrite</span>(LED_BUILTIN, LOW);
+    <span class="code-function">delay</span>(100);
+  }
+  
+  <span class="code-comment">// Pause de 3 secondes avant de recommencer</span>
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Pause de 3 secondes..."</span>);
+  <span class="code-function">delay</span>(3000);
+}</code></pre>
+                </div>
+                
+                <div class="code-example">
+                    <h4>Exemple avec boucle while</h4>
+                    <pre><code><span class="code-comment">/*
+  Programme avec boucle while
+  Clignote jusqu'à ce que le compteur atteigne 5
+*/</span>
+
+<span class="code-keyword">int</span> compteur = 0;  <span class="code-comment">// Variable compteur</span>
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-function">pinMode</span>(LED_BUILTIN, OUTPUT);
+  Serial.<span class="code-function">begin</span>(9600);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  compteur = 0;  <span class="code-comment">// Réinitialise le compteur</span>
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Debut de la sequence"</span>);
+  
+  <span class="code-comment">// Boucle while : s'exécute tant que compteur < 5</span>
+  <span class="code-keyword">while</span> (compteur < 5) {
+    Serial.<span class="code-function">print</span>(<span class="code-string">"Cycle "</span>);
+    Serial.<span class="code-function">println</span>(compteur + 1);
+    
+    <span class="code-function">digitalWrite</span>(LED_BUILTIN, HIGH);
+    <span class="code-function">delay</span>(200);
+    
+    <span class="code-function">digitalWrite</span>(LED_BUILTIN, LOW);
+    <span class="code-function">delay</span>(200);
+    
+    compteur = compteur + 1;  <span class="code-comment">// Incrémente le compteur</span>
+  }
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Sequence terminee. Attente de 2 secondes."</span>);
+  <span class="code-function">delay</span>(2000);
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Conditions -->
+            <section id="conditions-premier">
+                <h3>Structures conditionnelles dans votre premier programme</h3>
+                <p>Les conditions permettent d'exécuter du code seulement si certaines conditions sont remplies.</p>
+                
+                <div class="code-example">
+                    <h4>Exemple avec if, else if, else</h4>
+                    <pre><code><span class="code-comment">/*
+  Programme avec conditions pour varier la vitesse de clignotement
+*/</span>
+
+<span class="code-keyword">int</span> vitesse = 1;  <span class="code-comment">// 1=lent, 2=moyen, 3=rapide</span>
+<span class="code-keyword">int</span> delai = 0;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-function">pinMode</span>(LED_BUILTIN, OUTPUT);
+  Serial.<span class="code-function">begin</span>(9600);
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Programme LED avec conditions"</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Vitesse actuelle: lente (1)"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Détermine le délai en fonction de la vitesse</span>
+  <span class="code-keyword">if</span> (vitesse == 1) {
+    delai = 1000;  <span class="code-comment">// 1 seconde</span>
+  } <span class="code-keyword">else</span> <span class="code-keyword">if</span> (vitesse == 2) {
+    delai = 500;   <span class="code-comment">// 0.5 seconde</span>
+  } <span class="code-keyword">else</span> {
+    delai = 100;   <span class="code-comment">// 0.1 seconde</span>
+  }
+  
+  <span class="code-comment">// Clignote avec le délai choisi</span>
+  <span class="code-function">digitalWrite</span>(LED_BUILTIN, HIGH);
+  <span class="code-function">delay</span>(delai);
+  
+  <span class="code-function">digitalWrite</span>(LED_BUILTIN, LOW);
+  <span class="code-function">delay</span>(delai);
+  
+  <span class="code-comment">// Change la vitesse toutes les 10 itérations</span>
+  <span class="code-keyword">static</span> <span class="code-keyword">int</span> iteration = 0;
+  iteration = iteration + 1;
+  
+  <span class="code-keyword">if</span> (iteration >= 10) {
+    iteration = 0;
+    vitesse = vitesse + 1;
+    
+    <span class="code-keyword">if</span> (vitesse > 3) {
+      vitesse = 1;
+    }
+    
+    <span class="code-comment">// Affiche la nouvelle vitesse</span>
+    Serial.<span class="code-function">print</span>(<span class="code-string">"Changement de vitesse: "</span>);
+    <span class="code-keyword">if</span> (vitesse == 1) {
+      Serial.<span class="code-function">println</span>(<span class="code-string">"lente"</span>);
+    } <span class="code-keyword">else</span> <span class="code-keyword">if</span> (vitesse == 2) {
+      Serial.<span class="code-function">println</span>(<span class="code-string">"moyenne"</span>);
+    } <span class="code-keyword">else</span> {
+      Serial.<span class="code-function">println</span>(<span class="code-string">"rapide"</span>);
+    }
+  }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Fonctions -->
+            <section id="fonctions-premier">
+                <h3>Création de fonctions dans votre premier programme</h3>
+                <p>Les fonctions permettent d'organiser votre code en blocs réutilisables.</p>
+                
+                <div class="code-example">
+                    <h4>Exemple avec fonctions personnalisées</h4>
+                    <pre><code><span class="code-comment">/*
+  Programme avec fonctions personnalisées
+  Montre comment créer et utiliser des fonctions
+*/</span>
+
+<span class="code-comment">// Déclaration des fonctions (prototypes)</span>
+<span class="code-keyword">void</span> <span class="code-function">clignoterLED</span>(<span class="code-keyword">int</span> broche, <span class="code-keyword">int</span> duree);
+<span class="code-keyword">void</span> <span class="code-function">clignoterRapide</span>(<span class="code-keyword">int</span> broche, <span class="code-keyword">int</span> repetitions);
+<span class="code-keyword">void</span> <span class="code-function">afficherMessage</span>(<span class="code-type">String</span> message);
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(9600);
+  <span class="code-function">pinMode</span>(LED_BUILTIN, OUTPUT);
+  <span class="code-function">afficherMessage</span>(<span class="code-string">"Debut du programme avec fonctions"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Utilisation de la fonction clignoterLED</span>
+  <span class="code-function">afficherMessage</span>(<span class="code-string">"Clignotement simple"</span>);
+  <span class="code-function">clignoterLED</span>(LED_BUILTIN, 500);  <span class="code-comment">// Clignote 500ms</span>
+  
+  <span class="code-comment">// Utilisation de la fonction clignoterRapide</span>
+  <span class="code-function">afficherMessage</span>(<span class="code-string">"Clignotement rapide x5"</span>);
+  <span class="code-function">clignoterRapide</span>(LED_BUILTIN, 5);  <span class="code-comment">// 5 clignotements rapides</span>
+  
+  <span class="code-function">delay</span>(2000);  <span class="code-comment">// Pause de 2 secondes</span>
+}
+
+<span class="code-comment">// Définition de la fonction clignoterLED</span>
+<span class="code-keyword">void</span> <span class="code-function">clignoterLED</span>(<span class="code-keyword">int</span> broche, <span class="code-keyword">int</span> duree) {
+  <span class="code-function">digitalWrite</span>(broche, HIGH);
+  <span class="code-function">delay</span>(duree);
+  <span class="code-function">digitalWrite</span>(broche, LOW);
+  <span class="code-function">delay</span>(duree);
+}
+
+<span class="code-comment">// Définition de la fonction clignoterRapide</span>
+<span class="code-keyword">void</span> <span class="code-function">clignoterRapide</span>(<span class="code-keyword">int</span> broche, <span class="code-keyword">int</span> repetitions) {
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 0; i < repetitions; i++) {
+    <span class="code-function">clignoterLED</span>(broche, 100);  <span class="code-comment">// Appelle une autre fonction</span>
+  }
+}
+
+<span class="code-comment">// Définition de la fonction afficherMessage</span>
+<span class="code-keyword">void</span> <span class="code-function">afficherMessage</span>(<span class="code-type">String</span> message) {
+  Serial.<span class="code-function">print</span>(<span class="code-string">"[INFO] "</span>);
+  Serial.<span class="code-function">println</span>(message);
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Exemples complets -->
+            <section id="exemples-complets">
+                <h3>Exemples complets de premier programme</h3>
+                
+                <div class="code-example">
+                    <h4>Exemple complet 1 : Contrôle de LED avec bouton</h4>
+                    <pre><code><span class="code-comment">/*
+  Programme complet : Contrôle d'une LED avec un bouton
+  Quand on appuie sur le bouton, la LED s'allume
+*/</span>
+
+<span class="code-comment">// Définition des broches</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> boutonPin = 2;   <span class="code-comment">// Bouton connecté à la broche 2</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> ledPin = 13;      <span class="code-comment">// LED connectée à la broche 13</span>
+
+<span class="code-comment">// Variables d'état</span>
+<span class="code-keyword">int</span> etatBouton = 0;        <span class="code-comment">// État actuel du bouton</span>
+<span class="code-keyword">int</span> derniereEtatBouton = 0; <span class="code-comment">// État précédent du bouton</span>
+<span class="code-keyword">int</span> ledAllumee = 0;        <span class="code-comment">// État de la LED (0=éteinte, 1=allumée)</span>
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(9600);
+  <span class="code-function">pinMode</span>(boutonPin, INPUT);   <span class="code-comment">// Bouton en entrée</span>
+  <span class="code-function">pinMode</span>(ledPin, OUTPUT);     <span class="code-comment">// LED en sortie</span>
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Programme bouton-LED pret"</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Appuyez sur le bouton pour allumer/eteindre la LED"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Lecture de l'état du bouton</span>
+  etatBouton = <span class="code-function">digitalRead</span>(boutonPin);
+  
+  <span class="code-comment">// Vérifie si l'état du bouton a changé (appuyé ou relâché)</span>
+  <span class="code-keyword">if</span> (etatBouton != derniereEtatBouton) {
+    <span class="code-comment">// Si le bouton vient d'être appuyé (changement de LOW à HIGH)</span>
+    <span class="code-keyword">if</span> (etatBouton == HIGH) {
+      <span class="code-comment">// Inverse l'état de la LED</span>
+      ledAllumee = !ledAllumee;
+      
+      <span class="code-comment">// Allume ou éteint la LED</span>
+      <span class="code-keyword">if</span> (ledAllumee == 1) {
+        <span class="code-function">digitalWrite</span>(ledPin, HIGH);
+        Serial.<span class="code-function">println</span>(<span class="code-string">"LED allumee"</span>);
+      } <span class="code-keyword">else</span> {
+        <span class="code-function">digitalWrite</span>(ledPin, LOW);
+        Serial.<span class="code-function">println</span>(<span class="code-string">"LED eteinte"</span>);
+      }
+    }
+    
+    <span class="code-comment">// Anti-rebond : petit délai pour éviter les lectures multiples</span>
+    <span class="code-function">delay</span>(50);
+  }
+  
+  <span class="code-comment">// Sauvegarde l'état actuel pour la prochaine comparaison</span>
+  derniereEtatBouton = etatBouton;
+}</code></pre>
+                </div>
+                
+                <div class="code-example">
+                    <h4>Exemple complet 2 : Séquence de clignotement</h4>
+                    <pre><code><span class="code-comment">/*
+  Programme complet : Séquence de clignotement complexe
+  Crée un motif de clignotement avec différentes durées
+*/</span>
+
+<span class="code-comment">// Tableau des durées de clignotement (en millisecondes)</span>
+<span class="code-keyword">int</span> durees[] = {100, 200, 100, 500, 100, 200, 100, 1000};
+<span class="code-keyword">int</span> nombreDurees = 8;  <span class="code-comment">// Nombre d'éléments dans le tableau</span>
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(9600);
+  <span class="code-function">pinMode</span>(LED_BUILTIN, OUTPUT);
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Sequence de clignotement"</span>);
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Nombre de sequences: "</span>);
+  Serial.<span class="code-function">println</span>(nombreDurees);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  Serial.<span class="code-function">println</span>(<span class="code-string">"--- Debut de la sequence ---"</span>);
+  
+  <span class="code-comment">// Parcours toutes les durées du tableau</span>
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 0; i < nombreDurees; i++) {
+    <span class="code-comment">// Affiche l'étape en cours</span>
+    Serial.<span class="code-function">print</span>(<span class="code-string">"Etape "</span>);
+    Serial.<span class="code-function">print</span>(i + 1);
+    Serial.<span class="code-function">print</span>(<span class="code-string">"/"</span>);
+    Serial.<span class="code-function">print</span>(nombreDurees);
+    Serial.<span class="code-function">print</span>(<span class="code-string">" - Delai: "</span>);
+    Serial.<span class="code-function">print</span>(durees[i]);
+    Serial.<span class="code-function">println</span>(<span class="code-string">"ms"</span>);
+    
+    <span class="code-comment">// Clignote avec la durée actuelle</span>
+    <span class="code-function">digitalWrite</span>(LED_BUILTIN, HIGH);
+    <span class="code-function">delay</span>(durees[i]);
+    
+    <span class="code-function">digitalWrite</span>(LED_BUILTIN, LOW);
+    <span class="code-function">delay</span>(durees[i]);
+  }
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"--- Fin de la sequence ---"</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Attente de 3 secondes avant de recommencer"</span>);
+  <span class="code-function">delay</span>(3000);
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Exercise -->
+            <div class="exercise">
+                <h4><i class="fas fa-tasks"></i> Exercice pratique</h4>
+                <p><strong>Objectif :</strong> Créez un programme qui fait clignoter la LED 3 fois rapidement, puis 2 fois lentement, et répète ce motif.</p>
+                <p><strong>Indications :</strong></p>
+                <ul>
+                    <li>Utilisez une boucle <code>for</code> pour les clignotements rapides</li>
+                    <li>Utilisez une autre boucle <code>for</code> pour les clignotements lents</li>
+                    <li>Utilisez <code>delay(100)</code> pour rapide et <code>delay(500)</code> pour lent</li>
+                    <li>Ajoutez une pause de 2 secondes entre chaque motif</li>
+                    <li>Utilisez le moniteur série pour afficher l'état du programme</li>
+                </ul>
+            </div>
+
+            <!-- Navigation buttons -->
+            <div class="nav-buttons">
+                <a href="#installation" class="nav-button prev"><i class="fas fa-arrow-left"></i> Installation IDE</a>
+                <a href="#structure" class="nav-button next">Structure avancée <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ArduinoLearn</h3>
+                    <p>Votre ressource complète pour apprendre la programmation Arduino et ESP. Des tutoriels pour débutants aux projets avancés.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Premier programme</h3>
+                    <ul>
+                        <li><a href="#structure-de-base">Structure de base</a></li>
+                        <li><a href="#premier-exemple">Premier exemple</a></li>
+                        <li><a href="#variables-premier">Variables</a></li>
+                        <li><a href="#boucles-premier">Boucles</a></li>
+                        <li><a href="#conditions-premier">Conditions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Ressources</h3>
+                    <ul>
+                        <li><a href="#exemples-complets">Exemples complets</a></li>
+                        <li><a href="#fonctions-premier">Fonctions</a></li>
+                        <li><a href="#debug-serial">Débogage série</a></li>
+                        <li><a href="#compilation-upload">Compilation/Upload</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>À propos</h3>
+                    <p>Ce site est conçu pour les débutants souhaitant apprendre la programmation Arduino et ESP avec des exemples clairs et pratiques.</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 ArduinoLearn. Tous droits réservés. | Conçu pour l'apprentissage</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Gestion de la navigation et des ancres
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation par ancres
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#' || targetId === '#tutoriels') return;
+                    
+                    // Si c'est un lien interne (commence par #)
+                    if (targetId.startsWith('#')) {
+                        e.preventDefault();
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            // Scroll vers l'élément
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 100,
+                                behavior: 'smooth'
+                            });
+                            
+                            // Met à jour l'URL sans recharger la page
+                            history.pushState(null, null, targetId);
+                            
+                            // Met à jour le lien actif dans la sidebar
+                            updateActiveSidebarLink(targetId);
+                        }
+                    }
+                });
+            });
+            
+            // Fonction pour mettre à jour le lien actif dans la sidebar
+            function updateActiveSidebarLink(targetId) {
+                // Retire la classe active de tous les liens
+                document.querySelectorAll('.sidebar a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Ajoute la classe active au lien correspondant
+                const activeLink = document.querySelector(`.sidebar a[href="${targetId}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                    
+                    // Si c'est un sous-menu, active aussi le parent
+                    const parentLi = activeLink.closest('.sub-menu');
+                    if (parentLi) {
+                        const parentLink = parentLi.previousElementSibling;
+                        if (parentLink && parentLink.tagName === 'A') {
+                            parentLink.classList.add('active');
+                        }
+                    }
+                }
+            }
+            
+            // Gestion de l'état actif au chargement de la page
+            if (window.location.hash) {
+                const targetElement = document.querySelector(window.location.hash);
+                if (targetElement) {
+                    setTimeout(() => {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                        updateActiveSidebarLink(window.location.hash);
+                    }, 100);
+                }
+            }
+            
+            // Met à jour l'URL lors du défilement
+            let sections = document.querySelectorAll('section[id]');
+            window.addEventListener('scroll', function() {
+                let current = '';
+                let scrollPosition = window.scrollY + 150;
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                        current = '#' + section.getAttribute('id');
+                    }
+                });
+                
+                if (current) {
+                    history.replaceState(null, null, current);
+                    updateActiveSidebarLink(current);
+                }
+            });
+            
+            // Sidebar sticky behavior
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarTop = sidebar.offsetTop;
+            
+            window.addEventListener('scroll', function() {
+                if (window.innerWidth > 768) { // Desktop seulement
+                    if (window.scrollY >= sidebarTop - 100) {
+                        sidebar.style.position = 'sticky';
+                        sidebar.style.top = '100px';
+                    } else {
+                        sidebar.style.position = 'static';
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

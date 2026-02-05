@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArduinoLearn - Exemples et Simulations</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #00979c;
+      --secondary-color: #00696b;
+      --accent-color: #ff9800;
+      --light-color: #f8f9fa;
+      --dark-color: #333;
+      --gray-color: #6c757d;
+      --code-bg: #f4f4f4;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      color: var(--dark-color);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo i {
+      margin-right: 10px;
+      color: var(--accent-color);
+    }
+
+    .logo span {
+      color: var(--accent-color);
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+
+    nav ul li {
+      margin-left: 1.5rem;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+
+    nav ul li a:hover {
+      color: var(--accent-color);
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 4rem 0;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      opacity: 0.9;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background-color: var(--accent-color);
+      color: white;
+      padding: 0.8rem 2rem;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      color: white;
+    }
+
+    /* Main Content */
+    .main-content {
+      display: flex;
+      margin-bottom: 3rem;
+      gap: 2rem;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      flex: 0 0 300px;
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      align-self: flex-start;
+      position: sticky;
+      top: 100px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h3 {
+      color: var(--primary-color);
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #eee;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar ul li a {
+      color: var(--dark-color);
+      text-decoration: none;
+      display: block;
+      padding: 0.5rem 0.8rem;
+      border-radius: 4px;
+      transition: all 0.3s;
+      font-size: 0.95rem;
+    }
+
+    .sidebar ul li a:hover,
+    .sidebar ul li a.active {
+      background-color: #e9f7f7;
+      color: var(--primary-color);
+      padding-left: 1.2rem;
+    }
+
+    .sidebar ul li a i {
+      margin-right: 8px;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Content */
+    .content {
+      flex: 1;
+      background-color: white;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .content h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid #eee;
+    }
+
+    .content h3 {
+      color: var(--secondary-color);
+      margin: 2rem 0 1rem;
+      padding-top: 1rem;
+    }
+
+    .content h4 {
+      color: var(--primary-color);
+      margin: 1.5rem 0 0.8rem;
+    }
+
+    /* Example cards */
+    .example-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .example-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      background: white;
+    }
+
+    .example-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .example-header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .example-header h4 {
+      margin: 0;
+      color: white;
+    }
+
+    .example-difficulty {
+      background-color: var(--accent-color);
+      padding: 0.2rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .example-body {
+      padding: 1.5rem;
+    }
+
+    /* Simulation containers */
+    .simulation-container {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      background-color: #f9f9f9;
+      min-height: 300px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .simulation-title {
+      color: var(--secondary-color);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .simulation-title i {
+      margin-right: 10px;
+    }
+
+    /* Arduino board simulation */
+    .arduino-board {
+      width: 300px;
+      height: 200px;
+      background-color: #0a3d62;
+      border-radius: 10px;
+      position: relative;
+      margin: 2rem auto;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .arduino-usb {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      height: 20px;
+      background-color: #222;
+      border-radius: 3px;
+    }
+
+    .arduino-pins {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background-color: #1e272e;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
+    .pin {
+      width: 15px;
+      height: 30px;
+      background-color: #d1d8e0;
+      border-radius: 3px;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .pin.active {
+      background-color: #ffd32a;
+    }
+
+    .pin-label {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      color: white;
+      font-weight: bold;
+    }
+
+    /* LED Simulation */
+    .led-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      align-items: center;
+      margin: 2rem 0;
+    }
+
+    .led {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #ccc;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      position: relative;
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+    .led.on {
+      background-color: #ff3838;
+      box-shadow: 0 0 20px #ff3838, 0 0 40px #ff3838;
+    }
+
+    .led.led-green.on {
+      background-color: #32ff7e;
+      box-shadow: 0 0 20px #32ff7e, 0 0 40px #32ff7e;
+    }
+
+    .led.led-blue.on {
+      background-color: #18dcff;
+      box-shadow: 0 0 20px #18dcff, 0 0 40px #18dcff;
+    }
+
+    .led.led-yellow.on {
+      background-color: #ffaf40;
+      box-shadow: 0 0 20px #ffaf40, 0 0 40px #ffaf40;
+    }
+
+    .led-label {
+      position: absolute;
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--dark-color);
+    }
+
+    /* ESP32 Simulation */
+    .esp32-board {
+      width: 250px;
+      height: 150px;
+      background-color: #1e3799;
+      border-radius: 8px;
+      position: relative;
+      margin: 2rem auto;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .esp32-chip {
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 60px;
+      background-color: #222;
+      border-radius: 5px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .esp32-antenna {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #ffd32a;
+    }
+
+    /* Code editor simulation */
+    .code-editor {
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 1.5rem 0;
+    }
+
+    .editor-header {
+      background-color: #2d2d2d;
+      padding: 0.8rem 1rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .editor-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .editor-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .editor-dot.red {
+      background-color: #ff5f56;
+    }
+
+    .editor-dot.yellow {
+      background-color: #ffbd2e;
+    }
+
+    .editor-dot.green {
+      background-color: #27ca3f;
+    }
+
+    .editor-filename {
+      margin-left: 1rem;
+      color: #aaa;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+
+    .editor-content {
+      padding: 1.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #d4d4d4;
+      white-space: pre-wrap;
+      tab-size: 2;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .code-comment {
+      color: #6a9955;
+    }
+
+    .code-keyword {
+      color: #569cd6;
+      font-weight: bold;
+    }
+
+    .code-function {
+      color: #dcdcaa;
+    }
+
+    .code-value {
+      color: #ce9178;
+    }
+
+    .code-string {
+      color: #ce9178;
+    }
+
+    .code-number {
+      color: #b5cea8;
+    }
+
+    /* Controls */
+    .simulation-controls {
+      display: flex;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      padding: 0.6rem 1.2rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-btn:hover {
+      background-color: var(--secondary-color);
+    }
+
+    .control-btn.run {
+      background-color: var(--success-color);
+    }
+
+    .control-btn.run:hover {
+      background-color: #218838;
+    }
+
+    .control-btn.stop {
+      background-color: var(--danger-color);
+    }
+
+    .control-btn.stop:hover {
+      background-color: #c82333;
+    }
+
+    .control-slider {
+      width: 200px;
+    }
+
+    /* Serial Monitor */
+    .serial-monitor {
+      background-color: #000;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      padding: 1rem;
+      border-radius: 5px;
+      height: 200px;
+      overflow-y: auto;
+      margin: 1.5rem 0;
+    }
+
+    .serial-line {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      background-color: #e9f7f7;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .breadcrumb span {
+      color: var(--gray-color);
+    }
+
+    .breadcrumb i {
+      margin: 0 8px;
+      color: var(--gray-color);
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .sidebar {
+        flex: 0 0 250px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      nav ul {
+        margin-top: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      nav ul li {
+        margin: 0.3rem 0.5rem;
+      }
+
+      .main-content {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        flex: none;
+        width: 100%;
+        position: static;
+        max-height: none;
+      }
+
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+
+      .example-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Animation */
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .blink {
+      animation: blink 1s infinite;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    /* Tabs */
+    .simulation-tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 1.5rem;
+    }
+
+    .simulation-tab {
+      padding: 0.8rem 1.5rem;
+      background-color: #f1f1f1;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--gray-color);
+      transition: all 0.3s;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+
+    .simulation-tab:hover {
+      background-color: #e9e9e9;
+    }
+
+    .simulation-tab.active {
+      background-color: white;
+      color: var(--primary-color);
+      border-bottom: 3px solid var(--primary-color);
+    }
+
+    .simulation-tab-content {
+      display: none;
+    }
+
+    .simulation-tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header identique à la page principale -->
+  <header>
+    <div class="container header-content">
+      <div class="logo">
+        <i class="fas fa-microchip"></i>
+        <div><span>Fortico</span> Arduino/ESP <span>Learn</span></div>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+          <li><a href="index.html#tutoriels"><i class="fas fa-graduation-cap"></i> Tutoriels</a></li>
+          <li><a href="exemple.html" class="active"><i class="fas fa-code"></i> Exemples</a></li>
+          <li><a href="index.html#exercices"><i class="fas fa-pencil-alt"></i> Exercices</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Exemples et Simulations Arduino/ESP</h1>
+      <p>Testez et modifiez du code Arduino en temps réel avec des simulations visuelles interactives</p>
+      <a href="#exemple1" class="cta-button">Essayer une simulation <i class="fas fa-play-circle"></i></a>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container main-content">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h3><i class="fas fa-list"></i> Exemples disponibles</h3>
+      <ul>
+        <li><a href="#exemple1"><i class="fas fa-lightbulb"></i> LED Clignotante</a></li>
+        <li><a href="#exemple2"><i class="fas fa-sliders-h"></i> Contrôle PWM LED</a></li>
+        <li><a href="#exemple3"><i class="fas fa-toggle-on"></i> Bouton avec LED</a></li>
+        <li><a href="#exemple4"><i class="fas fa-palette"></i> LED RGB</a></li>
+        <li><a href="#exemple5"><i class="fas fa-thermometer"></i> Capteur de Température</a></li>
+        <li><a href="#exemple6"><i class="fas fa-wifi"></i> ESP32 WiFi Server</a></li>
+        <li><a href="#exemple7"><i class="fas fa-bluetooth"></i> ESP32 Bluetooth</a></li>
+        <li><a href="#exemple8"><i class="fas fa-server"></i> Serveur Web ESP</a></li>
+        <li><a href="#exemple9"><i class="fas fa-satellite-dish"></i> Communication MQTT</a></li>
+        <li><a href="#exemple10"><i class="fas fa-robot"></i> Robot Suiveur</a></li>
+      </ul>
+    </aside>
+
+    <!-- Content -->
+    <main class="content">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="index.html">Accueil</a> <i class="fas fa-chevron-right"></i>
+        <span>Exemples et Simulations</span>
+      </div>
+
+      <h2>Simulations Interactives Arduino/ESP</h2>
+      <p>Modifiez le code, exécutez-le et observez les résultats en temps réel grâce aux simulations visuelles.</p>
+
+      <!-- Exemple 1: LED Clignotante -->
+      <section id="exemple1" class="fade-in">
+        <div class="example-card">
+          <div class="example-header">
+            <h4>LED Clignotante</h4>
+            <span class="example-difficulty">Débutant</span>
+          </div>
+          <div class="example-body">
+            <p>Le fameux "Hello World" de l'électronique : faire clignoter une LED.</p>
+
+            <div class="simulation-tabs">
+              <button class="simulation-tab active" onclick="openTab(event, 'code1')">Code</button>
+              <button class="simulation-tab" onclick="openTab(event, 'sim1')">Simulation</button>
+              <button class="simulation-tab" onclick="openTab(event, 'serial1')">Moniteur Série</button>
+            </div>
+
+            <div id="code1" class="simulation-tab-content active">
+              <div class="code-editor">
+                <div class="editor-header">
+                  <div class="editor-dots">
+                    <div class="editor-dot red"></div>
+                    <div class="editor-dot yellow"></div>
+                    <div class="editor-dot green"></div>
+                  </div>
+                  <div class="editor-filename">blink.ino</div>
+                </div>
+                <div class="editor-content" id="editor-code1" contenteditable="true">
+// LED Clignotante - Exemple Arduino
+// Fait clignoter la LED intégrée (broche 13)
+
+void setup() {
+  // Initialise la broche 13 comme sortie
+  pinMode(LED_BUILTIN, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("Programme LED clignotante demarre");
+}
+
+void loop() {
+  // Allume la LED
+  digitalWrite(LED_BUILTIN, HIGH);
+  Serial.println("LED allumee");
+  delay(1000);  // Attend 1 seconde
+  
+  // Eteint la LED
+  digitalWrite(LED_BUILTIN, LOW);
+  Serial.println("LED eteinte");
+  delay(1000);  // Attend 1 seconde
+}
+                </div>
+              </div>
+            </div>
+
+            <div id="sim1" class="simulation-tab-content">
+              <div class="simulation-container">
+                <h4 class="simulation-title"><i class="fas fa-lightbulb"></i> Simulation LED Clignotante</h4>
+                
+                <!-- Simulation de la carte Arduino -->
+                <div class="arduino-board">
+                  <div class="arduino-usb"></div>
+                  <div class="arduino-pins">
+                    <div class="pin" id="pin13">
+                      <div class="pin-label">13</div>
+                    </div>
+                    <div class="pin">
+                      <div class="pin-label">12</div>
+                    </div>
+                    <div class="pin">
+                      <div class="pin-label">11</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Simulation LED -->
+                <div class="led-container">
+                  <div class="led" id="sim-led1">
+                    <div class="led-label">LED INTÉGRÉE</div>
+                  </div>
+                </div>
+
+                <p id="sim-status1" style="text-align: center; margin-top: 1rem;">État : Éteinte</p>
+              </div>
+            </div>
+
+            <div id="serial1" class="simulation-tab-content">
+              <div class="serial-monitor" id="serial-monitor1">
+                <div class="serial-line">Moniteur série initialisé (9600 baud)</div>
+                <div class="serial-line">Programme LED clignotante demarre</div>
+              </div>
+            </div>
+
+            <div class="simulation-controls">
+              <button class="control-btn run" onclick="runSimulation(1)">
+                <i class="fas fa-play"></i> Exécuter
+              </button>
+              <button class="control-btn stop" onclick="stopSimulation(1)">
+                <i class="fas fa-stop"></i> Arrêter
+              </button>
+              <button class="control-btn" onclick="resetSimulation(1)">
+                <i class="fas fa-redo"></i> Réinitialiser
+              </button>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span>Vitesse:</span>
+                <input type="range" min="100" max="2000" value="1000" class="control-slider" id="speed1" onchange="updateSpeed(1)">
+                <span id="speedValue1">1000ms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Exemple 2: Contrôle PWM LED -->
+      <section id="exemple2" class="fade-in">
+        <div class="example-card">
+          <div class="example-header">
+            <h4>Contrôle PWM LED (Luminosité variable)</h4>
+            <span class="example-difficulty">Débutant</span>
+          </div>
+          <div class="example-body">
+            <p>Contrôler la luminosité d'une LED avec PWM (Modulation par Largeur d'Impulsion).</p>
+
+            <div class="simulation-tabs">
+              <button class="simulation-tab active" onclick="openTab(event, 'code2')">Code</button>
+              <button class="simulation-tab" onclick="openTab(event, 'sim2')">Simulation</button>
+            </div>
+
+            <div id="code2" class="simulation-tab-content active">
+              <div class="code-editor">
+                <div class="editor-header">
+                  <div class="editor-dots">
+                    <div class="editor-dot red"></div>
+                    <div class="editor-dot yellow"></div>
+                    <div class="editor-dot green"></div>
+                  </div>
+                  <div class="editor-filename">pwm_led.ino</div>
+                </div>
+                <div class="editor-content" id="editor-code2" contenteditable="true">
+// Controle PWM LED - Effet de respiration
+// Utilise la broche 9 (PWM) pour contrôler la luminosité
+
+const int LED_PIN = 9;
+int brightness = 0;
+int fadeAmount = 5;
+
+void setup() {
+  // Pas besoin de pinMode pour analogWrite sur broche PWM
+  Serial.begin(9600);
+  Serial.println("Effet de respiration LED PWM");
+}
+
+void loop() {
+  // Applique la luminosité actuelle
+  analogWrite(LED_PIN, brightness);
+  
+  // Affiche la valeur PWM
+  Serial.print("Luminosite: ");
+  Serial.println(brightness);
+  
+  // Change la luminosité
+  brightness = brightness + fadeAmount;
+  
+  // Inverse la direction aux limites
+  if (brightness <= 0 || brightness >= 255) {
+    fadeAmount = -fadeAmount;
+  }
+  
+  delay(30);  // Controle la vitesse
+}
+                </div>
+              </div>
+            </div>
+
+            <div id="sim2" class="simulation-tab-content">
+              <div class="simulation-container">
+                <h4 class="simulation-title"><i class="fas fa-sliders-h"></i> Simulation PWM LED</h4>
+                
+                <div class="arduino-board">
+                  <div class="arduino-usb"></div>
+                  <div class="arduino-pins">
+                    <div class="pin" id="pin9">
+                      <div class="pin-label">9 (PWM)</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="led-container">
+                  <div class="led" id="sim-led2">
+                    <div class="led-label">LED PWM</div>
+                  </div>
+                </div>
+
+                <div style="margin-top: 2rem; text-align: center;">
+                  <p>Valeur PWM: <span id="pwmValue2">0</span>/255</p>
+                  <input type="range" min="0" max="255" value="0" class="control-slider" id="pwmSlider2" 
+                         style="width: 80%; margin-top: 1rem;" oninput="updatePWM(2)">
+                </div>
+              </div>
+            </div>
+
+            <div class="simulation-controls">
+              <button class="control-btn run" onclick="runSimulation(2)">
+                <i class="fas fa-play"></i> Démarrer respiration
+              </button>
+              <button class="control-btn stop" onclick="stopSimulation(2)">
+                <i class="fas fa-stop"></i> Arrêter
+              </button>
+              <button class="control-btn" onclick="testPWM(2)">
+                <i class="fas fa-vial"></i> Tester PWM
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Exemple 3: Bouton avec LED -->
+      <section id="exemple3" class="fade-in">
+        <div class="example-card">
+          <div class="example-header">
+            <h4>Bouton avec LED (Anti-rebond)</h4>
+            <span class="example-difficulty">Intermédiaire</span>
+          </div>
+          <div class="example-body">
+            <p>Contrôler une LED avec un bouton poussoir avec gestion de l'anti-rebond.</p>
+
+            <div class="simulation-tabs">
+              <button class="simulation-tab active" onclick="openTab(event, 'code3')">Code</button>
+              <button class="simulation-tab" onclick="openTab(event, 'sim3')">Simulation</button>
+            </div>
+
+            <div id="code3" class="simulation-tab-content active">
+              <div class="code-editor">
+                <div class="editor-header">
+                  <div class="editor-dots">
+                    <div class="editor-dot red"></div>
+                    <div class="editor-dot yellow"></div>
+                    <div class="editor-dot green"></div>
+                  </div>
+                  <div class="editor-filename">button_led.ino</div>
+                </div>
+                <div class="editor-content" id="editor-code3" contenteditable="true">
+// Bouton avec LED et anti-rebond
+// Bouton connecté à la broche 2, LED à la broche 13
+
+const int BUTTON_PIN = 2;
+const int LED_PIN = 13;
+
+int buttonState = LOW;
+int lastButtonState = LOW;
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 50;
+
+bool ledState = false;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);  // Résistance pull-up interne
+  pinMode(LED_PIN, OUTPUT);
+  Serial.println("Systeme bouton-LED pret");
+}
+
+void loop() {
+  // Lecture du bouton
+  int reading = digitalRead(BUTTON_PIN);
+  
+  // Anti-rebond
+  if (reading != lastButtonState) {
+    lastDebounceTime = millis();
+  }
+  
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    if (reading != buttonState) {
+      buttonState = reading;
+      
+      // Si le bouton est appuye (LOW avec pull-up)
+      if (buttonState == LOW) {
+        ledState = !ledState;  // Inverse l'etat
+        
+        if (ledState) {
+          digitalWrite(LED_PIN, HIGH);
+          Serial.println("LED allumee (bouton)");
+        } else {
+          digitalWrite(LED_PIN, LOW);
+          Serial.println("LED eteinte (bouton)");
+        }
+      }
+    }
+  }
+  
+  lastButtonState = reading;
+}
+                </div>
+              </div>
+            </div>
+
+            <div id="sim3" class="simulation-tab-content">
+              <div class="simulation-container">
+                <h4 class="simulation-title"><i class="fas fa-toggle-on"></i> Simulation Bouton-LED</h4>
+                
+                <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 2rem;">
+                  <!-- Bouton de simulation -->
+                  <div style="text-align: center;">
+                    <div class="led" id="sim-led3" style="width: 80px; height: 80px;">
+                      <div class="led-label">LED</div>
+                    </div>
+                  </div>
+                  
+                  <!-- Bouton poussoir -->
+                  <div style="text-align: center;">
+                    <div id="sim-button3" style="width: 60px; height: 60px; background-color: #666; 
+                         border-radius: 10px; margin: 0 auto; cursor: pointer; position: relative; 
+                         box-shadow: 0 5px 0 #333;" onclick="toggleButton(3)">
+                      <div style="position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); 
+                           font-weight: 600;">BOUTON</div>
+                    </div>
+                    <p id="button-state3" style="margin-top: 2rem;">État: RELÂCHÉ</p>
+                  </div>
+                </div>
+
+                <div style="margin-top: 2rem; text-align: center;">
+                  <p>Anti-rebond activé: <span id="debounce-state3" style="color: green; font-weight: bold;">OUI</span></p>
+                  <button class="control-btn" onclick="toggleDebounce(3)" style="margin-top: 1rem;">
+                    <i class="fas fa-exchange-alt"></i> Activer/Désactiver anti-rebond
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="simulation-controls">
+              <button class="control-btn run" onclick="runSimulation(3)">
+                <i class="fas fa-play"></i> Démarrer
+              </button>
+              <button class="control-btn" onclick="pressButton(3)">
+                <i class="fas fa-hand-pointer"></i> Appuyer bouton
+              </button>
+              <button class="control-btn" onclick="resetSimulation(3)">
+                <i class="fas fa-redo"></i> Réinitialiser
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Exemple 4: LED RGB -->
+      <section id="exemple4" class="fade-in">
+        <div class="example-card">
+          <div class="example-header">
+            <h4>LED RGB (Couleurs mélangées)</h4>
+            <span class="example-difficulty">Intermédiaire</span>
+          </div>
+          <div class="example-body">
+            <p>Contrôler une LED RGB pour créer différentes couleurs.</p>
+
+            <div class="simulation-tabs">
+              <button class="simulation-tab active" onclick="openTab(event, 'code4')">Code</button>
+              <button class="simulation-tab" onclick="openTab(event, 'sim4')">Simulation</button>
+            </div>
+
+            <div id="code4" class="simulation-tab-content active">
+              <div class="code-editor">
+                <div class="editor-header">
+                  <div class="editor-dots">
+                    <div class="editor-dot red"></div>
+                    <div class="editor-dot yellow"></div>
+                    <div class="editor-dot green"></div>
+                  </div>
+                  <div class="editor-filename">rgb_led.ino</div>
+                </div>
+                <div class="editor-content" id="editor-code4" contenteditable="true">
+// Controle LED RGB (cathode commune)
+// Broches PWM: Rouge=9, Vert=10, Bleu=11
+
+const int PIN_ROUGE = 9;
+const int PIN_VERT = 10;
+const int PIN_BLEU = 11;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Controle LED RGB");
+}
+
+// Fonction pour definir une couleur RGB
+void setCouleur(int rouge, int vert, int bleu) {
+  analogWrite(PIN_ROUGE, rouge);
+  analogWrite(PIN_VERT, vert);
+  analogWrite(PIN_BLEU, bleu);
+  
+  Serial.print("Couleur: R=");
+  Serial.print(rouge);
+  Serial.print(" G=");
+  Serial.print(vert);
+  Serial.print(" B=");
+  Serial.println(bleu);
+}
+
+void loop() {
+  // Sequence de couleurs
+  Serial.println("Rouge pur");
+  setCouleur(255, 0, 0);
+  delay(1000);
+  
+  Serial.println("Vert pur");
+  setCouleur(0, 255, 0);
+  delay(1000);
+  
+  Serial.println("Bleu pur");
+  setCouleur(0, 0, 255);
+  delay(1000);
+  
+  Serial.println("Jaune");
+  setCouleur(255, 255, 0);
+  delay(1000);
+  
+  Serial.println("Magenta");
+  setCouleur(255, 0, 255);
+  delay(1000);
+  
+  Serial.println("Cyan");
+  setCouleur(0, 255, 255);
+  delay(1000);
+  
+  Serial.println("Blanc");
+  setCouleur(255, 255, 255);
+  delay(1000);
+  
+  Serial.println("Eteint");
+  setCouleur(0, 0, 0);
+  delay(1000);
+}
+                </div>
+              </div>
+            </div>
+
+            <div id="sim4" class="simulation-tab-content">
+              <div class="simulation-container">
+                <h4 class="simulation-title"><i class="fas fa-palette"></i> Simulation LED RGB</h4>
+                
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
+                  <!-- LED RGB simulée -->
+                  <div class="led" id="sim-led4" style="width: 100px; height: 100px; background-color: #000;">
+                    <div class="led-label">LED RGB</div>
+                  </div>
+                  
+                  <!-- Contrôles de couleur -->
+                  <div style="width: 100%; max-width: 400px;">
+                    <div style="margin-bottom: 1rem;">
+                      <label style="color: #ff4444; font-weight: bold;">Rouge:</label>
+                      <input type="range" min="0" max="255" value="0" class="control-slider" 
+                             id="redSlider4" oninput="updateRGBColor(4)" style="width: 100%;">
+                      <span id="redValue4">0</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                      <label style="color: #44ff44; font-weight: bold;">Vert:</label>
+                      <input type="range" min="0" max="255" value="0" class="control-slider" 
+                             id="greenSlider4" oninput="updateRGBColor(4)" style="width: 100%;">
+                      <span id="greenValue4">0</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                      <label style="color: #4444ff; font-weight: bold;">Bleu:</label>
+                      <input type="range" min="0" max="255" value="0" class="control-slider" 
+                             id="blueSlider4" oninput="updateRGBColor(4)" style="width: 100%;">
+                      <span id="blueValue4">0</span>
+                    </div>
+                  </div>
+                  
+                  <!-- Palettes prédéfinies -->
+                  <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                    <button class="control-btn" style="background-color: #ff4444;" onclick="setPredefinedColor(4, 'red')">
+                      Rouge
+                    </button>
+                    <button class="control-btn" style="background-color: #44ff44; color: #000;" onclick="setPredefinedColor(4, 'green')">
+                      Vert
+                    </button>
+                    <button class="control-btn" style="background-color: #4444ff;" onclick="setPredefinedColor(4, 'blue')">
+                      Bleu
+                    </button>
+                    <button class="control-btn" style="background-color: #ffff44; color: #000;" onclick="setPredefinedColor(4, 'yellow')">
+                      Jaune
+                    </button>
+                    <button class="control-btn" style="background-color: #ff44ff;" onclick="setPredefinedColor(4, 'magenta')">
+                      Magenta
+                    </button>
+                    <button class="control-btn" style="background-color: #44ffff; color: #000;" onclick="setPredefinedColor(4, 'cyan')">
+                      Cyan
+                    </button>
+                    <button class="control-btn" style="background-color: #ffffff; color: #000;" onclick="setPredefinedColor(4, 'white')">
+                      Blanc
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="simulation-controls">
+              <button class="control-btn run" onclick="runSimulation(4)">
+                <i class="fas fa-play"></i> Démarrer séquence
+              </button>
+              <button class="control-btn stop" onclick="stopSimulation(4)">
+                <i class="fas fa-stop"></i> Arrêter
+              </button>
+              <button class="control-btn" onclick="cycleColors(4)">
+                <i class="fas fa-rainbow"></i> Cycle automatique
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Exemple 5: Capteur de Température -->
+      <section id="exemple5" class="fade-in">
+        <div class="example-card">
+          <div class="example-header">
+            <h4>Capteur de Température DHT11</h4>
+            <span class="example-difficulty">Intermédiaire</span>
+          </div>
+          <div class="example-body">
+            <p>Lire la température et l'humidité avec un capteur DHT11 simulé.</p>
+
+            <div class="simulation-tabs">
+              <button class="simulation-tab active" onclick="openTab(event, 'code5')">Code</button>
+              <button class="simulation-tab" onclick="openTab(event, 'sim5')">Simulation</button>
+            </div>
+
+            <div id="code5" class="simulation-tab-content active">
+              <div class="code-editor">
+                <div class="editor-header">
+                  <div class="editor-dots">
+                    <div class="editor-dot red"></div>
+                    <div class="editor-dot yellow"></div>
+                    <div class="editor-dot green"></div>
+                  </div>
+                  <div class="editor-filename">dht_sensor.ino</div>
+                </div>
+                <div class="editor-content" id="editor-code5" contenteditable="true">
+// Lecture capteur DHT11 (simulation)
+// Broche de donnees sur D2
+
+const int DHT_PIN = 2;
+float temperature = 0;
+float humidity = 0;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Capteur DHT11 - Simulation");
+  Serial.println("==========================");
+}
+
+void loop() {
+  // Simulation de lecture du capteur
+  temperature = random(150, 350) / 10.0;  // 15.0 à 35.0°C
+  humidity = random(300, 800) / 10.0;     // 30.0 à 80.0%
+  
+  // Affichage des valeurs
+  Serial.print("Temperature: ");
+  Serial.print(temperature, 1);
+  Serial.print("°C\t");
+  
+  Serial.print("Humidite: ");
+  Serial.print(humidity, 1);
+  Serial.println("%");
+  
+  // Alerte si temperature trop haute
+  if (temperature > 30.0) {
+    Serial.println("ALERTE: Temperature elevee!");
+  }
+  
+  // Alerte si humidite trop basse
+  if (humidity < 40.0) {
+    Serial.println("ALERTE: Humidite trop basse!");
+  }
+  
+  Serial.println("-------------------");
+  delay(2000);  // Lecture toutes les 2 secondes
+}
+                </div>
+              </div>
+            </div>
+
+            <div id="sim5" class="simulation-tab-content">
+              <div class="simulation-container">
+                <h4 class="simulation-title"><i class="fas fa-thermometer"></i> Simulation Capteur DHT11</h4>
+                
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 3rem; margin-top: 1rem;">
+                  <!-- Thermomètre -->
+                  <div style="text-align: center;">
+                    <div style="position: relative; width: 80px; margin: 0 auto;">
+                      <div style="width: 20px; height: 120px; background-color: #e0e0e0; 
+                           border-radius: 10px; margin: 0 auto; position: relative; overflow: hidden;">
+                        <div id="thermometer-fill" style="position: absolute; bottom: 0; width: 100%; 
+                             height: 50%; background: linear-gradient(to top, #ff4444, #ffaa44); 
+                             transition: height 0.5s;"></div>
+                      </div>
+                      <div style="width: 40px; height: 20px; background-color: #e0e0e0; 
+                           border-radius: 20px; margin: -10px auto 0;"></div>
+                    </div>
+                    <h3 style="margin-top: 1rem; color: #ff4444;" id="tempValue5">25.0°C</h3>
+                    <p>Température</p>
+                  </div>
+                  
+                  <!-- Hygromètre -->
+                  <div style="text-align: center;">
+                    <div style="position: relative; width: 120px; height: 120px; margin: 0 auto;">
+                      <div style="width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(
+                          #4444ff 0%, #4444ff 50%,
+                          #e0e0e0 50%, #e0e0e0 100%
+                        ); position: relative;">
+                        <div style="position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; 
+                             background-color: white; border-radius: 50%;"></div>
+                      </div>
+                      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                           font-size: 1.5rem; font-weight: bold; color: #4444ff;" id="humValue5">50%</div>
+                    </div>
+                    <p>Humidité</p>
+                  </div>
+                </div>
+                
+                <!-- Contrôles de simulation -->
+                <div style="margin-top: 2rem; text-align: center;">
+                  <div style="display: inline-block; text-align: left;">
+                    <div style="margin-bottom: 1rem;">
+                      <label>Température: </label>
+                      <input type="range" min="150" max="350" value="250" class="control-slider" 
+                             id="tempSlider5" oninput="updateSensorValues(5)" style="width: 200px;">
+                      <span id="tempSliderValue5">25.0°C</span>
+                    </div>
+                    <div>
+                      <label>Humidité: </label>
+                      <input type="range" min="300" max="800" value="500" class="control-slider" 
+                             id="humSlider5" oninput="updateSensorValues(5)" style="width: 200px;">
+                      <span id="humSliderValue5">50.0%</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Alertes -->
+                <div id="sensor-alerts5" style="margin-top: 2rem; text-align: center;"></div>
+              </div>
+            </div>
+
+            <div class="simulation-controls">
+              <button class="control-btn run" onclick="runSimulation(5)">
+                <i class="fas fa-play"></i> Démarrer lecture
+              </button>
+              <button class="control-btn stop" onclick="stopSimulation(5)">
+                <i class="fas fa-stop"></i> Arrêter
+              </button>
+              <button class="control-btn" onclick="randomizeSensor(5)">
+                <i class="fas fa-random"></i> Valeurs aléatoires
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Exemple 6: ESP32 WiFi Server -->
+      <section id="exemple6" class="fade-in">
+        <div class="example-card">
+          <div class="example-header">
+            <h4>ESP32 Serveur WiFi</h4>
+            <span class="example-difficulty">Avancé</span>
+          </div>
+          <div class="example-body">
+            <p>Créer un serveur web sur ESP32 pour contrôler des LEDs à distance.</p>
+
+            <div class="simulation-tabs">
+              <button class="simulation-tab active" onclick="openTab(event, 'code6')">Code</button>
+              <button class="simulation-tab" onclick="openTab(event, 'sim6')">Simulation</button>
+            </div>
+
+            <div id="code6" class="simulation-tab-content active">
+              <div class="code-editor">
+                <div class="editor-header">
+                  <div class="editor-dots">
+                    <div class="editor-dot red"></div>
+                    <div class="editor-dot yellow"></div>
+                    <div class="editor-dot green"></div>
+                  </div>
+                  <div class="editor-filename">esp32_wifi.ino</div>
+                </div>
+                <div class="editor-content" id="editor-code6" contenteditable="true">
+// ESP32 Serveur WiFi
+// Connecte a un reseau WiFi et cree un serveur web
+
+#include <WiFi.h>
+
+const char* ssid = "MonReseauWiFi";
+const char* password = "MonMotDePasse";
+
+const int LED1_PIN = 2;  // LED integree ESP32
+const int LED2_PIN = 4;
+
+WiFiServer server(80);
+String header;
+
+bool led1State = false;
+bool led2State = false;
+
+void setup() {
+  Serial.begin(115200);
+  
+  // Configuration LEDs
+  pinMode(LED1_PIN, OUTPUT);
+  pinMode(LED2_PIN, OUTPUT);
+  digitalWrite(LED1_PIN, LOW);
+  digitalWrite(LED2_PIN, LOW);
+  
+  // Connexion WiFi
+  Serial.print("Connexion au WiFi ");
+  Serial.println(ssid);
+  
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  
+  Serial.println("\nWiFi connecte!");
+  Serial.print("Adresse IP: ");
+  Serial.println(WiFi.localIP());
+  
+  server.begin();
+}
+
+void loop() {
+  WiFiClient client = server.available();
+  
+  if (client) {
+    Serial.println("Nouveau client");
+    String currentLine = "";
+    
+    while (client.connected()) {
+      if (client.available()) {
+        char c = client.read();
+        header += c;
+        
+        if (c == '\n') {
+          if (currentLine.length() == 0) {
+            // Envoi de la page web
+            client.println("HTTP/1.1 200 OK");
+            client.println("Content-type:text/html");
+            client.println("Connection: close");
+            client.println();
+            
+            // Page HTML
+            client.println("<!DOCTYPE html><html>");
+            client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+            client.println("<title>ESP32 Web Server</title>");
+            client.println("<style>body { font-family: Arial; text-align: center; }");
+            client.println(".button { padding: 10px 20px; margin: 5px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }");
+            client.println(".button2 { background-color: #f44336; }</style></head>");
+            client.println("<body><h1>ESP32 Web Server</h1>");
+            
+            // Controle LED 1
+            client.println("<p>LED 1: " + String(led1State ? "ON" : "OFF") + "</p>");
+            if (led1State) {
+              client.println("<p><a href=\"/led1off\"><button class=\"button button2\">Eteindre LED1</button></a></p>");
+            } else {
+              client.println("<p><a href=\"/led1on\"><button class=\"button\">Allumer LED1</button></a></p>");
+            }
+            
+            // Controle LED 2
+            client.println("<p>LED 2: " + String(led2State ? "ON" : "OFF") + "</p>");
+            if (led2State) {
+              client.println("<p><a href=\"/led2off\"><button class=\"button button2\">Eteindre LED2</button></a></p>");
+            } else {
+              client.println("<p><a href=\"/led2on\"><button class=\"button\">Allumer LED2</button></a></p>");
+            }
+            
+            client.println("</body></html>");
+            break;
+          } else {
+            currentLine = "";
+          }
+        } else if (c != '\r') {
+          currentLine += c;
+        }
+        
+        // Traitement des requetes
+        if (currentLine.endsWith("GET /led1on")) {
+          led1State = true;
+          digitalWrite(LED1_PIN, HIGH);
+          Serial.println("LED1 ON via web");
+        } else if (currentLine.endsWith("GET /led1off")) {
+          led1State = false;
+          digitalWrite(LED1_PIN, LOW);
+          Serial.println("LED1 OFF via web");
+        } else if (currentLine.endsWith("GET /led2on")) {
+          led2State = true;
+          digitalWrite(LED2_PIN, HIGH);
+          Serial.println("LED2 ON via web");
+        } else if (currentLine.endsWith("GET /led2off")) {
+          led2State = false;
+          digitalWrite(LED2_PIN, LOW);
+          Serial.println("LED2 OFF via web");
+        }
+      }
+    }
+    
+    header = "";
+    client.stop();
+    Serial.println("Client deconnecte");
+  }
+}
+                </div>
+              </div>
+            </div>
+
+            <div id="sim6" class="simulation-tab-content">
+              <div class="simulation-container">
+                <h4 class="simulation-title"><i class="fas fa-wifi"></i> Simulation ESP32 WiFi Server</h4>
+                
+                <!-- ESP32 Board -->
+                <div class="esp32-board">
+                  <div class="esp32-chip">ESP32</div>
+                  <div class="esp32-antenna">
+                    <i class="fas fa-wifi"></i>
+                  </div>
+                </div>
+                
+                <div style="text-align: center; margin: 2rem 0;">
+                  <div style="display: inline-block; background-color: #e9f7f7; padding: 1rem 2rem; 
+                       border-radius: 10px; margin-bottom: 1rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">Serveur Web Actif</h4>
+                    <p style="font-family: monospace; font-size: 1.1rem;">Adresse IP: <span id="esp-ip6">192.168.1.100</span></p>
+                    <p>Port: 80</p>
+                  </div>
+                </div>
+                
+                <!-- LEDs controlées par web -->
+                <div class="led-container">
+                  <div class="led" id="esp-led1">
+                    <div class="led-label">LED 1 (GPIO2)</div>
+                  </div>
+                  <div class="led" id="esp-led2">
+                    <div class="led-label">LED 2 (GPIO4)</div>
+                  </div>
+                </div>
+                
+                <!-- Interface web simulée -->
+                <div style="margin-top: 2rem; border: 1px solid #ddd; border-radius: 10px; padding: 1rem; 
+                     background-color: white;">
+                  <h4 style="text-align: center; margin-bottom: 1rem;">Interface Web Simulée</h4>
+                  
+                  <div style="text-align: center;">
+                    <p id="web-led1-state">LED 1: OFF</p>
+                    <button class="control-btn" id="web-led1-btn" onclick="toggleWebLED(6, 1)" 
+                            style="margin-bottom: 1rem;">
+                      Allumer LED1
+                    </button>
+                    
+                    <p id="web-led2-state">LED 2: OFF</p>
+                    <button class="control-btn" id="web-led2-btn" onclick="toggleWebLED(6, 2)">
+                      Allumer LED2
+                    </button>
+                  </div>
+                  
+                  <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                    <p style="text-align: center; font-size: 0.9rem; color: #666;">
+                      Simule une connexion depuis un navigateur web
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="simulation-controls">
+              <button class="control-btn run" onclick="runSimulation(6)">
+                <i class="fas fa-server"></i> Démarrer serveur
+              </button>
+              <button class="control-btn" onclick="simulateClient(6)">
+                <i class="fas fa-laptop"></i> Simuler client web
+              </button>
+              <button class="control-btn stop" onclick="stopSimulation(6)">
+                <i class="fas fa-stop"></i> Arrêter serveur
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Plus d'exemples peuvent être ajoutés ici -->
+
+      <div style="text-align: center; margin-top: 3rem; padding: 2rem; background-color: #e9f7f7; border-radius: 10px;">
+        <h3>🚀 Plus d'exemples à venir!</h3>
+        <p>Nous ajoutons régulièrement de nouveaux exemples avec simulations interactives.</p>
+        <p>Revenez bientôt pour découvrir plus de projets Arduino et ESP.</p>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Variables globales pour les simulations
+    let simulationIntervals = {};
+    let simulationStates = {};
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialiser tous les états de simulation
+      for (let i = 1; i <= 10; i++) {
+        simulationStates[i] = {
+          running: false,
+          ledState: false,
+          intervalId: null
+        };
+      }
+      
+      // Mettre à jour les valeurs des sliders
+      updateSpeed(1);
+      updatePWM(2);
+      updateRGBColor(4);
+      updateSensorValues(5);
+      
+      // Navigation par ancres
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          const targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          
+          e.preventDefault();
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 100,
+              behavior: 'smooth'
+            });
+            
+            // Mettre à jour le lien actif dans la sidebar
+            updateActiveSidebarLink(targetId);
+          }
+        });
+      });
+      
+      // Mise à jour de l'URL lors du défilement
+      let sections = document.querySelectorAll('section[id]');
+      window.addEventListener('scroll', function() {
+        let current = '';
+        let scrollPosition = window.scrollY + 150;
+        
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.clientHeight;
+          
+          if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            current = '#' + section.getAttribute('id');
+          }
+        });
+        
+        if (current) {
+          updateActiveSidebarLink(current);
+        }
+      });
+    });
+
+    // Fonction pour mettre à jour le lien actif dans la sidebar
+    function updateActiveSidebarLink(targetId) {
+      document.querySelectorAll('.sidebar a').forEach(link => {
+        link.classList.remove('active');
+      });
+      
+      const activeLink = document.querySelector(`.sidebar a[href="${targetId}"]`);
+      if (activeLink) {
+        activeLink.classList.add('active');
+      }
+    }
+
+    // Fonction pour gérer les onglets
+    function openTab(evt, tabName) {
+      const tabcontent = document.querySelectorAll('.simulation-tab-content');
+      tabcontent.forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      const tablinks = document.querySelectorAll('.simulation-tab');
+      tablinks.forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      document.getElementById(tabName).classList.add('active');
+      evt.currentTarget.classList.add('active');
+    }
+
+    // Simulation 1: LED Clignotante
+    function runSimulation(exampleNum) {
+      if (simulationStates[exampleNum].running) return;
+      
+      simulationStates[exampleNum].running = true;
+      
+      switch(exampleNum) {
+        case 1:
+          runBlinkSimulation();
+          break;
+        case 2:
+          runPWMSimulation();
+          break;
+        case 3:
+          runButtonSimulation();
+          break;
+        case 4:
+          runRGBSimulation();
+          break;
+        case 5:
+          runSensorSimulation();
+          break;
+        case 6:
+          runWiFiSimulation();
+          break;
+      }
+    }
+
+    function stopSimulation(exampleNum) {
+      simulationStates[exampleNum].running = false;
+      
+      if (simulationIntervals[exampleNum]) {
+        clearInterval(simulationIntervals[exampleNum]);
+        simulationIntervals[exampleNum] = null;
+      }
+      
+      // Éteindre les LEDs
+      switch(exampleNum) {
+        case 1:
+          document.getElementById('sim-led1').classList.remove('on');
+          document.getElementById('pin13').classList.remove('active');
+          document.getElementById('sim-status1').textContent = 'État : Arrêté';
+          break;
+        case 2:
+          document.getElementById('sim-led2').classList.remove('on');
+          document.getElementById('pin9').classList.remove('active');
+          break;
+        case 4:
+          // Pour RGB, on garde la couleur actuelle
+          break;
+      }
+    }
+
+    function resetSimulation(exampleNum) {
+      stopSimulation(exampleNum);
+      simulationStates[exampleNum] = {
+        running: false,
+        ledState: false,
+        intervalId: null
+      };
+      
+      // Réinitialiser les éléments visuels
+      switch(exampleNum) {
+        case 1:
+          document.getElementById('sim-led1').classList.remove('on');
+          document.getElementById('pin13').classList.remove('active');
+          document.getElementById('sim-status1').textContent = 'État : Éteinte';
+          document.getElementById('serial-monitor1').innerHTML = 
+            '<div class="serial-line">Moniteur série initialisé (9600 baud)</div>' +
+            '<div class="serial-line">Programme LED clignotante demarre</div>';
+          break;
+        case 3:
+          document.getElementById('sim-led3').classList.remove('on');
+          document.getElementById('sim-button3').style.backgroundColor = '#666';
+          document.getElementById('button-state3').textContent = 'État: RELÂCHÉ';
+          break;
+        case 4:
+          setPredefinedColor(4, 'off');
+          break;
+      }
+    }
+
+    // Fonctions spécifiques à chaque simulation
+    function runBlinkSimulation() {
+      const led = document.getElementById('sim-led1');
+      const pin = document.getElementById('pin13');
+      const status = document.getElementById('sim-status1');
+      const serial = document.getElementById('serial-monitor1');
+      const speed = parseInt(document.getElementById('speed1').value);
+      
+      let ledState = false;
+      
+      simulationIntervals[1] = setInterval(() => {
+        ledState = !ledState;
+        
+        if (ledState) {
+          led.classList.add('on');
+          pin.classList.add('active');
+          status.textContent = 'État : Allumée';
+          addSerialLine(serial, 'LED allumee');
+        } else {
+          led.classList.remove('on');
+          pin.classList.remove('active');
+          status.textContent = 'État : Éteinte';
+          addSerialLine(serial, 'LED eteinte');
+        }
+      }, speed);
+    }
+
+    function updateSpeed(exampleNum) {
+      const slider = document.getElementById('speed' + exampleNum);
+      const valueSpan = document.getElementById('speedValue' + exampleNum);
+      valueSpan.textContent = slider.value + 'ms';
+      
+      if (simulationStates[exampleNum].running && exampleNum === 1) {
+        stopSimulation(1);
+        runSimulation(1);
+      }
+    }
+
+    function runPWMSimulation() {
+      const led = document.getElementById('sim-led2');
+      const pin = document.getElementById('pin9');
+      const pwmValue = document.getElementById('pwmValue2');
+      
+      let brightness = 0;
+      let fadeAmount = 5;
+      
+      simulationIntervals[2] = setInterval(() => {
+        // Mettre à jour la luminosité
+        brightness += fadeAmount;
+        
+        if (brightness <= 0 || brightness >= 255) {
+          fadeAmount = -fadeAmount;
+        }
+        
+        // Mettre à jour l'affichage
+        pwmValue.textContent = brightness;
+        document.getElementById('pwmSlider2').value = brightness;
+        
+        // Mettre à jour la LED
+        const opacity = brightness / 255;
+        led.style.opacity = opacity;
+        led.style.boxShadow = `0 0 ${10 + brightness/5}px rgba(255, 56, 56, ${opacity})`;
+        
+        if (brightness > 0) {
+          led.classList.add('on');
+          pin.classList.add('active');
+        } else {
+          led.classList.remove('on');
+          pin.classList.remove('active');
+        }
+      }, 30);
+    }
+
+    function updatePWM(exampleNum) {
+      const slider = document.getElementById('pwmSlider' + exampleNum);
+      const valueSpan = document.getElementById('pwmValue' + exampleNum);
+      const led = document.getElementById('sim-led' + exampleNum);
+      const pin = document.getElementById('pin' + (exampleNum === 2 ? '9' : ''));
+      
+      const brightness = parseInt(slider.value);
+      valueSpan.textContent = brightness;
+      
+      const opacity = brightness / 255;
+      led.style.opacity = opacity;
+      led.style.boxShadow = `0 0 ${10 + brightness/5}px rgba(255, 56, 56, ${opacity})`;
+      
+      if (brightness > 0) {
+        led.classList.add('on');
+        if (pin) pin.classList.add('active');
+      } else {
+        led.classList.remove('on');
+        if (pin) pin.classList.remove('active');
+      }
+    }
+
+    function testPWM(exampleNum) {
+      const slider = document.getElementById('pwmSlider' + exampleNum);
+      const steps = [0, 64, 128, 192, 255, 192, 128, 64, 0];
+      let step = 0;
+      
+      const interval = setInterval(() => {
+        slider.value = steps[step];
+        slider.dispatchEvent(new Event('input'));
+        
+        step++;
+        if (step >= steps.length) {
+          clearInterval(interval);
+        }
+      }, 300);
+    }
+
+    function runButtonSimulation() {
+      // Simulation déjà gérée par les fonctions de bouton
+    }
+
+    function toggleButton(exampleNum) {
+      const button = document.getElementById('sim-button' + exampleNum);
+      const buttonState = document.getElementById('button-state' + exampleNum);
+      const led = document.getElementById('sim-led' + exampleNum);
+      
+      // Simuler l'appui du bouton
+      button.style.transform = 'translateY(5px)';
+      button.style.boxShadow = '0 0 0 #333';
+      buttonState.textContent = 'État: APPUYÉ';
+      
+      // Inverser l'état de la LED
+      simulationStates[exampleNum].ledState = !simulationStates[exampleNum].ledState;
+      
+      if (simulationStates[exampleNum].ledState) {
+        led.classList.add('on');
+      } else {
+        led.classList.remove('on');
+      }
+      
+      // Relâcher le bouton après un délai
+      setTimeout(() => {
+        button.style.transform = '';
+        button.style.boxShadow = '0 5px 0 #333';
+        buttonState.textContent = 'État: RELÂCHÉ';
+      }, 300);
+    }
+
+    function pressButton(exampleNum) {
+      toggleButton(exampleNum);
+    }
+
+    function toggleDebounce(exampleNum) {
+      const state = document.getElementById('debounce-state' + exampleNum);
+      if (state.textContent === 'OUI') {
+        state.textContent = 'NON';
+        state.style.color = 'red';
+      } else {
+        state.textContent = 'OUI';
+        state.style.color = 'green';
+      }
+    }
+
+    function runRGBSimulation() {
+      // Pour RGB, on utilise le cycle automatique
+      cycleColors(4);
+    }
+
+    function updateRGBColor(exampleNum) {
+      const red = parseInt(document.getElementById('redSlider' + exampleNum).value);
+      const green = parseInt(document.getElementById('greenSlider' + exampleNum).value);
+      const blue = parseInt(document.getElementById('blueSlider' + exampleNum).value);
+      
+      document.getElementById('redValue' + exampleNum).textContent = red;
+      document.getElementById('greenValue' + exampleNum).textContent = green;
+      document.getElementById('blueValue' + exampleNum).textContent = blue;
+      
+      const led = document.getElementById('sim-led' + exampleNum);
+      const color = `rgb(${red}, ${green}, ${blue})`;
+      led.style.backgroundColor = color;
+      
+      // Ajouter un effet de brillance si une couleur est active
+      if (red > 0 || green > 0 || blue > 0) {
+        const maxColor = Math.max(red, green, blue);
+        const intensity = maxColor / 255;
+        led.style.boxShadow = `0 0 ${20 * intensity}px ${color}`;
+      } else {
+        led.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.3)';
+      }
+    }
+
+    function setPredefinedColor(exampleNum, color) {
+      let red = 0, green = 0, blue = 0;
+      
+      switch(color) {
+        case 'red':
+          red = 255;
+          break;
+        case 'green':
+          green = 255;
+          break;
+        case 'blue':
+          blue = 255;
+          break;
+        case 'yellow':
+          red = 255;
+          green = 255;
+          break;
+        case 'magenta':
+          red = 255;
+          blue = 255;
+          break;
+        case 'cyan':
+          green = 255;
+          blue = 255;
+          break;
+        case 'white':
+          red = 255;
+          green = 255;
+          blue = 255;
+          break;
+        case 'off':
+          // Déjà à 0
+          break;
+      }
+      
+      document.getElementById('redSlider' + exampleNum).value = red;
+      document.getElementById('greenSlider' + exampleNum).value = green;
+      document.getElementById('blueSlider' + exampleNum).value = blue;
+      
+      updateRGBColor(exampleNum);
+    }
+
+    function cycleColors(exampleNum) {
+      if (simulationIntervals[4]) {
+        clearInterval(simulationIntervals[4]);
+      }
+      
+      const colors = ['red', 'green', 'blue', 'yellow', 'magenta', 'cyan', 'white', 'off'];
+      let index = 0;
+      
+      simulationIntervals[4] = setInterval(() => {
+        setPredefinedColor(exampleNum, colors[index]);
+        index = (index + 1) % colors.length;
+      }, 1000);
+    }
+
+    function runSensorSimulation() {
+      simulationIntervals[5] = setInterval(() => {
+        // Générer des valeurs aléatoires
+        const temp = (Math.random() * 20 + 15).toFixed(1);
+        const hum = (Math.random() * 50 + 30).toFixed(1);
+        
+        // Mettre à jour les sliders et les valeurs
+        document.getElementById('tempSlider5').value = temp * 10;
+        document.getElementById('humSlider5').value = hum * 10;
+        updateSensorValues(5);
+      }, 2000);
+    }
+
+    function updateSensorValues(exampleNum) {
+      const temp = parseInt(document.getElementById('tempSlider' + exampleNum).value) / 10;
+      const hum = parseInt(document.getElementById('humSlider' + exampleNum).value) / 10;
+      
+      // Mettre à jour les affichages
+      document.getElementById('tempValue' + exampleNum).textContent = temp.toFixed(1) + '°C';
+      document.getElementById('humValue' + exampleNum).textContent = hum.toFixed(0) + '%';
+      
+      document.getElementById('tempSliderValue' + exampleNum).textContent = temp.toFixed(1) + '°C';
+      document.getElementById('humSliderValue' + exampleNum).textContent = hum.toFixed(1) + '%';
+      
+      // Mettre à jour les jauges
+      const tempFill = document.getElementById('thermometer-fill');
+      const tempHeight = ((temp - 15) / 20) * 100;
+      tempFill.style.height = Math.max(0, Math.min(100, tempHeight)) + '%';
+      
+      // Gérer les alertes
+      const alertsDiv = document.getElementById('sensor-alerts' + exampleNum);
+      alertsDiv.innerHTML = '';
+      
+      if (temp > 30) {
+        alertsDiv.innerHTML += '<div style="color: #ff4444; margin: 5px 0;">⚠️ ALERTE: Température élevée!</div>';
+      }
+      if (hum < 40) {
+        alertsDiv.innerHTML += '<div style="color: #4444ff; margin: 5px 0;">⚠️ ALERTE: Humidité trop basse!</div>';
+      }
+    }
+
+    function randomizeSensor(exampleNum) {
+      const temp = Math.floor(Math.random() * 200 + 150); // 15.0 à 35.0
+      const hum = Math.floor(Math.random() * 500 + 300); // 30.0 à 80.0
+      
+      document.getElementById('tempSlider' + exampleNum).value = temp;
+      document.getElementById('humSlider' + exampleNum).value = hum;
+      updateSensorValues(exampleNum);
+    }
+
+    function runWiFiSimulation() {
+      // Simulation de connexion WiFi
+      const ipElement = document.getElementById('esp-ip6');
+      const ips = ['192.168.1.100', '192.168.1.101', '192.168.0.50', '10.0.0.15'];
+      let ipIndex = 0;
+      
+      // Changer l'adresse IP périodiquement pour simuler une reconnexion
+      simulationIntervals[6] = setInterval(() => {
+        ipElement.textContent = ips[ipIndex];
+        ipIndex = (ipIndex + 1) % ips.length;
+      }, 5000);
+    }
+
+    function toggleWebLED(exampleNum, ledNum) {
+      const led = document.getElementById('esp-led' + ledNum);
+      const stateElement = document.getElementById('web-led' + ledNum + '-state');
+      const button = document.getElementById('web-led' + ledNum + '-btn');
+      
+      if (led.classList.contains('on')) {
+        led.classList.remove('on');
+        stateElement.textContent = 'LED ' + ledNum + ': OFF';
+        button.textContent = 'Allumer LED' + ledNum;
+        button.style.backgroundColor = '';
+      } else {
+        led.classList.add('on');
+        stateElement.textContent = 'LED ' + ledNum + ': ON';
+        button.textContent = 'Éteindre LED' + ledNum;
+        button.style.backgroundColor = '#f44336';
+      }
+    }
+
+    function simulateClient(exampleNum) {
+      // Simuler plusieurs connexions client
+      const serial = document.getElementById('serial-monitor1');
+      addSerialLine(serial, 'Nouveau client connecté au serveur web');
+      addSerialLine(serial, 'Requête HTTP: GET /led1on');
+      addSerialLine(serial, 'LED1 ON via web');
+      
+      // Allumer la LED 1
+      toggleWebLED(6, 1);
+      
+      // Simuler une déconnexion après 2 secondes
+      setTimeout(() => {
+        addSerialLine(serial, 'Client déconnecté');
+      }, 2000);
+    }
+
+    // Fonctions utilitaires
+    function addSerialLine(serialElement, text) {
+      const line = document.createElement('div');
+      line.className = 'serial-line';
+      line.textContent = '> ' + text;
+      serialElement.appendChild(line);
+      serialElement.scrollTop = serialElement.scrollHeight;
+    }
+
+    // Navigation par ancres avec mise en évidence
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          updateActiveSidebarLink('#' + id);
+        }
+      });
+    }, observerOptions);
+
+    // Observer toutes les sections
+    document.querySelectorAll('section[id]').forEach(section => {
+      observer.observe(section);
+    });
+  </script>
+</body>
+
+</html>
