@@ -1,0 +1,121 @@
+/* highlight-styles.css - Styles pour la coloration syntaxique */
+
+/* Style VS Code dark theme */
+.hljs {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 1.5rem;
+    border-radius: 0 0 8px 8px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    tab-size: 2;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  /* Commentaires */
+  .hljs-comment,
+  .hljs-quote {
+    color: #6a9955;
+    font-style: italic;
+  }
+  
+  /* Mots-clés */
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-literal,
+  .hljs-section,
+  .hljs-link {
+    color: #569cd6;
+    font-weight: bold;
+  }
+  
+  /* Types */
+  .hljs-title,
+  .hljs-type {
+    color: #4ec9b0;
+  }
+  
+  /* Noms de fonctions */
+  .hljs-function,
+  .hljs-title.function_ {
+    color: #dcdcaa;
+  }
+  
+  /* Strings */
+  .hljs-string,
+  .hljs-meta .hljs-string {
+    color: #ce9178;
+  }
+  
+  /* Nombres */
+  .hljs-number {
+    color: #b5cea8;
+  }
+  
+  /* Constantes */
+  .hljs-literal {
+    color: #569cd6;
+  }
+  
+  /* Préprocesseur */
+  .hljs-preprocessor,
+  .hljs-meta {
+    color: #c586c0;
+  }
+  
+  /* Parenthèses, crochets */
+  .hljs-punctuation {
+    color: #d4d4d4;
+  }
+  
+  /* Variables */
+  .hljs-variable {
+    color: #9cdcfe;
+  }
+  
+  /* Opérateurs */
+  .hljs-operator {
+    color: #d4d4d4;
+  }
+  
+  /* Built-in functions */
+  .hljs-built_in {
+    color: #4ec9b0;
+  }
+  
+  /* Inclusions */
+  .hljs-meta .hljs-keyword {
+    color: #c586c0;
+  }
+  
+  /* Surcharge pour Arduino spécifique */
+  .language-arduino .hljs-type {
+    color: #4ec9b0;
+  }
+  
+  .language-arduino .hljs-built_in {
+    color: #dcdcaa;
+  }
+  
+  .language-arduino .hljs-function {
+    color: #dcdcaa;
+  }
+  
+  .language-arduino .hljs-number {
+    color: #b5cea8;
+  }
+  
+  .language-arduino .hljs-string {
+    color: #ce9178;
+  }
+  
+  .language-arduino .hljs-keyword {
+    color: #569cd6;
+    font-weight: bold;
+  }
+  
+  .language-arduino .hljs-comment {
+    color: #6a9955;
+  }
