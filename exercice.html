@@ -1077,6 +1077,105 @@
           </div>
         </div>
       </div>
+      <!-- Exercice 7 -->
+<div class="exercise-card" onclick="loadExercise(7)">
+    <div class="exercise-header">
+      <h3>LED avec bouton</h3>
+      <span class="exercise-difficulty difficulty-beginner">Normal</span>
+    </div>
+    <div class="exercise-body">
+      <div class="exercise-description">
+        <p>Allumez une LED lorsque vous appuyez sur un bouton.</p>
+      </div>
+      <div class="exercise-objectives">
+        <h4><i class="fas fa-bullseye"></i> Objectifs</h4>
+        <ul>
+          <li>Lire l'état d'une entrée numérique</li>
+          <li>Utiliser digitalRead()</li>
+          <li>Récupérer l'état d'un bouton</li>
+        </ul>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span id="status-7" style="color: #6c757d;"><i class="far fa-circle"></i> Non tenté</span>
+        <span style="font-size: 0.9rem;"><i class="fas fa-clock"></i> ~15 min</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Exercice 8 -->
+  <div class="exercise-card" onclick="loadExercise(8)">
+    <div class="exercise-header">
+      <h3>Clignotement avec potentiomètre</h3>
+      <span class="exercise-difficulty difficulty-beginner">Normal</span>
+    </div>
+    <div class="exercise-body">
+      <div class="exercise-description">
+        <p>Contrôlez la vitesse de clignotement avec un potentiomètre.</p>
+      </div>
+      <div class="exercise-objectives">
+        <h4><i class="fas fa-bullseye"></i> Objectifs</h4>
+        <ul>
+          <li>Lire une entrée analogique</li>
+          <li>Utiliser analogRead()</li>
+          <li>Mapper des valeurs</li>
+        </ul>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span id="status-8" style="color: #6c757d;"><i class="far fa-circle"></i> Non tenté</span>
+        <span style="font-size: 0.9rem;"><i class="fas fa-clock"></i> ~20 min</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Exercice 9 -->
+  <div class="exercise-card" onclick="loadExercise(9)">
+    <div class="exercise-header">
+      <h3>Contrôle LED avec 2 boutons</h3>
+      <span class="exercise-difficulty difficulty-intermediate">Normal</span>
+    </div>
+    <div class="exercise-body">
+      <div class="exercise-description">
+        <p>Augmentez et diminuez la luminosité avec deux boutons.</p>
+      </div>
+      <div class="exercise-objectives">
+        <h4><i class="fas fa-bullseye"></i> Objectifs</h4>
+        <ul>
+          <li>Gérer plusieurs entrées</li>
+          <li>Implémenter un compteur</li>
+          <li>Limiter les valeurs</li>
+        </ul>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span id="status-9" style="color: #6c757d;"><i class="far fa-circle"></i> Non tenté</span>
+        <span style="font-size: 0.9rem;"><i class="fas fa-clock"></i> ~25 min</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Exercice 10 -->
+  <div class="exercise-card" onclick="loadExercise(10)">
+    <div class="exercise-header">
+      <h3>Séquence avec interruption</h3>
+      <span class="exercise-difficulty difficulty-intermediate">Normal</span>
+    </div>
+    <div class="exercise-body">
+      <div class="exercise-description">
+        <p>Changez la séquence LED avec un bouton par interruption.</p>
+      </div>
+      <div class="exercise-objectives">
+        <h4><i class="fas fa-bullseye"></i> Objectifs</h4>
+        <ul>
+          <li>Utiliser les interruptions</li>
+          <li>Changer de mode dynamiquement</li>
+          <li>Gérer les variables volatiles</li>
+        </ul>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span id="status-10" style="color: #6c757d;"><i class="far fa-circle"></i> Non tenté</span>
+        <span style="font-size: 0.9rem;"><i class="fas fa-clock"></i> ~30 min</span>
+      </div>
+    </div>
+  </div>
     </div>
 
     <!-- Exercise Workspace (initially hidden) -->
@@ -1192,11 +1291,9 @@
       </button>
     </div>
   </div>
-
   <script>
     // Global variables
     let currentExercise = 0;
-    let exerciseData = {};
     let pinsConfiguration = {};
     let ledsConfiguration = {};
     let codeLines = [];
@@ -1251,15 +1348,55 @@ void loop() {
           "Utilisez delay(1000) pour attendre 1 seconde"
         ],
         test: function(code) {
+          // Nettoyer le code des commentaires
+          const cleanCode = code.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+          
+          // Vérifier si le code est essentiellement le template (non modifié)
+          const cleanTemplate = this.template.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+          const cleanSolution = this.solution.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+          
+          const isTemplate = cleanCode === cleanTemplate;
+          const isSolution = cleanCode === cleanSolution;
+          
+          if (isTemplate) {
+            return {
+              isAcceptable: false,
+              score: 0,
+              feedback: "Code non modifié. Modifiez le template pour résoudre l'exercice."
+            };
+          }
+          
           const tests = {
-            hasPinMode: code.includes('pinMode(13, OUTPUT)'),
-            hasDigitalWriteHigh: code.includes('digitalWrite(13, HIGH)'),
-            hasDigitalWriteLow: code.includes('digitalWrite(13, LOW)'),
-            hasDelay: code.includes('delay(1000)'),
-            hasLoopStructure: code.includes('void loop()')
+            // Essentiels
+            hasPinMode: /pinMode\s*\(\s*\d+\s*,\s*OUTPUT\s*\)/i.test(cleanCode),
+            hasDigitalWriteHigh: /digitalWrite\s*\(\s*\d+\s*,\s*HIGH\s*\)/i.test(cleanCode),
+            hasDigitalWriteLow: /digitalWrite\s*\(\s*\d+\s*,\s*LOW\s*\)/i.test(cleanCode),
+            hasDelay: /delay\s*\(\s*\d+\s*\)/i.test(cleanCode),
+            
+            // Bonus
+            hasLoopStructure: /void\s+loop\s*\(\s*\)/.test(cleanCode),
+            hasSetupStructure: /void\s+setup\s*\(\s*\)/.test(cleanCode)
           };
           
-          return tests;
+          // Compter les tests essentiels réussis
+          const essentialTests = ['hasPinMode', 'hasDigitalWriteHigh', 'hasDigitalWriteLow', 'hasDelay'];
+          const essentialPassed = essentialTests.filter(test => tests[test]).length;
+          
+          // Calcul du score
+          const essentialScore = Math.floor((essentialPassed / essentialTests.length) * 70);
+          const bonusScore = (tests.hasLoopStructure && tests.hasSetupStructure) ? 20 : 0;
+          const totalScore = Math.min(100, essentialScore + bonusScore);
+          
+          // Déterminer si acceptable
+          const isAcceptable = essentialPassed >= 3 && totalScore >= 70;
+          
+          return {
+            ...tests,
+            isAcceptable: isAcceptable,
+            score: totalScore,
+            feedback: isAcceptable ? "Bon travail! Votre code fonctionne." : 
+                     `Code incomplet. Score: ${totalScore}%. Il manque: ${essentialTests.filter(t => !tests[t]).map(t => t.replace('has', '')).join(', ')}`
+          };
         }
       },
       2: {
@@ -1319,14 +1456,26 @@ void loop() {
           "Utilisez delay(200) entre chaque changement"
         ],
         test: function(code) {
+          const cleanCode = code.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+          
           const tests = {
-            hasArray: code.includes('leds[]') || code.includes('int leds'),
-            hasForLoop: code.includes('for(') && code.includes('i++'),
-            hasDigitalWriteInLoop: code.includes('digitalWrite(leds[i]'),
-            hasDelay: code.includes('delay(200)')
+            hasArray: /leds\s*\[\s*\]\s*=\s*\{.*\}/.test(cleanCode) || /int\s+leds/.test(cleanCode),
+            hasForLoopSetup: /for\s*\(.*i.*<.*4.*\)/.test(cleanCode) && cleanCode.includes('pinMode(leds[i]'),
+            hasForLoopLoop: /for\s*\(.*i.*<.*4.*\)/.test(cleanCode) && cleanCode.includes('digitalWrite(leds[i]'),
+            hasDelay: /delay\s*\(\s*200\s*\)/.test(cleanCode),
+            hasDigitalWrite: /digitalWrite\s*\(/.test(cleanCode)
           };
           
-          return tests;
+          const essentialTests = ['hasArray', 'hasForLoopLoop', 'hasDigitalWrite'];
+          const essentialPassed = essentialTests.filter(test => tests[test]).length;
+          const score = Math.floor((essentialPassed / essentialTests.length) * 100);
+          
+          return {
+            ...tests,
+            isAcceptable: score >= 70,
+            score: score,
+            feedback: score >= 70 ? "Code fonctionnel!" : "Améliorez votre solution."
+          };
         }
       },
       3: {
@@ -1364,7 +1513,7 @@ int brightness = 0;
 int fadeAmount = 5;
 
 void setup() {
-  Serial.begin(9600);
+  // Pas besoin de pinMode pour PWM sur ESP32
 }
 
 void loop() {
@@ -1387,14 +1536,26 @@ void loop() {
           "Utilisez un petit delay pour contrôler la vitesse"
         ],
         test: function(code) {
+          const cleanCode = code.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+          
           const tests = {
-            hasAnalogWrite: code.includes('analogWrite('),
-            hasBrightnessChange: code.includes('brightness = brightness') || code.includes('brightness +='),
-            hasBoundaryCheck: code.includes('brightness <= 0') && code.includes('brightness >= 255'),
-            hasFadeAmountInversion: code.includes('fadeAmount = -fadeAmount')
+            hasAnalogWrite: /analogWrite\s*\(/.test(cleanCode),
+            hasBrightnessChange: /brightness\s*=\s*brightness/.test(cleanCode) || /brightness\s*[+\-]=/.test(cleanCode),
+            hasBoundaryCheck: /if\s*\(.*brightness.*<=.*0.*\|.*brightness.*>=.*255/.test(cleanCode),
+            hasFadeAmountInversion: /fadeAmount\s*=\s*-\s*fadeAmount/.test(cleanCode),
+            hasDelay: /delay\s*\(\s*30\s*\)/.test(cleanCode)
           };
           
-          return tests;
+          const essentialTests = ['hasAnalogWrite', 'hasBrightnessChange', 'hasBoundaryCheck'];
+          const essentialPassed = essentialTests.filter(test => tests[test]).length;
+          const score = Math.floor((essentialPassed / essentialTests.length) * 100);
+          
+          return {
+            ...tests,
+            isAcceptable: score >= 70,
+            score: score,
+            feedback: score >= 70 ? "Code PWM fonctionnel!" : "Vérifiez la logique PWM."
+          };
         }
       },
       4: {
@@ -1438,7 +1599,7 @@ int greenPin = 13;
 int bluePin = 14;
 
 void setup() {
-  // Les broches PWM n'ont pas besoin de pinMode
+  // Broches PWM - pas besoin de pinMode sur ESP32
 }
 
 void setColor(int red, int green, int blue) {
@@ -1466,19 +1627,744 @@ void loop() {
           "Rouge = (255, 0, 0), Vert = (0, 255, 0), Bleu = (0, 0, 255)"
         ],
         test: function(code) {
+          const cleanCode = code.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+          
           const tests = {
-            hasSetColorFunction: code.includes('void setColor('),
-            hasAnalogWriteRGB: code.includes('analogWrite(redPin') && code.includes('analogWrite(greenPin') && code.includes('analogWrite(bluePin'),
-            hasColorCalls: code.includes('setColor(255, 0, 0)') && code.includes('setColor(0, 255, 0)') && code.includes('setColor(0, 0, 255)'),
-            hasDelays: code.includes('delay(1000)')
+            hasSetColorFunction: /void\s+setColor\s*\(/.test(cleanCode),
+            hasAnalogWriteCalls: (cleanCode.match(/analogWrite\(/g) || []).length >= 3,
+            hasColorCalls: /setColor\s*\(\s*255\s*,\s*0\s*,\s*0\s*\)/.test(cleanCode) &&
+                         /setColor\s*\(\s*0\s*,\s*255\s*,\s*0\s*\)/.test(cleanCode) &&
+                         /setColor\s*\(\s*0\s*,\s*0\s*,\s*255\s*\)/.test(cleanCode),
+            hasDelays: (cleanCode.match(/delay\s*\(/g) || []).length >= 3
           };
           
-          return tests;
+          const essentialTests = ['hasSetColorFunction', 'hasAnalogWriteCalls', 'hasColorCalls'];
+          const essentialPassed = essentialTests.filter(test => tests[test]).length;
+          const score = Math.floor((essentialPassed / essentialTests.length) * 100);
+          
+          return {
+            ...tests,
+            isAcceptable: score >= 70,
+            score: score,
+            feedback: score >= 70 ? "RGB fonctionnel!" : "Vérifiez la fonction setColor()."
+          };
+        }
+      },
+      5: {
+        title: "Feu tricolore",
+        difficulty: "Intermédiaire",
+        description: "Simulez un feu de circulation avec séquence précise.",
+        objectives: [
+          "Coordonner plusieurs LEDs",
+          "Implémenter des temporisations complexes",
+          "Utiliser millis() pour un timing précis"
+        ],
+        template: `// Broches des LEDs
+int redPin = 25;
+int yellowPin = 26;
+int greenPin = 27;
+
+unsigned long previousMillis = 0;
+int currentState = 0; // 0: rouge, 1: rouge+jaune, 2: vert, 3: jaune
+
+void setup() {
+  // TODO: Configurer les broches en sortie
+}
+
+void loop() {
+  unsigned long currentMillis = millis();
+  
+  switch(currentState) {
+    case 0: // Rouge
+      // TODO: Allumer rouge, éteindre autres
+      if (currentMillis - previousMillis >= 3000) {
+        previousMillis = currentMillis;
+        currentState = 1;
+      }
+      break;
+      
+    case 1: // Rouge + Jaune
+      // TODO: Allumer rouge et jaune
+      if (currentMillis - previousMillis >= 1000) {
+        previousMillis = currentMillis;
+        currentState = 2;
+      }
+      break;
+      
+    case 2: // Vert
+      // TODO: Allumer vert, éteindre autres
+      if (currentMillis - previousMillis >= 3000) {
+        previousMillis = currentMillis;
+        currentState = 3;
+      }
+      break;
+      
+    case 3: // Jaune
+      // TODO: Allumer jaune
+      if (currentMillis - previousMillis >= 1000) {
+        previousMillis = currentMillis;
+        currentState = 0;
+      }
+      break;
+  }
+}`,
+        solution: `int redPin = 25;
+int yellowPin = 26;
+int greenPin = 27;
+
+unsigned long previousMillis = 0;
+int currentState = 0;
+
+void setup() {
+  pinMode(redPin, OUTPUT);
+  pinMode(yellowPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+}
+
+void loop() {
+  unsigned long currentMillis = millis();
+  
+  switch(currentState) {
+    case 0:
+      digitalWrite(redPin, HIGH);
+      digitalWrite(yellowPin, LOW);
+      digitalWrite(greenPin, LOW);
+      if (currentMillis - previousMillis >= 3000) {
+        previousMillis = currentMillis;
+        currentState = 1;
+      }
+      break;
+      
+    case 1:
+      digitalWrite(redPin, HIGH);
+      digitalWrite(yellowPin, HIGH);
+      digitalWrite(greenPin, LOW);
+      if (currentMillis - previousMillis >= 1000) {
+        previousMillis = currentMillis;
+        currentState = 2;
+      }
+      break;
+      
+    case 2:
+      digitalWrite(redPin, LOW);
+      digitalWrite(yellowPin, LOW);
+      digitalWrite(greenPin, HIGH);
+      if (currentMillis - previousMillis >= 3000) {
+        previousMillis = currentMillis;
+        currentState = 3;
+      }
+      break;
+      
+    case 3:
+      digitalWrite(redPin, LOW);
+      digitalWrite(yellowPin, HIGH);
+      digitalWrite(greenPin, LOW);
+      if (currentMillis - previousMillis >= 1000) {
+        previousMillis = currentMillis;
+        currentState = 0;
+      }
+      break;
+  }
+}`,
+        pins: [25, 26, 27],
+        leds: [
+          {id: 1, color: 'red', pin: 25},
+          {id: 2, color: 'yellow', pin: 26},
+          {id: 3, color: 'green', pin: 27}
+        ],
+        hints: [
+          "Utilisez millis() pour un timing précis sans bloquer",
+          "Maintenez un état (state) pour savoir quelle couleur afficher",
+          "Rouge: 3s → Rouge+Jaune: 1s → Vert: 3s → Jaune: 1s",
+          "Utilisez switch/case pour gérer les différents états"
+        ],
+        test: function(code) {
+          const cleanCode = code.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+          
+          const tests = {
+            hasThreePins: /25.*26.*27/.test(cleanCode),
+            hasPinModeAll: (cleanCode.match(/pinMode\(/g) || []).length >= 2,
+            hasMillis: /millis\s*\(/.test(cleanCode),
+            hasSwitchCase: /switch\s*\(/.test(cleanCode) && /case\s+0:/.test(cleanCode),
+            hasStateManagement: /currentState/.test(cleanCode),
+            hasDigitalWrites: (cleanCode.match(/digitalWrite\(/g) || []).length >= 6
+          };
+          
+          const essentialTests = ['hasThreePins', 'hasPinModeAll', 'hasSwitchCase', 'hasDigitalWrites'];
+          const essentialPassed = essentialTests.filter(test => tests[test]).length;
+          const score = Math.floor((essentialPassed / essentialTests.length) * 100);
+          
+          return {
+            ...tests,
+            isAcceptable: score >= 70,
+            score: score,
+            feedback: score >= 70 ? "Feu tricolore fonctionnel!" : "Vérifiez la logique des états."
+          };
+        }
+      },
+      6: {
+        title: "Animation Lumineuse Complexe",
+        difficulty: "Avancé",
+        description: "Créez une animation complexe avec 6 LEDs et effets variés.",
+        objectives: [
+          "Gérer plusieurs patterns d'animation",
+          "Utiliser des structures de contrôle avancées",
+          "Optimiser le code pour fluidité"
+        ],
+        template: `int leds[] = {2, 4, 5, 18, 19, 21};
+int numLeds = 6;
+int pattern = 0;
+unsigned long lastChange = 0;
+
+void setup() {
+  // TODO: Configurer toutes les broches
+}
+
+void loop() {
+  unsigned long currentTime = millis();
+  
+  // Changer de pattern toutes les 5 secondes
+  if (currentTime - lastChange >= 5000) {
+    lastChange = currentTime;
+    pattern = (pattern + 1) % 4;
+  }
+  
+  switch(pattern) {
+    case 0:
+      patternCascade();
+      break;
+    case 1:
+      patternBounce();
+      break;
+    case 2:
+      patternRandom();
+      break;
+    case 3:
+      patternAllBlink();
+      break;
+  }
+}
+
+void patternCascade() {
+  // TODO: Effet cascade (une LED après l'autre)
+}
+
+void patternBounce() {
+  // TODO: Effet rebond (aller-retour)
+}
+
+void patternRandom() {
+  // TODO: LEDs aléatoires
+}
+
+void patternAllBlink() {
+  // TODO: Toutes les LEDs clignotent ensemble
+}`,
+        solution: `int leds[] = {2, 4, 5, 18, 19, 21};
+int numLeds = 6;
+int pattern = 0;
+unsigned long lastChange = 0;
+unsigned long lastAnimation = 0;
+int animationState = 0;
+
+void setup() {
+  for(int i = 0; i < numLeds; i++) {
+    pinMode(leds[i], OUTPUT);
+  }
+}
+
+void loop() {
+  unsigned long currentTime = millis();
+  
+  if (currentTime - lastChange >= 5000) {
+    lastChange = currentTime;
+    pattern = (pattern + 1) % 4;
+    animationState = 0;
+  }
+  
+  if (currentTime - lastAnimation >= 200) {
+    lastAnimation = currentTime;
+    
+    switch(pattern) {
+      case 0:
+        patternCascade();
+        break;
+      case 1:
+        patternBounce();
+        break;
+      case 2:
+        patternRandom();
+        break;
+      case 3:
+        patternAllBlink();
+        break;
+    }
+  }
+}
+
+void patternCascade() {
+  for(int i = 0; i < numLeds; i++) {
+    digitalWrite(leds[i], i == animationState ? HIGH : LOW);
+  }
+  animationState = (animationState + 1) % numLeds;
+}
+
+void patternBounce() {
+  static int direction = 1;
+  
+  for(int i = 0; i < numLeds; i++) {
+    digitalWrite(leds[i], i == animationState ? HIGH : LOW);
+  }
+  
+  animationState += direction;
+  if (animationState == 0 || animationState == numLeds - 1) {
+    direction = -direction;
+  }
+}
+
+void patternRandom() {
+  for(int i = 0; i < numLeds; i++) {
+    digitalWrite(leds[i], random(2) == 1 ? HIGH : LOW);
+  }
+}
+
+void patternAllBlink() {
+  for(int i = 0; i < numLeds; i++) {
+    digitalWrite(leds[i], animationState % 2 == 0 ? HIGH : LOW);
+  }
+  animationState++;
+}`,
+        pins: [2, 4, 5, 18, 19, 21],
+        leds: [
+          {id: 1, color: 'red', pin: 2},
+          {id: 2, color: 'green', pin: 4},
+          {id: 3, color: 'blue', pin: 5},
+          {id: 4, color: 'yellow', pin: 18},
+          {id: 5, color: 'red', pin: 19},
+          {id: 6, color: 'green', pin: 21}
+        ],
+        hints: [
+          "Utilisez millis() pour les animations non-bloquantes",
+          "Créez plusieurs fonctions pour différents patterns",
+          "Gérez un état d'animation pour savoir où vous en êtes",
+          "Utilisez random() pour l'effet aléatoire"
+        ],
+        test: function(code) {
+          const cleanCode = code.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+          
+          const tests = {
+            hasMultiplePatterns: /patternCascade|patternBounce|patternRandom|patternAllBlink/.test(cleanCode),
+            hasMillis: /millis\s*\(/.test(cleanCode),
+            hasForLoop: /for\s*\(/.test(cleanCode),
+            hasRandom: /random\s*\(/.test(cleanCode),
+            hasMultipleFunctions: (cleanCode.match(/void\s+\w+\s*\(/g) || []).length >= 3,
+            hasPinModeLoop: /for.*pinMode.*leds\[i\]/.test(cleanCode)
+          };
+          
+          const essentialTests = ['hasMultiplePatterns', 'hasMillis', 'hasPinModeLoop'];
+          const essentialPassed = essentialTests.filter(test => tests[test]).length;
+          const score = Math.floor((essentialPassed / essentialTests.length) * 100);
+          
+          return {
+            ...tests,
+            isAcceptable: score >= 70,
+            score: score,
+            feedback: score >= 70 ? "Animation complexe réussie!" : "Implémentez plusieurs patterns."
+          };
+        }
+      },
+      7: {
+        title: "LED avec bouton",
+        difficulty: "Normal",
+        description: "Allumez une LED lorsque vous appuyez sur un bouton.",
+        objectives: [
+          "Lire l'état d'une entrée numérique",
+          "Utiliser digitalRead()",
+          "Récupérer l'état d'un bouton"
+        ],
+        template: `int ledPin = 13;
+int buttonPin = 12;
+
+void setup() {
+  // TODO: Configurer les broches
+}
+
+void loop() {
+  // TODO: Lire l'état du bouton
+  // int buttonState = digitalRead(buttonPin);
+  
+  // TODO: Allumer la LED si bouton pressé
+}`,
+        solution: `int ledPin = 13;
+int buttonPin = 12;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+}
+
+void loop() {
+  int buttonState = digitalRead(buttonPin);
+  
+  if (buttonState == LOW) {
+    digitalWrite(ledPin, HIGH);
+  } else {
+    digitalWrite(ledPin, LOW);
+  }
+}`,
+        pins: [12, 13],
+        leds: [{id: 1, color: 'red', pin: 13}],
+        hints: [
+          "Utilisez INPUT_PULLUP pour le bouton",
+          "digitalRead() retourne HIGH ou LOW",
+          "Un bouton avec PULLUP est LOW quand pressé",
+          "Utilisez if/else pour contrôler la LED"
+        ],
+        test: function(code) {
+          const cleanCode = code.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+          
+          const tests = {
+            hasDigitalRead: /digitalRead\s*\(/.test(cleanCode),
+            hasInputPullup: /INPUT_PULLUP/.test(cleanCode),
+            hasConditional: /if\s*\(/.test(cleanCode) && /==/.test(cleanCode),
+            hasBothPins: /12.*13/.test(cleanCode),
+            hasPinModeBoth: (cleanCode.match(/pinMode\(/g) || []).length >= 2
+          };
+          
+          const essentialTests = ['hasDigitalRead', 'hasInputPullup', 'hasConditional'];
+          const essentialPassed = essentialTests.filter(test => tests[test]).length;
+          const score = Math.floor((essentialPassed / essentialTests.length) * 100);
+          
+          return {
+            ...tests,
+            isAcceptable: score >= 70,
+            score: score,
+            feedback: score >= 70 ? "Bouton fonctionnel!" : "Vérifiez la lecture du bouton."
+          };
+        }
+      },
+      8: {
+        title: "Clignotement avec potentiomètre",
+        difficulty: "Normal",
+        description: "Contrôlez la vitesse de clignotement avec un potentiomètre.",
+        objectives: [
+          "Lire une entrée analogique",
+          "Utiliser analogRead()",
+          "Mapper des valeurs"
+        ],
+        template: `int ledPin = 13;
+int potPin = 34;
+int delayTime;
+
+void setup() {
+  // TODO: Configurer la broche LED
+}
+
+void loop() {
+  // TODO: Lire la valeur du potentiomètre (0-4095)
+  // int potValue = analogRead(potPin);
+  
+  // TODO: Convertir en temps de délai (ex: 50-1000ms)
+  // delayTime = map(potValue, 0, 4095, 50, 1000);
+  
+  // TODO: Faire clignoter avec cette vitesse
+}`,
+        solution: `int ledPin = 13;
+int potPin = 34;
+int delayTime;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  int potValue = analogRead(potPin);
+  
+  delayTime = map(potValue, 0, 4095, 50, 1000);
+  
+  digitalWrite(ledPin, HIGH);
+  delay(delayTime);
+  digitalWrite(ledPin, LOW);
+  delay(delayTime);
+}`,
+        pins: [13, 34],
+        leds: [{id: 1, color: 'red', pin: 13}],
+        hints: [
+          "analogRead() retourne 0-4095 sur ESP32",
+          "map() convertit une plage de valeurs",
+          "Plus le potentiomètre est haut, plus le délai est long",
+          "Utilisez la valeur mapée dans delay()"
+        ],
+        test: function(code) {
+          const cleanCode = code.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+          
+          const tests = {
+            hasAnalogRead: /analogRead\s*\(/.test(cleanCode),
+            hasMap: /map\s*\(/.test(cleanCode),
+            hasDigitalWrite: /digitalWrite\s*\(/.test(cleanCode),
+            hasDelayVariable: /delayTime/.test(cleanCode),
+            hasBlinkPattern: /digitalWrite.*HIGH.*delay.*digitalWrite.*LOW.*delay/.test(cleanCode.replace(/\s/g, ''))
+          };
+          
+          const essentialTests = ['hasAnalogRead', 'hasMap', 'hasBlinkPattern'];
+          const essentialPassed = essentialTests.filter(test => tests[test]).length;
+          const score = Math.floor((essentialPassed / essentialTests.length) * 100);
+          
+          return {
+            ...tests,
+            isAcceptable: score >= 70,
+            score: score,
+            feedback: score >= 70 ? "Potentiomètre fonctionnel!" : "Vérifiez la lecture analogique."
+          };
+        }
+      },
+      9: {
+        title: "Contrôle LED avec 2 boutons",
+        difficulty: "Normal",
+        description: "Augmentez et diminuez la luminosité avec deux boutons.",
+        objectives: [
+          "Gérer plusieurs entrées",
+          "Implémenter un compteur",
+          "Limiter les valeurs"
+        ],
+        template: `int ledPin = 13;
+int buttonUpPin = 12;
+int buttonDownPin = 14;
+int brightness = 128;
+
+void setup() {
+  // TODO: Configurer broches
+}
+
+void loop() {
+  // TODO: Lire bouton augmentation
+  // if (digitalRead(buttonUpPin) == LOW) {
+  //   brightness += 10;
+  // }
+  
+  // TODO: Lire bouton diminution
+  
+  // TODO: Limiter brightness entre 0 et 255
+  
+  // TODO: Appliquer la luminosité
+  // analogWrite(ledPin, brightness);
+  
+  delay(100);
+}`,
+        solution: `int ledPin = 13;
+int buttonUpPin = 12;
+int buttonDownPin = 14;
+int brightness = 128;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonUpPin, INPUT_PULLUP);
+  pinMode(buttonDownPin, INPUT_PULLUP);
+}
+
+void loop() {
+  if (digitalRead(buttonUpPin) == LOW) {
+    brightness += 10;
+  }
+  
+  if (digitalRead(buttonDownPin) == LOW) {
+    brightness -= 10;
+  }
+  
+  brightness = constrain(brightness, 0, 255);
+  
+  analogWrite(ledPin, brightness);
+  
+  delay(100);
+}`,
+        pins: [12, 13, 14],
+        leds: [{id: 1, color: 'red', pin: 13, pwm: true}],
+        hints: [
+          "Utilisez INPUT_PULLUP pour les boutons",
+          "constrain() limite les valeurs entre min et max",
+          "Augmentez/diminuez la valeur par pas de 10",
+          "Les boutons sont LOW quand pressés"
+        ],
+        test: function(code) {
+          const cleanCode = code.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+          
+          const tests = {
+            hasTwoButtons: /12.*14/.test(cleanCode),
+            hasConstrains: /constrain\s*\(/.test(cleanCode),
+            hasBrightnessControl: /brightness\s*[+\-]=\s*10/.test(cleanCode),
+            hasAnalogWrite: /analogWrite\s*\(/.test(cleanCode),
+            hasDigitalReadBoth: (cleanCode.match(/digitalRead\(/g) || []).length >= 2
+          };
+          
+          const essentialTests = ['hasTwoButtons', 'hasBrightnessControl', 'hasAnalogWrite'];
+          const essentialPassed = essentialTests.filter(test => tests[test]).length;
+          const score = Math.floor((essentialPassed / essentialTests.length) * 100);
+          
+          return {
+            ...tests,
+            isAcceptable: score >= 70,
+            score: score,
+            feedback: score >= 70 ? "Contrôle PWM avec boutons réussi!" : "Vérifiez la gestion des boutons."
+          };
+        }
+      },
+      10: {
+        title: "Séquence avec interruption",
+        difficulty: "Normal",
+        description: "Changez la séquence LED avec un bouton par interruption.",
+        objectives: [
+          "Utiliser les interruptions",
+          "Changer de mode dynamiquement",
+          "Gérer les variables volatiles"
+        ],
+        template: `int leds[] = {2, 4, 5, 18};
+int buttonPin = 12;
+volatile bool changePattern = false;
+int pattern = 0;
+
+void setup() {
+  // TODO: Configurer LEDs
+  
+  // TODO: Configurer bouton avec interruption
+  // attachInterrupt(digitalPinToInterrupt(buttonPin), changePatternISR, FALLING);
+}
+
+void loop() {
+  if (changePattern) {
+    pattern = (pattern + 1) % 3;
+    changePattern = false;
+  }
+  
+  switch(pattern) {
+    case 0:
+      pattern1();
+      break;
+    case 1:
+      pattern2();
+      break;
+    case 2:
+      pattern3();
+      break;
+  }
+}
+
+void pattern1() {
+  // TODO: Séquence simple
+}
+
+void pattern2() {
+  // TODO: Séquence inversée
+}
+
+void pattern3() {
+  // TODO: Clignotement groupé
+}
+
+void changePatternISR() {
+  changePattern = true;
+}`,
+        solution: `int leds[] = {2, 4, 5, 18};
+int buttonPin = 12;
+volatile bool changePattern = false;
+int pattern = 0;
+int currentLed = 0;
+
+void setup() {
+  for(int i = 0; i < 4; i++) {
+    pinMode(leds[i], OUTPUT);
+  }
+  pinMode(buttonPin, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(buttonPin), changePatternISR, FALLING);
+}
+
+void loop() {
+  if (changePattern) {
+    pattern = (pattern + 1) % 3;
+    changePattern = false;
+    currentLed = 0;
+    
+    for(int i = 0; i < 4; i++) {
+      digitalWrite(leds[i], LOW);
+    }
+  }
+  
+  switch(pattern) {
+    case 0:
+      pattern1();
+      break;
+    case 1:
+      pattern2();
+      break;
+    case 2:
+      pattern3();
+      break;
+  }
+  delay(200);
+}
+
+void pattern1() {
+  digitalWrite(leds[currentLed], HIGH);
+  delay(100);
+  digitalWrite(leds[currentLed], LOW);
+  currentLed = (currentLed + 1) % 4;
+}
+
+void pattern2() {
+  digitalWrite(leds[3 - currentLed], HIGH);
+  delay(100);
+  digitalWrite(leds[3 - currentLed], LOW);
+  currentLed = (currentLed + 1) % 4;
+}
+
+void pattern3() {
+  for(int i = 0; i < 4; i++) {
+    digitalWrite(leds[i], i % 2 == currentLed % 2 ? HIGH : LOW);
+  }
+  currentLed++;
+}
+
+void changePatternISR() {
+  changePattern = true;
+}`,
+        pins: [2, 4, 5, 12, 18],
+        leds: [
+          {id: 1, color: 'red', pin: 2},
+          {id: 2, color: 'green', pin: 4},
+          {id: 3, color: 'blue', pin: 5},
+          {id: 4, color: 'yellow', pin: 18}
+        ],
+        hints: [
+          "attachInterrupt() permet de réagir immédiatement",
+          "Les variables partagées avec l'ISR doivent être 'volatile'",
+          "FALLING déclenche quand le signal passe de HIGH à LOW",
+          "Réinitialisez les LEDs quand vous changez de pattern"
+        ],
+        test: function(code) {
+          const cleanCode = code.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+          
+          const tests = {
+            hasInterrupt: /attachInterrupt\s*\(/.test(cleanCode),
+            hasVolatile: /volatile/.test(cleanCode),
+            hasISR: /ISR/.test(cleanCode) || /changePatternISR/.test(cleanCode),
+            hasMultiplePatterns: /pattern1|pattern2|pattern3/.test(cleanCode),
+            hasSwitchPattern: /switch\s*\(.*pattern/.test(cleanCode)
+          };
+          
+          const essentialTests = ['hasInterrupt', 'hasVolatile', 'hasMultiplePatterns'];
+          const essentialPassed = essentialTests.filter(test => tests[test]).length;
+          const score = Math.floor((essentialPassed / essentialTests.length) * 100);
+          
+          return {
+            ...tests,
+            isAcceptable: score >= 70,
+            score: score,
+            feedback: score >= 70 ? "Interruptions fonctionnelles!" : "Vérifiez la configuration des interruptions."
+          };
         }
       }
     };
 
-    // Arduino Code Interpreter
+    // Arduino Code Interpreter - Version simplifiée et robuste
     class ArduinoInterpreter {
       constructor() {
         this.variables = {};
@@ -1494,6 +2380,37 @@ void loop() {
       
       // Parse and execute Arduino code
       execute(code) {
+        this.reset();
+        
+        try {
+          // Validation syntaxique d'abord
+          const syntaxErrors = this.validateSyntax(code);
+          if (syntaxErrors.length > 0) {
+            this.errorMessages.push(...syntaxErrors);
+            this.hasErrors = true;
+            this.serialOutput.push('❌ Erreurs de syntaxe détectées:');
+            syntaxErrors.forEach(error => {
+              this.serialOutput.push(`   • ${error}`);
+            });
+            return this.createResult();
+          }
+          
+          // Recherche simple des fonctions Arduino
+          this.findAndExecuteArduinoFunctions(code);
+          
+          // Si aucune fonction Arduino trouvée
+          if (this.serialOutput.filter(line => line.startsWith('✓')).length === 0) {
+            this.serialOutput.push("⚠️  Aucune fonction Arduino valide trouvée");
+          }
+          
+          return this.createResult();
+        } catch (error) {
+          this.serialOutput.push(`❌ Erreur: ${error.message}`);
+          this.hasErrors = true;
+          return this.createResult();
+        }
+      }
+      reset() {
         this.variables = {};
         this.pinModes = {};
         this.pinStates = {};
@@ -1502,530 +2419,134 @@ void loop() {
         this.loopCounter = 0;
         this.hasErrors = false;
         this.errorMessages = [];
-        
-        try {
-          // Validate basic syntax first
-          this.validateBasicSyntax(code);
-          if (this.hasErrors) {
-            throw new Error("Erreurs de syntaxe détectées");
-          }
-          
-          // Split into setup and loop
-          const parts = this.splitCode(code);
-          
-          if (parts.errors && parts.errors.length > 0) {
-            this.errorMessages.push(...parts.errors);
-            this.hasErrors = true;
-            throw new Error("Erreurs dans la structure du code");
-          }
-          
-          // Check for required functions
-          if (!parts.setup || parts.setup.length === 0) {
-            this.serialOutput.push("[ERREUR: Fonction setup() vide ou absente]");
-            this.hasErrors = true;
-          }
-          
-          if (!parts.loop || parts.loop.length === 0) {
-            this.serialOutput.push("[ERREUR: Fonction loop() vide ou absente]");
-            this.hasErrors = true;
-          }
-          
-          if (this.hasErrors) {
-            throw new Error("Fonctions setup() ou loop() manquantes");
-          }
-          
-          // Execute setup
-          this.serialOutput.push("=== EXECUTION SETUP ===");
-          this.executeBlock(parts.setup);
-          
-          // Execute loop (with safety limit)
-          this.serialOutput.push("=== EXECUTION LOOP ===");
-          let hasValidOperations = false;
-          
-          while (this.loopCounter < this.maxLoops && !this.hasErrors) {
-            this.loopCounter++;
-            this.executeBlock(parts.loop);
-            
-            // Check if we executed any valid operations
-            if (this.serialOutput.some(line => line.includes('✓'))) {
-              hasValidOperations = true;
-            }
-            
-            if (this.delayQueue > 0) {
-              this.serialOutput.push(`[DELAY ${this.delayQueue}ms]`);
-              this.delayQueue = 0;
-            }
-            
-            // Break early if no meaningful operations after 3 loops
-            if (this.loopCounter >= 3 && !hasValidOperations) {
-              this.serialOutput.push("[ATTENTION: Aucune opération valide exécutée]");
-              break;
-            }
-          }
-          
-          if (this.loopCounter >= this.maxLoops) {
-            this.serialOutput.push("[ATTENTION: Boucle arrêtée pour sécurité]");
-          }
-          
-          if (!hasValidOperations) {
-            this.serialOutput.push("[ERREUR: Aucune instruction Arduino valide exécutée]");
-            this.hasErrors = true;
-          }
-          
-          return { 
-            success: !this.hasErrors, 
-            output: this.serialOutput, 
-            pinStates: this.pinStates,
-            errors: this.errorMessages
-          };
-        } catch (error) {
-          return { 
-            success: false, 
-            error: error.message,
-            output: this.serialOutput,
-            pinStates: this.pinStates,
-            errors: this.errorMessages
-          };
+      }
+   // AJOUTER cette méthode à la classe ArduinoInterpreter :
+validateSyntax(code) {
+    const errors = [];
+    const lines = code.split('\n');
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      const lineNum = i + 1;
+      
+      if (!line || line.startsWith('//')) continue;
+      
+      // Vérifier digitalWrite incomplet
+      if (line.includes('digitalWrite(')) {
+        const match = line.match(/digitalWrite\s*\(\s*([^,)]+)\s*,?\s*([^)]*)?/);
+        if (!match || !match[2] || match[2].trim() === '') {
+          errors.push(`Ligne ${lineNum}: digitalWrite() incomplet. Exemple: digitalWrite(13, HIGH)`);
+        } else if (match[2] && !['HIGH', 'LOW'].includes(match[2].trim())) {
+          errors.push(`Ligne ${lineNum}: digitalWrite() doit utiliser HIGH ou LOW, pas "${match[2].trim()}"`);
         }
       }
       
-      // Validate basic syntax
-      validateBasicSyntax(code) {
+      // Vérifier analogWrite incomplet
+      if (line.includes('analogWrite(')) {
+        const match = line.match(/analogWrite\s*\(\s*([^,)]+)\s*,?\s*([^)]*)?/);
+        if (!match || !match[2] || match[2].trim() === '') {
+          errors.push(`Ligne ${lineNum}: analogWrite() incomplet. Exemple: analogWrite(13, 128)`);
+        }
+      }
+      
+      // Vérifier delay incomplet
+      if (line.includes('delay(') && !line.includes('delay(')) {
+        const match = line.match(/delay\s*\(\s*([^)]*)\s*\)/);
+        if (!match || !match[1] || match[1].trim() === '') {
+          errors.push(`Ligne ${lineNum}: delay() incomplet. Exemple: delay(1000)`);
+        }
+      }
+    }
+    
+    return errors;
+  }
+    
+    
+      findAndExecuteArduinoFunctions(code) {
         const lines = code.split('\n');
         
-        lines.forEach((line, index) => {
+        for (let line of lines) {
           const trimmed = line.trim();
+          if (!trimmed || trimmed.startsWith('//')) continue;
           
-          // Check for unmatched parentheses
-          const openParen = (trimmed.match(/\(/g) || []).length;
-          const closeParen = (trimmed.match(/\)/g) || []).length;
-          if (openParen !== closeParen && trimmed.includes('(')) {
-            this.errorMessages.push(`Ligne ${index + 1}: Parenthèses non équilibrées`);
-            this.hasErrors = true;
-          }
-          
-          // Check for common typos
-          if (trimmed.includes('Mode(') && !trimmed.includes('pinMode(')) {
-            this.errorMessages.push(`Ligne ${index + 1}: 'Mode(' → 'pinMode('`);
-            this.hasErrors = true;
-          }
-          
-          if (trimmed.match(/\(\s*\d+\s*\)/) && !trimmed.includes('delay(')) {
-            this.errorMessages.push(`Ligne ${index + 1}: '(1000)' → 'delay(1000)'`);
-            this.hasErrors = true;
-          }
-          
-          if (trimmed.includes('DigitalWrite(') && !trimmed.includes('digitalWrite(')) {
-            this.errorMessages.push(`Ligne ${index + 1}: 'DigitalWrite' → 'digitalWrite'`);
-            this.hasErrors = true;
-          }
-          
-          if (trimmed.includes('AnalogWrite(') && !trimmed.includes('analogWrite(')) {
-            this.errorMessages.push(`Ligne ${index + 1}: 'AnalogWrite' → 'analogWrite'`);
-            this.hasErrors = true;
-          }
-          
-          // Check for missing semicolons in statements
-          if (trimmed && 
-              !trimmed.startsWith('//') && 
-              !trimmed.startsWith('#') && 
-              !trimmed.startsWith('/*') &&
-              !trimmed.endsWith(';') &&
-              !trimmed.endsWith('{') &&
-              !trimmed.endsWith('}') &&
-              !trimmed.includes('void ') &&
-              !trimmed.includes('if ') &&
-              !trimmed.includes('for ') &&
-              !trimmed.includes('while ') &&
-              !trimmed.includes('else') &&
-              trimmed !== '' &&
-              !trimmed.match(/^[{}]$/)) {
-            
-            const validWithoutSemicolon = [
-              /^void\s+\w+\s*\(.*\)\s*$/,
-              /^if\s*\(.*\)\s*$/,
-              /^for\s*\(.*\)\s*$/,
-              /^while\s*\(.*\)\s*$/,
-              /^else\s*$/,
-              /^{$/,
-              /^}$/,
-              /^\/\/.*$/,
-              /^#include/,
-              /^#define/
-            ];
-            
-            const needsSemicolon = !validWithoutSemicolon.some(pattern => pattern.test(trimmed));
-            if (needsSemicolon) {
-              this.errorMessages.push(`Ligne ${index + 1}: Point-virgule manquant ';'`);
-              this.hasErrors = true;
-            }
-          }
-        });
-      }
-      
-      // Split code into setup and loop functions
-      splitCode(code) {
-        const result = { setup: [], loop: [], errors: [] };
-        let currentBlock = null;
-        const lines = code.split('\n');
-        let braceCount = 0;
-        let inFunction = false;
-        let functionStartLine = 0;
-        
-        // Check for required functions
-        if (!code.includes('void setup()') && !code.includes('void setup ()')) {
-          result.errors.push("Fonction setup() manquante");
-        }
-        
-        if (!code.includes('void loop()') && !code.includes('void loop ()')) {
-          result.errors.push("Fonction loop() manquante");
-        }
-        
-        for (let i = 0; i < lines.length; i++) {
-          const line = lines[i];
-          const trimmed = line.trim();
-          
-          // Detect function start
-          if (trimmed.startsWith('void setup()') || trimmed.startsWith('void setup ()')) {
-            if (currentBlock) {
-              result.errors.push(`Ligne ${i + 1}: Fonction imbriquée ou mal fermée`);
-            }
-            currentBlock = 'setup';
-            inFunction = true;
-            braceCount = 0;
-            functionStartLine = i + 1;
-            continue;
-          } else if (trimmed.startsWith('void loop()') || trimmed.startsWith('void loop ()')) {
-            if (currentBlock) {
-              result.errors.push(`Ligne ${i + 1}: Fonction imbriquée ou mal fermée`);
-            }
-            currentBlock = 'loop';
-            inFunction = true;
-            braceCount = 0;
-            functionStartLine = i + 1;
-            continue;
-          }
-          
-          // Count braces
-          if (inFunction) {
-            const openBraces = (trimmed.match(/{/g) || []).length;
-            const closeBraces = (trimmed.match(/}/g) || []).length;
-            
-            braceCount += openBraces;
-            braceCount -= closeBraces;
-            
-            // Function ended
-            if (braceCount <= 0 && closeBraces > 0) {
-              if (braceCount < 0) {
-                result.errors.push(`Ligne ${i + 1}: Trop d'accolades fermantes`);
-              }
-              currentBlock = null;
-              inFunction = false;
-              continue;
-            }
-          }
-          
-          // Add line to current block
-          if (currentBlock && trimmed && !trimmed.match(/^void\s+\w+\s*\(.*\)/)) {
-            const withoutComments = trimmed.replace(/\/\/.*$/, '').trim();
-            if (withoutComments && !withoutComments.match(/^[{}]$/)) {
-              result[currentBlock].push(withoutComments.replace(/;$/, ''));
-            }
-          }
-        }
-        
-        // Check for unclosed functions
-        if (inFunction && currentBlock) {
-          result.errors.push(`Fonction ${currentBlock}() non fermée (commencée ligne ${functionStartLine})`);
-        }
-        
-        return result;
-      }
-      
-      // Execute a block of code
-      executeBlock(statements) {
-        for (let i = 0; i < statements.length; i++) {
-          const result = this.executeStatement(statements[i]);
-          if (result === 'skipNext') {
-            i++;
-          }
-        }
-      }
-      
-      // Execute a single statement
-      executeStatement(statement) {
-        if (!statement || statement.startsWith('//')) return;
-        
-        try {
-          statement = statement.replace(/\s+/g, ' ').trim();
-          
-          // Check for obvious syntax errors
-          if (statement.includes('(') && !statement.includes(')')) {
-            throw new Error(`Parenthèse fermante manquante: ${statement}`);
-          }
-          
-          if (statement.includes(')') && !statement.includes('(')) {
-            throw new Error(`Parenthèse ouvrante manquante: ${statement}`);
-          }
-          
-          // pinMode(pin, mode)
-          if (statement.includes('Mode(') && !statement.includes('pinMode(')) {
-            throw new Error("'Mode(' → 'pinMode('");
-          }
-          
-          const pinModeMatch = statement.match(/pinMode\s*\(\s*(\d+)\s*,\s*(OUTPUT|INPUT|INPUT_PULLUP)\s*\)/i);
+          // pinMode
+          const pinModeMatch = trimmed.match(/pinMode\s*\(\s*(\d+)\s*,\s*(OUTPUT|INPUT|INPUT_PULLUP)\s*\)/i);
           if (pinModeMatch) {
             const pin = parseInt(pinModeMatch[1]);
             const mode = pinModeMatch[2];
             this.pinModes[pin] = mode;
             this.serialOutput.push(`✓ pinMode(${pin}, ${mode})`);
-            return;
           }
           
-          // digitalWrite(pin, value)
-          if (statement.includes('DigitalWrite(') && !statement.includes('digitalWrite(')) {
-            throw new Error("'DigitalWrite' → 'digitalWrite'");
-          }
-          
-          const digitalWriteMatch = statement.match(/digitalWrite\s*\(\s*(\d+)\s*,\s*(HIGH|LOW)\s*\)/i);
+          // digitalWrite
+          const digitalWriteMatch = trimmed.match(/digitalWrite\s*\(\s*(\d+)\s*,\s*(HIGH|LOW)\s*\)/i);
           if (digitalWriteMatch) {
             const pin = parseInt(digitalWriteMatch[1]);
             const value = digitalWriteMatch[2];
             this.pinStates[pin] = value === 'HIGH' ? 1 : 0;
             this.serialOutput.push(`✓ digitalWrite(${pin}, ${value})`);
-            return;
           }
           
-          // analogWrite(pin, value)
-          if (statement.includes('AnalogWrite(') && !statement.includes('analogWrite(')) {
-            throw new Error("'AnalogWrite' → 'analogWrite'");
-          }
-          
-          const analogWriteMatch = statement.match(/analogWrite\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)/i);
+          // analogWrite
+          const analogWriteMatch = trimmed.match(/analogWrite\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)/i);
           if (analogWriteMatch) {
             const pin = parseInt(analogWriteMatch[1]);
             let value = parseInt(analogWriteMatch[2]);
-            if (value < 0 || value > 255) {
-              throw new Error(`Valeur PWM invalide: ${value} (doit être entre 0 et 255)`);
-            }
             value = Math.min(255, Math.max(0, value));
             this.pinStates[pin] = value / 255;
             this.serialOutput.push(`✓ analogWrite(${pin}, ${value})`);
-            return;
           }
           
-          // delay(ms)
-          if (statement.match(/\(\s*\d+\s*\)/) && !statement.includes('delay(')) {
-            throw new Error("'(1000)' → 'delay(1000)'");
-          }
-          
-          const delayMatch = statement.match(/delay\s*\(\s*(\d+)\s*\)/i);
+          // delay
+          const delayMatch = trimmed.match(/delay\s*\(\s*(\d+)\s*\)/i);
           if (delayMatch) {
             this.delayQueue += parseInt(delayMatch[1]);
             this.serialOutput.push(`✓ delay(${delayMatch[1]})`);
-            return;
           }
           
-          // Serial.begin(baud)
-          const serialBeginMatch = statement.match(/Serial\.begin\s*\(\s*(\d+)\s*\)/i);
+          // digitalRead
+          const digitalReadMatch = trimmed.match(/digitalRead\s*\(\s*(\d+)\s*\)/i);
+          if (digitalReadMatch) {
+            const pin = parseInt(digitalReadMatch[1]);
+            this.serialOutput.push(`✓ digitalRead(${pin})`);
+          }
+          
+          // analogRead
+          const analogReadMatch = trimmed.match(/analogRead\s*\(\s*(\d+)\s*\)/i);
+          if (analogReadMatch) {
+            const pin = parseInt(analogReadMatch[1]);
+            this.serialOutput.push(`✓ analogRead(${pin})`);
+          }
+          
+          // map
+          const mapMatch = trimmed.match(/map\s*\(/i);
+          if (mapMatch) {
+            this.serialOutput.push(`✓ map()`);
+          }
+          
+          // millis
+          const millisMatch = trimmed.match(/millis\s*\(/i);
+          if (millisMatch) {
+            this.serialOutput.push(`✓ millis()`);
+          }
+          
+          // Serial.begin
+          const serialBeginMatch = trimmed.match(/Serial\.begin\s*\(\s*(\d+)\s*\)/i);
           if (serialBeginMatch) {
             this.serialOutput.push(`✓ Serial.begin(${serialBeginMatch[1]})`);
-            return;
           }
-          
-          // Serial.print(text) or Serial.println(text)
-          const serialPrintMatch = statement.match(/Serial\.(print|println)\s*\(\s*"([^"]*)"\s*\)/i);
-          if (serialPrintMatch) {
-            const text = serialPrintMatch[2];
-            this.serialOutput.push(`✓ "${text}"`);
-            return;
-          }
-          
-          // Variable declaration
-          const varDeclareMatch = statement.match(/(int|float|bool)\s+(\w+)\s*(?:=\s*([^;]+))?/i);
-          if (varDeclareMatch) {
-            const name = varDeclareMatch[2];
-            if (varDeclareMatch[3]) {
-              const value = this.evaluateExpression(varDeclareMatch[3]);
-              this.variables[name] = value;
-              this.serialOutput.push(`✓ ${name} = ${value}`);
-            } else {
-              this.variables[name] = 0;
-            }
-            return;
-          }
-          
-          // Variable assignment
-          const assignMatch = statement.match(/^(\w+)\s*([+\-*/]?=)\s*([^;]+)/i);
-          if (assignMatch && !statement.includes('(')) {
-            const name = assignMatch[1];
-            const operator = assignMatch[2];
-            const expr = assignMatch[3];
-            
-            if (this.variables[name] === undefined) {
-              this.variables[name] = 0;
-            }
-            
-            const currentValue = this.variables[name];
-            const newValue = this.evaluateExpression(expr);
-            
-            if (operator === '=') {
-              this.variables[name] = newValue;
-            } else if (operator === '+=') {
-              this.variables[name] = currentValue + newValue;
-            } else if (operator === '-=') {
-              this.variables[name] = currentValue - newValue;
-            } else if (operator === '*=') {
-              this.variables[name] = currentValue * newValue;
-            } else if (operator === '/=') {
-              this.variables[name] = newValue !== 0 ? currentValue / newValue : 0;
-            }
-            
-            this.serialOutput.push(`✓ ${name} ${operator} ${newValue} → ${this.variables[name]}`);
-            return;
-          }
-          
-          // Increment/decrement
-          const incDecMatch = statement.match(/^(\w+)\s*(\+\+|--)/);
-          if (incDecMatch) {
-            const name = incDecMatch[1];
-            const operator = incDecMatch[2];
-            
-            if (this.variables[name] === undefined) {
-              this.variables[name] = 0;
-            }
-            
-            if (operator === '++') {
-              this.variables[name]++;
-            } else {
-              this.variables[name]--;
-            }
-            
-            return;
-          }
-          
-          // If statement
-          const ifMatch = statement.match(/if\s*\(\s*(.+)\s*\)/i);
-          if (ifMatch) {
-            const condition = this.evaluateCondition(ifMatch[1]);
-            if (!condition) {
-              return 'skipNext';
-            }
-            return;
-          }
-          
-          // For loop initialization
-          const forInitMatch = statement.match(/for\s*\(\s*int\s+(\w+)\s*=\s*(\d+)/i);
-          if (forInitMatch) {
-            const varName = forInitMatch[1];
-            const initValue = parseInt(forInitMatch[2]);
-            this.variables[varName] = initValue;
-            return;
-          }
-          
-          // Function call
-          const funcCallMatch = statement.match(/^(\w+)\s*\(\s*([^)]*)\s*\)/);
-          if (funcCallMatch && !statement.includes('=')) {
-            const funcName = funcCallMatch[1];
-            const args = funcCallMatch[2];
-            
-            if (funcName === 'setColor') {
-              const rgb = args.split(',').map(arg => parseInt(arg.trim()));
-              if (rgb.length >= 3) {
-                this.serialOutput.push(`✓ setColor(${args})`);
-              }
-            }
-            return;
-          }
-          
-          // If we get here and statement is not empty, log warning
-          if (statement.length > 2 && !statement.match(/^[{}]$/)) {
-            if (statement.includes('(')) {
-              const funcName = statement.split('(')[0].trim();
-              this.serialOutput.push(`⚠ Instruction ignorée: ${statement} (fonction '${funcName}' inconnue)`);
-            }
-          }
-          
-        } catch (error) {
-          this.errorMessages.push(error.message);
-          this.hasErrors = true;
-          this.serialOutput.push(`❌ ${error.message}`);
         }
       }
       
-      // Evaluate a simple expression
-      evaluateExpression(expr) {
-        expr = expr.trim();
-        
-        // Number
-        if (/^\d+$/.test(expr)) {
-          return parseInt(expr);
-        }
-        
-        // Variable
-        if (this.variables[expr] !== undefined) {
-          return this.variables[expr];
-        }
-        
-        // Simple arithmetic
-        const arithmeticMatch = expr.match(/(\w+)\s*([+\-*/])\s*(\w+)/);
-        if (arithmeticMatch) {
-          const left = this.evaluateExpression(arithmeticMatch[1]);
-          const right = this.evaluateExpression(arithmeticMatch[3]);
-          const op = arithmeticMatch[2];
-          
-          switch(op) {
-            case '+': return left + right;
-            case '-': return left - right;
-            case '*': return left * right;
-            case '/': return right !== 0 ? Math.floor(left / right) : 0;
-          }
-        }
-        
-        // Negation
-        const negationMatch = expr.match(/-\s*(\w+)/);
-        if (negationMatch) {
-          const value = this.evaluateExpression(negationMatch[1]);
-          return -value;
-        }
-        
-        return 0;
+      createResult() {
+        return { 
+          success: !this.hasErrors, 
+          output: this.serialOutput, 
+          pinStates: this.pinStates,
+          errors: this.errorMessages
+        };
       }
       
-      // Evaluate a condition
-      evaluateCondition(cond) {
-        cond = cond.trim();
-        
-        // Simple comparisons
-        const comparisonMatch = cond.match(/(\w+)\s*(<=|>=|==|!=|<|>)\s*(\w+)/);
-        if (comparisonMatch) {
-          const left = this.evaluateExpression(comparisonMatch[1]);
-          const right = this.evaluateExpression(comparisonMatch[3]);
-          const op = comparisonMatch[2];
-          
-          switch(op) {
-            case '<': return left < right;
-            case '>': return left > right;
-            case '<=': return left <= right;
-            case '>=': return left >= right;
-            case '==': return left === right;
-            case '!=': return left !== right;
-          }
-        }
-        
-        // Single variable
-        if (this.variables[cond] !== undefined) {
-          return !!this.variables[cond];
-        }
-        
-        // Direct boolean
-        if (cond === 'true') return true;
-        if (cond === 'false') return false;
-        
-        return false;
-      }
-      
-      // Get pin state for visualization
       getPinState(pin) {
         return this.pinStates[pin] || 0;
       }
@@ -2037,18 +2558,78 @@ void loop() {
       loadExerciseStatus();
       initPinsConfiguration();
     });
-
-    // Load an exercise
+// REMPLACER la fonction isCodeModified() par :
+// Vérifier si le code est vraiment modifié (pas juste décommenté)
+function isCodeTrulyModified(code, template) {
+    // Enlever les commentaires et espaces
+    const cleanCode = removeCommentsAndWhitespace(code);
+    const cleanTemplate = removeCommentsAndWhitespace(template);
+    
+    // Si identique au template, pas modifié
+    if (cleanCode === cleanTemplate) {
+      return false;
+    }
+    
+    // Séparer en lignes significatives
+    const codeLines = code.split('\n').filter(line => {
+      const trimmed = line.trim();
+      return trimmed && 
+             !trimmed.startsWith('//') && 
+             !trimmed.startsWith('/*') &&
+             !trimmed.startsWith('* ') &&
+             trimmed !== '{' && 
+             trimmed !== '}';
+    });
+    
+    const templateLines = template.split('\n').filter(line => {
+      const trimmed = line.trim();
+      return trimmed && 
+             !trimmed.startsWith('//') && 
+             !trimmed.startsWith('/*') &&
+             !trimmed.startsWith('* ') &&
+             trimmed !== '{' && 
+             trimmed !== '}';
+    });
+    
+    // Si peu de lignes ajoutées, probablement incomplet
+    if (codeLines.length <= templateLines.length + 1) {
+      return false;
+    }
+    
+    // Compter les nouvelles instructions Arduino
+    const arduinoFunctions = ['pinMode', 'digitalWrite', 'analogWrite', 'delay', 
+                            'digitalRead', 'analogRead', 'millis', 'map', 'constrain'];
+    
+    let newFunctionCount = 0;
+    codeLines.forEach(line => {
+      arduinoFunctions.forEach(func => {
+        if (line.includes(func + '(')) {
+          newFunctionCount++;
+        }
+      });
+    });
+    
+    // Pour l'exercice 1, besoin d'au moins 4-5 fonctions Arduino
+    if (newFunctionCount < 4) {
+      return false;
+    }
+    
+    return true;
+  }
+   
+ 
+  // Load an exercise
     function loadExercise(num) {
       currentExercise = num;
       const exercise = exercises[num];
       
       if (!exercise) {
         console.error(`Exercise ${num} not found`);
+        alert(`Exercice ${num} non disponible`);
         return;
       }
       
-      // Show workspace first to ensure DOM elements exist
+      // Show workspace
       const workspace = document.getElementById('exercise-workspace');
       workspace.style.display = 'block';
       
@@ -2064,82 +2645,83 @@ void loop() {
       configureExerciseLEDs(exercise.leds);
       
       // Hide feedback
-      document.getElementById('feedback-area').classList.remove('show');
+      const feedbackArea = document.getElementById('feedback-area');
+      feedbackArea.classList.remove('show');
       
       // Scroll to workspace
       workspace.scrollIntoView({ behavior: 'smooth' });
       
       // Clear serial monitor
       clearSerialMonitor();
-      addSerialLine(`Chargement exercice #${num}: ${exercise.title}`);
-      addSerialLine('Prêt à coder!');
+      addSerialLine(`=== Exercice #${num}: ${exercise.title} ===`);
+      addSerialLine('Prêt à coder! Tapez "Exécuter" pour tester.');
     }
 
     // Load code template
     function loadCodeTemplate(template) {
-        const codeArea = document.getElementById('code-area');
-        if (!codeArea) {
-          console.error('code-area element not found');
-          return;
-        }
-        
-        codeLines = template.split('\n');
-        userCode[currentExercise] = template;
-        
-        codeArea.innerHTML = '';
-        codeLines.forEach((line, index) => {
-          const lineDiv = document.createElement('div');
-          lineDiv.className = 'code-line';
-          
-          // Create line number
-          const lineNumber = document.createElement('span');
-          lineNumber.className = 'line-number';
-          lineNumber.textContent = index + 1;
-          
-          // Create code display span
-          const codeSpan = document.createElement('span');
-          codeSpan.className = 'code-display';
-          codeSpan.innerHTML = highlightSyntax(line);
-          
-          // Create hidden input for editing
-          const codeInput = document.createElement('input');
-          codeInput.type = 'text';
-          codeInput.className = 'code-input';
-          codeInput.value = line;
-          codeInput.dataset.line = index;
-          codeInput.style.display = 'none';
-          
-          lineDiv.appendChild(lineNumber);
-          lineDiv.appendChild(codeSpan);
-          lineDiv.appendChild(codeInput);
-          codeArea.appendChild(lineDiv);
-          
-          // Add click event to code span for editing
-          codeSpan.addEventListener('click', function() {
-            this.style.display = 'none';
-            codeInput.style.display = 'inline';
-            codeInput.focus();
-            codeInput.setSelectionRange(codeInput.value.length, codeInput.value.length);
-          });
-          
-          // Add blur event to code input
-          codeInput.addEventListener('blur', function() {
-            updateCodeLine(parseInt(this.dataset.line), this.value);
-            codeSpan.innerHTML = highlightSyntax(this.value);
-            codeSpan.style.display = 'inline';
-            this.style.display = 'none';
-          });
-          
-          // Add enter key support
-          codeInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-              this.blur();
-            }
-          });
-        });
+      const codeArea = document.getElementById('code-area');
+      if (!codeArea) {
+        console.error('code-area element not found');
+        return;
       }
       
-    // Highlight syntax for a single line
+      codeLines = template.split('\n');
+      userCode[currentExercise] = template;
+      
+      codeArea.innerHTML = '';
+      codeLines.forEach((line, index) => {
+        const lineDiv = document.createElement('div');
+        lineDiv.className = 'code-line';
+        
+        // Line number
+        const lineNumber = document.createElement('span');
+        lineNumber.className = 'line-number';
+        lineNumber.textContent = index + 1;
+        
+        // Code display
+        const codeSpan = document.createElement('span');
+        codeSpan.className = 'code-display';
+        codeSpan.innerHTML = highlightSyntax(line);
+        
+        // Hidden input for editing
+        const codeInput = document.createElement('input');
+        codeInput.type = 'text';
+        codeInput.className = 'code-input';
+        codeInput.value = line;
+        codeInput.dataset.line = index;
+        codeInput.style.display = 'none';
+        
+        lineDiv.appendChild(lineNumber);
+        lineDiv.appendChild(codeSpan);
+        lineDiv.appendChild(codeInput);
+        codeArea.appendChild(lineDiv);
+        
+        // Edit on click
+        codeSpan.addEventListener('click', function() {
+          this.style.display = 'none';
+          codeInput.style.display = 'inline';
+          codeInput.focus();
+          codeInput.setSelectionRange(codeInput.value.length, codeInput.value.length);
+        });
+        
+        // Save on blur
+        codeInput.addEventListener('blur', function() {
+          updateCodeLine(parseInt(this.dataset.line), this.value);
+          codeSpan.innerHTML = highlightSyntax(this.value);
+          codeSpan.style.display = 'inline';
+          this.style.display = 'none';
+        });
+        
+        // Enter key support
+        codeInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            this.blur();
+          }
+        });
+      });
+    }
+    
+    // Highlight syntax
     function highlightSyntax(line) {
       let html = '';
       let inComment = false;
@@ -2150,16 +2732,16 @@ void loop() {
         const char = line[i];
         const nextChar = i + 1 < line.length ? line[i + 1] : '';
         
-        // Check for comment start
+        // Comment start
         if (!inString && char === '/' && nextChar === '/') {
           html += wrapCurrent(current);
           current = '//';
           inComment = true;
-          i++; // Skip next char
+          i++;
           continue;
         }
         
-        // Check for string start/end
+        // String start/end
         if (!inComment && char === '"') {
           html += wrapCurrent(current);
           current = '"';
@@ -2169,7 +2751,7 @@ void loop() {
         
         current += char;
         
-        // If at end of line, wrap what's left
+        // End of line
         if (i === line.length - 1) {
           html += wrapCurrent(current, inComment, inString);
         }
@@ -2181,29 +2763,26 @@ void loop() {
     function wrapCurrent(text, isComment = false, isString = false) {
       if (!text) return '';
       
-      // Escape HTML
       const escaped = text
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
       
       if (isComment) {
-        // Highlight numbers in comments
-        const withNumbers = escaped.replace(/\b(\d+)\b/g, 
-          '<span class="code-number">$1</span>');
-        return '<span class="code-comment">' + withNumbers + '</span>';
+        return '<span class="code-comment">' + escaped + '</span>';
       }
       
       if (isString) {
         return '<span class="code-string">' + escaped + '</span>';
       }
       
-      // Apply highlighting to non-comment, non-string text
       let result = escaped;
       
-      // Simple keyword matching
+      // Keywords
       const keywords = ['void', 'setup', 'loop', 'int', 'float', 'if', 'else', 
-                        'for', 'while', 'return', 'const', 'bool', 'true', 'false'];
+                        'for', 'while', 'return', 'const', 'bool', 'true', 'false',
+                        'switch', 'case', 'break', 'default', 'static', 'volatile',
+                        'unsigned', 'long', 'short', 'byte', 'char'];
       keywords.forEach(keyword => {
         const regex = new RegExp('\\b' + keyword + '\\b', 'g');
         result = result.replace(regex, '<span class="code-keyword">$&</span>');
@@ -2211,18 +2790,19 @@ void loop() {
       
       // Functions
       const functions = ['pinMode', 'digitalWrite', 'digitalRead', 'analogWrite', 
-                         'analogRead', 'delay', 'millis', 'Serial.begin', 
-                         'Serial.print', 'Serial.println'];
+                         'analogRead', 'delay', 'millis', 'micros', 'Serial.begin',
+                         'Serial.print', 'Serial.println', 'map', 'constrain',
+                         'random', 'attachInterrupt', 'digitalPinToInterrupt'];
       functions.forEach(func => {
         const regex = new RegExp('\\b' + func.replace('.', '\\.') + '\\b', 'g');
         result = result.replace(regex, '<span class="code-function">$&</span>');
       });
       
       // Values
-      result = result.replace(/\b(HIGH|LOW|OUTPUT|INPUT|INPUT_PULLUP)\b/g, 
+      result = result.replace(/\b(HIGH|LOW|OUTPUT|INPUT|INPUT_PULLUP|FALLING|RISING|CHANGE)\b/g, 
         '<span class="code-value">$&</span>');
       
-      // Numbers (but not inside HTML tags)
+      // Numbers
       result = result.replace(/\b(\d+)\b(?![\w-]*>)/g, 
         '<span class="code-number">$1</span>');
       
@@ -2240,14 +2820,10 @@ void loop() {
     // Configure pins on ESP32 board
     function configurePins(pinNumbers) {
       const pinsGrid = document.getElementById('pins-grid');
-      if (!pinsGrid) {
-        console.error('pins-grid element not found');
-        return;
-      }
+      if (!pinsGrid) return;
       
       pinsGrid.innerHTML = '';
       
-      // Create pins - ESP32 typically has pins 0-19 on each side
       for (let i = 0; i < 20; i++) {
         const pin = document.createElement('div');
         const pinNum = i;
@@ -2255,16 +2831,17 @@ void loop() {
         pin.className = 'pin';
         pin.id = `pin-${pinNum}`;
         
-        // Create label and status elements
+        // Label
         const label = document.createElement('div');
         label.className = 'pin-label';
         label.textContent = `GPIO${pinNum}`;
         
+        // Status
         const status = document.createElement('div');
         status.className = 'pin-status';
         status.id = `pin-status-${pinNum}`;
         
-        // Check if this pin is used in exercise
+        // Check if pin is used
         if (pinNumbers.includes(pinNum)) {
           pin.classList.add('output');
           pin.dataset.mode = 'output';
@@ -2278,7 +2855,7 @@ void loop() {
         pin.appendChild(label);
         pin.appendChild(status);
         
-        // Click to toggle mode
+        // Toggle mode on click
         pin.addEventListener('click', function() {
           togglePinMode(pinNum);
         });
@@ -2309,10 +2886,7 @@ void loop() {
     // Configure LEDs for exercise
     function configureExerciseLEDs(leds) {
       const ledsContainer = document.getElementById('leds-container');
-      if (!ledsContainer) {
-        console.error('leds-container element not found');
-        return;
-      }
+      if (!ledsContainer) return;
       
       ledsContainer.innerHTML = '';
       
@@ -2321,12 +2895,12 @@ void loop() {
         ledDiv.className = `led led-${led.color}`;
         ledDiv.id = `led-${led.id}`;
         
-        // Create connected pin label
+        // Pin label
         const pinLabel = document.createElement('div');
         pinLabel.className = 'led-connected-pin';
         pinLabel.textContent = `GPIO${led.pin}`;
         
-        // Create LED label
+        // LED label
         const ledLabel = document.createElement('div');
         ledLabel.className = 'led-label';
         ledLabel.textContent = `LED ${led.id}`;
@@ -2342,173 +2916,478 @@ void loop() {
         ledsContainer.appendChild(ledDiv);
       });
     }
-
+    function removeCommentsAndWhitespace(text) {
+        if (!text) return '';
+        
+        // Enlever les commentaires sur une ligne
+        let result = text.replace(/\/\/.*$/gm, '');
+        
+        // Enlever les commentaires multi-lignes
+        result = result.replace(/\/\*[\s\S]*?\*\//g, '');
+        
+        // Enlever tous les espaces, tabulations et retours à la ligne
+        result = result.replace(/\s/g, '');
+        
+        return result;
+      }
+      // Vérifier si le code est COMPLET pour l'exercice
+function isExerciseComplete(code, exerciseNum) {
+    const exercise = exercises[exerciseNum];
+    if (!exercise) return false;
+    
+    const cleanCode = removeCommentsAndWhitespace(code);
+    const cleanTemplate = removeCommentsAndWhitespace(exercise.template);
+    const cleanSolution = removeCommentsAndWhitespace(exercise.solution);
+    
+    // Si le code est identique au template (même décommenté), c'est incomplet
+    if (cleanCode === cleanTemplate) {
+      return false;
+    }
+    
+    // Si le code est identique à la solution, c'est complet
+    if (cleanCode === cleanSolution) {
+      return true;
+    }
+    
+    // Vérifications spécifiques par exercice
+    switch(exerciseNum) {
+      case 1: // LED Clignotante
+        // Doit avoir: pinMode, digitalWrite HIGH, digitalWrite LOW, delay deux fois
+        const hasPinMode1 = /pinMode\s*\(\s*13\s*,\s*OUTPUT\s*\)/.test(cleanCode);
+        const hasDigitalWriteHigh = /digitalWrite\s*\(\s*13\s*,\s*HIGH\s*\)/.test(cleanCode);
+        const hasDigitalWriteLow = /digitalWrite\s*\(\s*13\s*,\s*LOW\s*\)/.test(cleanCode);
+        const delayCount1 = (cleanCode.match(/delay\s*\(\s*\d+\s*\)/g) || []).length;
+        const hasBothDigitalWrites = hasDigitalWriteHigh && hasDigitalWriteLow;
+        
+        return hasPinMode1 && hasBothDigitalWrites && delayCount1 >= 2;
+        
+      case 2: // Séquence LED
+        const hasArray = /leds\s*\[\s*\]\s*=\s*\{.*\}/.test(cleanCode);
+        const hasPinModeLoop = /for.*i.*<.*4.*pinMode.*leds\[i\]/.test(cleanCode);
+        const hasDigitalWriteLoop = /for.*i.*<.*4.*digitalWrite.*leds\[i\]/.test(cleanCode);
+        const hasDelay2 = /delay\s*\(\s*200\s*\)/.test(cleanCode);
+        
+        return hasArray && hasPinModeLoop && hasDigitalWriteLoop && hasDelay2;
+        
+      case 3: // PWM
+        const hasAnalogWrite = /analogWrite\s*\(/.test(cleanCode);
+        const hasBrightnessChange = /brightness.*[+\-]=/.test(cleanCode);
+        const hasBoundaryCheck = /if\s*\(.*brightness.*[<>]=.*\d+.*\)/.test(cleanCode);
+        const hasFadeAmountInversion = /fadeAmount\s*=\s*-\s*fadeAmount/.test(cleanCode);
+        
+        return hasAnalogWrite && hasBrightnessChange && hasBoundaryCheck && hasFadeAmountInversion;
+        
+      case 4: // RGB
+        const hasSetColorFunction = /voidsetColor\(/.test(cleanCode);
+        const analogWriteCount = (cleanCode.match(/analogWrite\(/g) || []).length;
+        const hasColorCalls = /setColor\(255,0,0\)/.test(cleanCode) && 
+                             /setColor\(0,255,0\)/.test(cleanCode) && 
+                             /setColor\(0,0,255\)/.test(cleanCode);
+        const delayCount4 = (cleanCode.match(/delay\(1000\)/g) || []).length;
+        
+        return hasSetColorFunction && analogWriteCount >= 3 && hasColorCalls && delayCount4 >= 3;
+        
+      case 5: // Feu tricolore
+        const hasThreePins = /25.*26.*27/.test(cleanCode);
+        const pinModeCount5 = (cleanCode.match(/pinMode\(/g) || []).length;
+        const hasMillis = /millis\(/.test(cleanCode);
+        const hasSwitchCase = /switch\(currentState\)/.test(cleanCode);
+        const digitalWriteCount5 = (cleanCode.match(/digitalWrite\(/g) || []).length;
+        
+        return hasThreePins && pinModeCount5 >= 3 && hasMillis && hasSwitchCase && digitalWriteCount5 >= 6;
+        
+      case 6: // Animation complexe
+        const hasMultiplePatterns = /patternCascade|patternBounce|patternRandom|patternAllBlink/.test(cleanCode);
+        const hasMillis6 = /millis\(/.test(cleanCode);
+        const hasForLoop = /for\(/.test(cleanCode);
+        const hasPinModeLoop6 = /for.*i.*<.*numLeds.*pinMode.*leds\[i\]/.test(cleanCode);
+        
+        return hasMultiplePatterns && hasMillis6 && hasForLoop && hasPinModeLoop6;
+        
+      case 7: // LED avec bouton
+        const hasPinMode7 = /pinMode\(13,OUTPUT\)/.test(cleanCode);
+        const hasInputPullup = /INPUT_PULLUP/.test(cleanCode);
+        const hasDigitalRead = /digitalRead\(/.test(cleanCode);
+        const hasConditional = /if\(.*==.*LOW.*\)/.test(cleanCode);
+        
+        return hasPinMode7 && hasInputPullup && hasDigitalRead && hasConditional;
+        
+      case 8: // Potentiomètre
+        const hasPinMode8 = /pinMode\(13,OUTPUT\)/.test(cleanCode);
+        const hasAnalogRead = /analogRead\(/.test(cleanCode);
+        const hasMap = /map\(/.test(cleanCode);
+        const hasBlinkPattern = /digitalWrite\(13,HIGH\).*delay\(delayTime\).*digitalWrite\(13,LOW\).*delay\(delayTime\)/.test(cleanCode);
+        
+        return hasPinMode8 && hasAnalogRead && hasMap && hasBlinkPattern;
+        
+      case 9: // 2 boutons PWM
+        const hasPinMode9 = /pinMode\(13,OUTPUT\)/.test(cleanCode);
+        const hasAnalogWrite9 = /analogWrite\(/.test(cleanCode);
+        const hasTwoDigitalReads = (cleanCode.match(/digitalRead\(/g) || []).length >= 2;
+        const hasConstrains = /constrain\(/.test(cleanCode);
+        const hasBrightnessAdjust = /brightness.*[+\-]=.*10/.test(cleanCode);
+        
+        return hasPinMode9 && hasAnalogWrite9 && hasTwoDigitalReads && hasConstrains && hasBrightnessAdjust;
+        
+      case 10: // Interruption
+        const hasInterrupt = /attachInterrupt\(/.test(cleanCode);
+        const hasVolatile = /volatile/.test(cleanCode);
+        const hasMultiplePatterns10 = /pattern1|pattern2|pattern3/.test(cleanCode);
+        const hasSwitchPattern = /switch\(pattern\)/.test(cleanCode);
+        
+        return hasInterrupt && hasVolatile && hasMultiplePatterns10 && hasSwitchPattern;
+        
+      default:
+        // Pour les exercices non spécifiés, vérifier les bases
+        const hasPinMode = /pinMode\(/.test(cleanCode);
+        const hasDigitalWrite = /digitalWrite\(/.test(cleanCode);
+        const hasDelay = /delay\(/.test(cleanCode);
+        
+        return hasPinMode && hasDigitalWrite && hasDelay;
+    }
+  }
+  
     // Run user code with interpreter
-    function runCode() {
-      clearSerialMonitor();
-      addSerialLine('⚡ Analyse du code Arduino...');
-      addSerialLine('--------------------------------');
-      
-      // Stop any running simulation
-      if (simulationInterval) {
-        clearInterval(simulationInterval);
-        simulationInterval = null;
+// REMPLACER la fonction runCode() par cette version plus stricte :
+// REMPLACER complètement la fonction runCode() par :
+function runCode() {
+    clearSerialMonitor();
+    addSerialLine('⚡ Analyse approfondie du code...');
+    addSerialLine('═══════════════════════════════');
+    
+    // Arrêter toute animation en cours
+    if (simulationInterval) {
+      clearInterval(simulationInterval);
+      simulationInterval = null;
+    }
+    
+    // Récupérer le code et l'exercice
+    const code = userCode[currentExercise] || '';
+    const exercise = exercises[currentExercise];
+    
+    if (!exercise) {
+      addSerialLine('❌ ERREUR: Exercice non chargé');
+      return;
+    }
+    
+    // === VÉRIFICATION 1: Code non vide ===
+    if (code.trim().length < 30) {
+      addSerialLine('❌ Code trop court ou vide');
+      addSerialLine('➡️  Écrivez du code Arduino valide dans les fonctions setup() et loop()');
+      addSerialLine('➡️  Exemple minimal: pinMode(13, OUTPUT); digitalWrite(13, HIGH); delay(1000);');
+      return;
+    }
+    
+    // === VÉRIFICATION 2: Structure Arduino de base ===
+    const hasSetup = code.includes('void setup()');
+    const hasLoop = code.includes('void loop()');
+    
+    if (!hasSetup || !hasLoop) {
+      addSerialLine('❌ Structure Arduino incorrecte');
+      if (!hasSetup) addSerialLine('   • Fonction setup() manquante');
+      if (!hasLoop) addSerialLine('   • Fonction loop() manquante');
+      addSerialLine('➡️  Tous les programmes Arduino doivent avoir setup() et loop()');
+      return;
+    }
+    
+    // === VÉRIFICATION 3: Syntaxe correcte ===
+    const syntaxErrors = validateArduinoSyntaxStrict(code);
+    if (syntaxErrors.length > 0) {
+      addSerialLine('❌ ERREURS DE SYNTAXE:');
+      syntaxErrors.slice(0, 5).forEach(error => { // Limiter à 5 erreurs
+        addSerialLine(`   • ${error}`);
+      });
+      if (syntaxErrors.length > 5) {
+        addSerialLine(`   • ... et ${syntaxErrors.length - 5} autres erreurs`);
       }
+      addSerialLine('═══════════════════════════════');
+      addSerialLine('➡️  Corrigez la syntaxe avant de ré-exécuter');
+      return;
+    }
+    
+    // === VÉRIFICATION 4: Code vraiment modifié ===
+    if (!isCodeTrulyModified(code, exercise.template)) {
+      addSerialLine('❌ Code insuffisant ou identique au template');
+      addSerialLine('➡️  Vous devez ÉCRIRE votre propre code Arduino');
+      addSerialLine('➡️  Ne vous contentez pas de décommenter ou de copier-coller');
       
-      // Get user code
-      const code = userCode[currentExercise] || '';
-      const exercise = exercises[currentExercise];
+      // Afficher ce qui est attendu spécifiquement
+      addSerialLine('═══════════════════════════════');
+      addSerialLine('POUR CET EXERCICE (' + exercise.title + '):');
+      addSerialLine('Vous devez implémenter:');
       
-      if (!exercise) {
-        addSerialLine('❌ ERREUR: Exercice non chargé');
-        return;
-      }
-      
-      // Check if code is empty or too short
-      const codeWithoutComments = code.replace(/\/\/.*/g, '').replace(/\s/g, '');
-      if (codeWithoutComments.length < 30) {
-        addSerialLine('⚠️  Code trop court ou vide. Écrivez du code Arduino valide!');
-        addSerialLine('➡️  Exemple: pinMode(13, OUTPUT); digitalWrite(13, HIGH); delay(1000);');
-        return;
-      }
-      
-      // Check if it's just the template
-      const isModified = isCodeModified(code, exercise.template);
-      if (!isModified) {
-        addSerialLine('⚠️  Code non modifié. Modifiez le template avant d\'exécuter.');
-        addSerialLine('➡️  Remplacez les commentaires TODO par votre code Arduino.');
-        return;
-      }
-      
-      // Manual validation for common errors
-      const validationErrors = validateArduinoCode(code);
-      if (validationErrors.length > 0) {
-        addSerialLine('❌ ERREURS DE SYNTAXE DÉTECTÉES:');
-        validationErrors.forEach(error => {
-          addSerialLine(`   • ${error}`);
+      const essentialFuncs = checkEssentialFunctions(code, currentExercise);
+      if (!essentialFuncs.passed) {
+        essentialFuncs.missing.forEach(func => {
+          addSerialLine(`   • ${func.replace('(', '()')}`);
         });
-        addSerialLine('--------------------------------');
-        addSerialLine('➡️  Corrigez les erreurs avant de ré-exécuter.');
-        return;
       }
       
-      // Create and execute interpreter
-      const interpreter = new ArduinoInterpreter();
-      const result = interpreter.execute(code);
+      if (currentExercise === 1) {
+        addSerialLine('   • pinMode(13, OUTPUT) dans setup()');
+        addSerialLine('   • digitalWrite(13, HIGH) pour allumer');
+        addSerialLine('   • delay(1000) pour attendre 1 seconde');
+        addSerialLine('   • digitalWrite(13, LOW) pour éteindre');
+        addSerialLine('   • delay(1000) à nouveau');
+      }
       
-      // Display results
-      if (result.success && !interpreter.hasErrors) {
-        addSerialLine('✅ Code exécuté avec succès');
-        addSerialLine('--------------------------------');
-        
-        // Display execution output
-        result.output.forEach(line => {
-          if (line.startsWith('===') || line.startsWith('[') || line.startsWith('✓') || line.startsWith('❌') || line.startsWith('⚠')) {
-            addSerialLine(line);
-          } else if (line.trim()) {
-            addSerialLine(`→ ${line}`);
-          }
+      return;
+    }
+    
+    // === VÉRIFICATION 5: Code complet pour l'exercice ===
+    const isComplete = isExerciseComplete(code, currentExercise);
+    if (!isComplete) {
+      addSerialLine('⚠️  Code incomplet pour cet exercice');
+      addSerialLine('═══════════════════════════════');
+      addSerialLine('Votre code fonctionne mais il manque des éléments:');
+      
+      // Analyse détaillée de ce qui manque
+      const cleanCode = removeCommentsAndWhitespace(code);
+      
+      if (currentExercise === 1) {
+        if (!/pinMode\s*\(\s*13\s*,\s*OUTPUT\s*\)/.test(cleanCode)) {
+          addSerialLine('   • Configuration de la broche 13 en OUTPUT');
+        }
+        if (!/digitalWrite\s*\(\s*13\s*,\s*HIGH\s*\)/.test(cleanCode)) {
+          addSerialLine('   • Allumage de la LED (digitalWrite(13, HIGH))');
+        }
+        if (!/digitalWrite\s*\(\s*13\s*,\s*LOW\s*\)/.test(cleanCode)) {
+          addSerialLine('   • Extinction de la LED (digitalWrite(13, LOW))');
+        }
+        const delayCount = (cleanCode.match(/delay\s*\(\s*\d+\s*\)/g) || []).length;
+        if (delayCount < 2) {
+          addSerialLine('   • Deux appels à delay() pour les temporisations');
+        }
+      }
+      
+      addSerialLine('═══════════════════════════════');
+      addSerialLine('➡️  Complétez votre code avant de vérifier la solution');
+      addSerialLine('➡️  Utilisez "Vérifier la solution" pour une correction détaillée');
+      
+      // Malgré tout, exécuter le code partiel pour l'apprentissage
+      addSerialLine('═══════════════════════════════');
+      addSerialLine('Exécution partielle du code (mode apprentissage)...');
+    } else {
+      addSerialLine('✅ Code complet détecté!');
+      addSerialLine('═══════════════════════════════');
+      addSerialLine('Exécution du code...');
+    }
+    
+    // === EXÉCUTION DU CODE ===
+    const interpreter = new ArduinoInterpreter();
+    const result = interpreter.execute(code);
+    
+    // === AFFICHAGE DES RÉSULTATS ===
+    if (result.success) {
+      addSerialLine('✅ Exécution terminée');
+      addSerialLine('═══════════════════════════════');
+      
+      // Filtrer les messages significatifs
+      const meaningfulOutput = result.output.filter(line => 
+        line.startsWith('✓') || line.startsWith('❌') || line.startsWith('⚠')
+      );
+      
+      if (meaningfulOutput.length > 0) {
+        addSerialLine('Instructions exécutées:');
+        meaningfulOutput.forEach(line => {
+          addSerialLine(`  ${line}`);
         });
-        
-        // Update visualization based on interpreter results
-        updateVisualizationFromInterpreter(interpreter, exercise);
-        
-        // Start animation only if code has valid operations
-        const hasValidOperations = result.output.some(line => 
+      } else {
+        addSerialLine('⚠️  Aucune instruction Arduino significative exécutée');
+      }
+      
+      // Mise à jour de la visualisation
+      updateVisualizationFromInterpreter(interpreter, exercise);
+      
+      // Démarrer l'animation seulement si le code est complet
+      if (isComplete) {
+        const hasMeaningfulOps = result.output.some(line => 
           line.startsWith('✓ pinMode') || 
           line.startsWith('✓ digitalWrite') || 
-          line.startsWith('✓ analogWrite') ||
-          line.startsWith('✓ delay')
+          line.startsWith('✓ analogWrite')
         );
         
-        if (hasValidOperations) {
+        if (hasMeaningfulOps) {
           startSmartAnimation(exercise, interpreter);
-        } else {
-          addSerialLine('[INFO] Pas d\'animation: aucune opération Arduino valide exécutée');
         }
       } else {
-        addSerialLine('❌ EXÉCUTION ÉCHOUÉE:');
-        addSerialLine('--------------------------------');
-        
-        // Show all errors
-        if (result.error) {
-          addSerialLine(`Erreur principale: ${result.error}`);
-        }
-        
-        if (result.errors && result.errors.length > 0) {
-          result.errors.forEach(error => {
-            addSerialLine(`• ${error}`);
-          });
-        }
-        
-        // Show execution output
-        result.output.forEach(line => {
-          if (line.trim()) {
-            addSerialLine(line);
-          }
-        });
-        
-        addSerialLine('--------------------------------');
-        addSerialLine('➡️  Corrigez les erreurs et ré-exécutez.');
+        addSerialLine('[MODE APPRENTISSAGE] Animation désactivée - code incomplet');
       }
+    } else {
+      addSerialLine('❌ Exécution échouée');
+      addSerialLine('═══════════════════════════════');
+      
+      if (result.error) {
+        addSerialLine(`Erreur: ${result.error}`);
+      }
+      
+      // Afficher les erreurs spécifiques
+      const errorMessages = result.output.filter(line => line.includes('❌'));
+      if (errorMessages.length > 0) {
+        addSerialLine('Problèmes détectés:');
+        errorMessages.forEach(msg => {
+          addSerialLine(`  ${msg}`);
+        });
+      }
+      
+      addSerialLine('═══════════════════════════════');
+      addSerialLine('➡️  Corrigez les erreurs et ré-exécutez');
     }
-
-    // Helper function to check if code has been modified from template
-    function isCodeModified(code, template) {
-      // Remove comments and whitespace for comparison
-      const cleanCode = code.replace(/\/\/.*/g, '').replace(/\s/g, '');
-      const cleanTemplate = template.replace(/\/\/.*/g, '').replace(/\s/g, '');
-      
-      // Check if code contains actual Arduino functions
-      const hasArduinoFunctions = 
-        code.includes('pinMode') || 
-        code.includes('digitalWrite') || 
-        code.includes('analogWrite') || 
-        code.includes('delay(');
-      
-      return cleanCode !== cleanTemplate && hasArduinoFunctions;
+    
+    // === CONSEIL FINAL ===
+    if (!isComplete && currentExercise === 1) {
+      addSerialLine('═══════════════════════════════');
+      addSerialLine('💡 CONSEIL pour l\'exercice 1:');
+      addSerialLine('Un programme LED clignotante complet doit avoir:');
+      addSerialLine('1. pinMode(13, OUTPUT) dans setup()');
+      addSerialLine('2. digitalWrite(13, HIGH) pour allumer');
+      addSerialLine('3. delay(1000) pour attendre');
+      addSerialLine('4. digitalWrite(13, LOW) pour éteindre');
+      addSerialLine('5. delay(1000) pour attendre à nouveau');
+      addSerialLine('6. Tout cela dans une boucle loop() infinie');
     }
-
-    // Manual validation for common errors
-    function validateArduinoCode(code) {
-      const errors = [];
-      const lines = code.split('\n');
+  } 
+  // AJOUTER ces nouvelles fonctions de validation :
+  
+  // Validation syntaxique STRICTE
+ // Vérifier la syntaxe Arduino de manière stricte
+function validateArduinoSyntaxStrict(code) {
+    const errors = [];
+    const lines = code.split('\n');
+    
+    lines.forEach((line, index) => {
+      const trimmed = line.trim();
+      const lineNum = index + 1;
       
-      lines.forEach((line, index) => {
-        const trimmed = line.trim();
-        const lineNum = index + 1;
-        
-        // Detect common errors
-        if (trimmed.includes('Mode(') && !trimmed.includes('pinMode(')) {
-          errors.push(`Ligne ${lineNum}: 'Mode(' → 'pinMode('`);
+      // Ignorer les lignes vides et commentaires
+      if (!trimmed || trimmed.startsWith('//')) return;
+      
+      // Vérifier les parenthèses fermantes manquantes
+      if (trimmed.includes('(') && !trimmed.includes(')') && !trimmed.includes('//')) {
+        // Sauf pour les déclarations de fonctions
+        if (!trimmed.match(/void\s+\w+\s*\([^)]*$/)) {
+          errors.push(`Ligne ${lineNum}: Parenthèse fermante manquante dans "${trimmed.substring(0, 30)}..."`);
         }
+      }
+      
+      // Vérifier les points-virgules manquants
+      if (trimmed && 
+          !trimmed.endsWith(';') && 
+          !trimmed.endsWith('{') && 
+          !trimmed.endsWith('}') &&
+          !trimmed.match(/^[{}]$/) &&
+          !trimmed.startsWith('#') &&
+          !trimmed.match(/^\/\//) &&
+          !trimmed.match(/^void\s+\w+\s*\(.*\)\s*$/) &&
+          !trimmed.match(/^for\s*\(.*\)\s*$/) &&
+          !trimmed.match(/^if\s*\(.*\)\s*$/) &&
+          !trimmed.match(/^while\s*\(.*\)\s*$/) &&
+          !trimmed.match(/^else\s*$/) &&
+          !trimmed.match(/^switch\s*\(.*\)\s*$/)) {
         
-        if (trimmed.match(/\(\s*\d+\s*\)/) && !trimmed.includes('delay(')) {
-          errors.push(`Ligne ${lineNum}: '(1000)' → 'delay(1000)'`);
+        // Vérifier si c'est une instruction qui devrait se terminer par ;
+        const hasAssignment = trimmed.match(/^\w+\s*[=+\-*/]/);
+        const hasFunctionCall = trimmed.match(/\w+\s*\(/);
+        
+        if (hasAssignment || hasFunctionCall) {
+          errors.push(`Ligne ${lineNum}: Point-virgule manquant (;)`);
         }
-        
-        if (trimmed.includes('DigitalWrite(') && !trimmed.includes('digitalWrite(')) {
-          errors.push(`Ligne ${lineNum}: 'DigitalWrite' → 'digitalWrite'`);
-        }
-        
-        if (trimmed.includes('AnalogWrite(') && !trimmed.includes('analogWrite(')) {
-          errors.push(`Ligne ${lineNum}: 'AnalogWrite' → 'analogWrite'`);
-        }
-        
-        // Check parentheses
-        const openParen = (trimmed.match(/\(/g) || []).length;
-        const closeParen = (trimmed.match(/\)/g) || []).length;
-        if (openParen !== closeParen && trimmed.includes('(')) {
-          errors.push(`Ligne ${lineNum}: Parenthèses non équilibrées`);
+      }
+      
+      // Vérifier les fonctions Arduino mal écrites
+      const commonTypos = [
+        { wrong: 'Mode(', correct: 'pinMode(' },
+        { wrong: 'DigitalWrite(', correct: 'digitalWrite(' },
+        { wrong: 'AnalogWrite(', correct: 'analogWrite(' },
+        { wrong: 'DigitalRead(', correct: 'digitalRead(' },
+        { wrong: 'AnalogRead(', correct: 'analogRead(' }
+      ];
+      
+      commonTypos.forEach(typo => {
+        if (trimmed.includes(typo.wrong) && !trimmed.includes(typo.correct)) {
+          errors.push(`Ligne ${lineNum}: "${typo.wrong}" → "${typo.correct}"`);
         }
       });
       
-      return errors;
+      // Vérifier les paramètres incomplets
+      if (trimmed.includes('digitalWrite(')) {
+        const match = trimmed.match(/digitalWrite\s*\(\s*([^,)]+)\s*,?\s*([^)]*)?\s*\)?/);
+        if (match) {
+          const secondParam = match[2] ? match[2].trim() : '';
+          if (!secondParam || (secondParam !== 'HIGH' && secondParam !== 'LOW')) {
+            errors.push(`Ligne ${lineNum}: digitalWrite() nécessite 2 paramètres: pin et HIGH/LOW`);
+          }
+        }
+      }
+      
+      if (trimmed.includes('analogWrite(')) {
+        const match = trimmed.match(/analogWrite\s*\(\s*([^,)]+)\s*,?\s*([^)]*)?\s*\)?/);
+        if (match) {
+          const secondParam = match[2] ? match[2].trim() : '';
+          if (!secondParam) {
+            errors.push(`Ligne ${lineNum}: analogWrite() nécessite 2 paramètres: pin et valeur (0-255)`);
+          } else {
+            const value = parseInt(secondParam);
+            if (isNaN(value) || value < 0 || value > 255) {
+              errors.push(`Ligne ${lineNum}: analogWrite() valeur doit être entre 0 et 255`);
+            }
+          }
+        }
+      }
+      
+      if (trimmed.includes('delay(')) {
+        const match = trimmed.match(/delay\s*\(\s*([^)]+)\s*\)/);
+        if (!match) {
+          errors.push(`Ligne ${lineNum}: delay() mal formé. Exemple: delay(1000)`);
+        }
+      }
+    });
+    
+    // Vérifier la structure de base
+    const hasSetup = code.includes('void setup()');
+    const hasLoop = code.includes('void loop()');
+    
+    if (!hasSetup) {
+      errors.push("Fonction setup() manquante");
     }
-
+    if (!hasLoop) {
+      errors.push("Fonction loop() manquante");
+    }
+    
+    return errors;
+  }
+  // Vérifier les fonctions essentielles par exercice
+  function checkEssentialFunctions(code, exerciseNum) {
+    const requirements = {
+      1: ['pinMode(', 'digitalWrite(', 'delay('],
+      2: ['pinMode(', 'digitalWrite(', 'delay(', 'for('],
+      3: ['analogWrite(', 'delay('],
+      4: ['analogWrite(', 'delay(', 'setColor('],
+      5: ['pinMode(', 'digitalWrite(', 'millis(', 'switch('],
+      6: ['pinMode(', 'digitalWrite(', 'millis(', 'for('],
+      7: ['pinMode(', 'digitalWrite(', 'digitalRead(', 'INPUT_PULLUP'],
+      8: ['pinMode(', 'digitalWrite(', 'analogRead(', 'map(', 'delay('],
+      9: ['pinMode(', 'analogWrite(', 'digitalRead(', 'constrain(', 'delay('],
+      10: ['pinMode(', 'digitalWrite(', 'attachInterrupt(', 'volatile', 'delay(']
+    };
+    
+    const exerciseReqs = requirements[exerciseNum] || [];
+    const missing = [];
+    
+    exerciseReqs.forEach(req => {
+      if (!code.includes(req)) {
+        missing.push(req);
+      }
+    });
+    
+    return {
+      passed: missing.length === 0,
+      missing: missing
+    };
+  }
     // Update visualization based on interpreter results
     function updateVisualizationFromInterpreter(interpreter, exercise) {
-      // First reset everything
+      // Reset everything
       document.querySelectorAll('.led').forEach(led => {
         led.classList.remove('on');
         led.style.opacity = '1';
@@ -2519,7 +3398,7 @@ void loop() {
         pin.classList.remove('active');
       });
       
-      // Update based on pin states from interpreter
+      // Update based on pin states
       exercise.leds.forEach(led => {
         const ledElement = document.getElementById(`led-${led.id}`);
         const pinElement = document.getElementById(`pin-${led.pin}`);
@@ -2531,13 +3410,13 @@ void loop() {
             ledElement.classList.add('on');
             pinElement.classList.add('active');
             
-            // Handle PWM brightness
+            // PWM brightness
             if (led.pwm) {
               const brightness = Math.min(1, Math.max(0, pinState));
               ledElement.style.opacity = brightness;
             }
             
-            // Handle RGB
+            // RGB
             if (led.rgb) {
               const r = Math.round((interpreter.getPinState(led.pin) || 0) * 255);
               const g = Math.round((interpreter.getPinState(led.pin + 1) || 0) * 255);
@@ -2550,28 +3429,6 @@ void loop() {
       });
     }
 
-    // Check if we should animate
-    function shouldAnimate(exercise, interpreter) {
-      const code = userCode[currentExercise] || '';
-      
-      // Very strict checks
-      const hasValidLoop = /void\s+loop\s*\(\s*\)\s*\{/.test(code);
-      const hasValidSetup = /void\s+setup\s*\(\s*\)\s*\{/.test(code);
-      const hasPinMode = code.includes('pinMode(');
-      const hasDigitalWrite = code.includes('digitalWrite(') || code.includes('analogWrite(');
-      const hasDelay = code.includes('delay(');
-      
-      // Check interpreter results
-      const hasNoErrors = !interpreter.hasErrors && interpreter.errorMessages.length === 0;
-      const executedValidOperations = interpreter.serialOutput.some(line => 
-        line.startsWith('✓ pinMode') || 
-        line.startsWith('✓ digitalWrite') || 
-        line.startsWith('✓ analogWrite')
-      );
-      
-      return hasValidLoop && hasValidSetup && hasPinMode && hasDigitalWrite && hasDelay && hasNoErrors && executedValidOperations;
-    }
-
     // Smart animation based on interpreter results
     function startSmartAnimation(exercise, interpreter) {
       if (simulationInterval) {
@@ -2582,36 +3439,45 @@ void loop() {
       const code = userCode[currentExercise] || '';
       
       // Don't animate if there are errors
-      if (interpreter.hasErrors || interpreter.errorMessages.length > 0) {
+      if (interpreter.hasErrors) {
         addSerialLine('[ANIM] Animation désactivée: erreurs dans le code');
         return;
       }
       
-      // Don't animate if no valid operations
-      const hasValidOps = interpreter.serialOutput.some(line => 
-        line.startsWith('✓ pinMode') || 
-        line.startsWith('✓ digitalWrite') || 
-        line.startsWith('✓ analogWrite')
-      );
-      
-      if (!hasValidOps) {
-        addSerialLine('[ANIM] Animation désactivée: aucune opération valide');
-        return;
-      }
-      
-      // Analyze code to determine animation type
-      if (code.includes('digitalWrite(13, HIGH)') && code.includes('digitalWrite(13, LOW)') && code.includes('delay(1000)')) {
-        startBlinkAnimation(exercise);
-      } else if (code.includes('leds[') && code.includes('digitalWrite(leds[i]')) {
-        startChaseAnimation(exercise);
-      } else if (code.includes('analogWrite(') && code.includes('brightness')) {
-        startPWMAnimation(exercise);
-      } else if (code.includes('setColor(')) {
-        startRGBAnimation(exercise);
-      } else if (shouldAnimate(exercise, interpreter)) {
-        startGenericAnimation(exercise, interpreter);
-      } else {
-        addSerialLine('[ANIM] Pas d\'animation spécifique détectée');
+      // Choose animation based on exercise
+      switch(currentExercise) {
+        case 1: // LED clignotante
+          startBlinkAnimation(exercise);
+          break;
+        case 2: // Séquence LED
+          startChaseAnimation(exercise);
+          break;
+        case 3: // PWM
+          startPWMAnimation(exercise);
+          break;
+        case 4: // RGB
+          startRGBAnimation(exercise);
+          break;
+        case 5: // Feu tricolore
+          startTrafficLightAnimation(exercise);
+          break;
+        case 6: // Animation complexe
+          startComplexAnimation(exercise);
+          break;
+        case 7: // LED avec bouton
+          startButtonLEDAnimation(exercise);
+          break;
+        case 8: // Potentiomètre
+          startPotentiometerAnimation(exercise);
+          break;
+        case 9: // 2 boutons PWM
+          startTwoButtonsAnimation(exercise);
+          break;
+        case 10: // Interruption
+          startInterruptAnimation(exercise);
+          break;
+        default:
+          startGenericAnimation(exercise);
       }
     }
 
@@ -2669,7 +3535,7 @@ void loop() {
         
         // Move to next LED
         currentIndex = (currentIndex + 1) % exercise.leds.length;
-      }, 500);
+      }, 300);
       
       addSerialLine('[ANIM] Animation séquence LED démarrée');
     }
@@ -2759,34 +3625,282 @@ void loop() {
       addSerialLine('[ANIM] Animation RGB démarrée');
     }
 
-    // Generic animation - ONLY if code is valid
-    function startGenericAnimation(exercise, interpreter) {
-      // Don't animate if interpreter has errors
-      if (interpreter.hasErrors || interpreter.errorMessages.length > 0) {
-        addSerialLine('[ANIM] Pas d\'animation générique: erreurs détectées');
-        return;
-      }
+    // Animation for Exercise 5
+    function startTrafficLightAnimation(exercise) {
+      const states = [
+        {red: true, yellow: false, green: false, duration: 3000, name: "Rouge"},
+        {red: true, yellow: true, green: false, duration: 1000, name: "Rouge+Jaune"},
+        {red: false, yellow: false, green: true, duration: 3000, name: "Vert"},
+        {red: false, yellow: true, green: false, duration: 1000, name: "Jaune"}
+      ];
       
-      // Check if we have valid operations
-      const hasValidOps = interpreter.serialOutput.some(line => 
-        line.startsWith('✓ pinMode') || 
-        line.startsWith('✓ digitalWrite') || 
-        line.startsWith('✓ analogWrite')
-      );
+      let currentState = 0;
+      let lastChange = Date.now();
       
-      if (!hasValidOps) {
-        addSerialLine('[ANIM] Pas d\'animation: aucune opération valide');
-        return;
-      }
+      simulationInterval = setInterval(() => {
+        const now = Date.now();
+        
+        if (now - lastChange >= states[currentState].duration) {
+          lastChange = now;
+          currentState = (currentState + 1) % states.length;
+          addSerialLine(`[ANIM] ${states[currentState].name}`);
+        }
+        
+        // Update LEDs
+        exercise.leds.forEach(led => {
+          const ledEl = document.getElementById(`led-${led.id}`);
+          const pinEl = document.getElementById(`pin-${led.pin}`);
+          
+          if (ledEl && pinEl) {
+            const state = states[currentState];
+            let shouldBeOn = false;
+            
+            if (led.color === 'red') shouldBeOn = state.red;
+            else if (led.color === 'yellow') shouldBeOn = state.yellow;
+            else if (led.color === 'green') shouldBeOn = state.green;
+            
+            if (shouldBeOn) {
+              ledEl.classList.add('on');
+              pinEl.classList.add('active');
+            } else {
+              ledEl.classList.remove('on');
+              pinEl.classList.remove('active');
+            }
+          }
+        });
+      }, 100);
       
-      // Simple toggle animation
+      addSerialLine('[ANIM] Animation feu tricolore démarrée');
+    }
+
+    // Animation for Exercise 6
+    function startComplexAnimation(exercise) {
+      let pattern = 0;
+      let animationState = 0;
+      let lastPatternChange = Date.now();
+      
+      simulationInterval = setInterval(() => {
+        const now = Date.now();
+        
+        // Change pattern every 5 seconds
+        if (now - lastPatternChange >= 5000) {
+          pattern = (pattern + 1) % 4;
+          lastPatternChange = now;
+          animationState = 0;
+          addSerialLine(`[ANIM] Pattern ${pattern + 1}`);
+        }
+        
+        // Update based on pattern
+        exercise.leds.forEach((led, idx) => {
+          const ledEl = document.getElementById(`led-${led.id}`);
+          const pinEl = document.getElementById(`pin-${led.pin}`);
+          
+          if (ledEl && pinEl) {
+            let shouldBeOn = false;
+            
+            switch(pattern) {
+              case 0: // Cascade
+                shouldBeOn = (idx === animationState % 6);
+                break;
+              case 1: // Bounce
+                const bounceIndex = animationState % 10;
+                const actualIndex = bounceIndex < 5 ? bounceIndex : 9 - bounceIndex;
+                shouldBeOn = (idx === actualIndex);
+                break;
+              case 2: // Random
+                shouldBeOn = Math.random() > 0.5;
+                break;
+              case 3: // All blink
+                shouldBeOn = animationState % 2 === 0;
+                break;
+            }
+            
+            if (shouldBeOn) {
+              ledEl.classList.add('on');
+              pinEl.classList.add('active');
+            } else {
+              ledEl.classList.remove('on');
+              pinEl.classList.remove('active');
+            }
+          }
+        });
+        
+        animationState++;
+      }, 200);
+      
+      addSerialLine('[ANIM] Animation complexe démarrée');
+    }
+
+    // Animation for Exercise 7
+    function startButtonLEDAnimation(exercise) {
+      let buttonPressed = false;
+      
+      simulationInterval = setInterval(() => {
+        // Simulate random button presses
+        if (Math.random() > 0.8) {
+          buttonPressed = !buttonPressed;
+          addSerialLine(`[ANIM] Bouton ${buttonPressed ? 'pressé' : 'relâché'}`);
+        }
+        
+        const led = document.getElementById('led-1');
+        const pin = document.getElementById('pin-13');
+        const buttonPin = document.getElementById('pin-12');
+        
+        if (led && pin && buttonPin) {
+          if (buttonPressed) {
+            led.classList.add('on');
+            pin.classList.add('active');
+            buttonPin.classList.add('active');
+          } else {
+            led.classList.remove('on');
+            pin.classList.remove('active');
+            buttonPin.classList.remove('active');
+          }
+        }
+      }, 500);
+      
+      addSerialLine('[ANIM] Animation bouton+LED démarrée');
+    }
+
+    // Animation for Exercise 8
+    function startPotentiometerAnimation(exercise) {
+      let potValue = 512;
+      let direction = 1;
+      
+      simulationInterval = setInterval(() => {
+        potValue += direction * 100;
+        
+        if (potValue >= 4095) {
+          potValue = 4095;
+          direction = -1;
+        } else if (potValue <= 0) {
+          potValue = 0;
+          direction = 1;
+        }
+        
+        const delayTime = Math.floor(mapValue(potValue, 0, 4095, 50, 1000));
+        const led = document.getElementById('led-1');
+        const pin = document.getElementById('pin-13');
+        
+        if (led && pin) {
+          // Toggle LED based on delay
+          let state = led.classList.contains('on');
+          if (!state) {
+            led.classList.add('on');
+            pin.classList.add('active');
+          } else {
+            setTimeout(() => {
+              led.classList.remove('on');
+              pin.classList.remove('active');
+            }, delayTime / 2);
+          }
+        }
+      }, 300);
+      
+      addSerialLine('[ANIM] Animation potentiomètre démarrée');
+    }
+    
+    function mapValue(value, inMin, inMax, outMin, outMax) {
+      return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    }
+
+    // Animation for Exercise 9
+    function startTwoButtonsAnimation(exercise) {
+      let brightness = 128;
+      let direction = 1;
+      
+      simulationInterval = setInterval(() => {
+        // Simulate button presses
+        if (Math.random() > 0.7) {
+          brightness += direction * 10;
+          
+          if (brightness >= 255) {
+            brightness = 255;
+            direction = -1;
+            addSerialLine('[ANIM] Bouton - pressé');
+          } else if (brightness <= 0) {
+            brightness = 0;
+            direction = 1;
+            addSerialLine('[ANIM] Bouton + pressé');
+          }
+        }
+        
+        const led = document.getElementById('led-1');
+        const pin = document.getElementById('pin-13');
+        
+        if (led && pin) {
+          const opacity = brightness / 255;
+          led.style.opacity = opacity;
+          
+          if (brightness > 0) {
+            led.classList.add('on');
+            pin.classList.add('active');
+          } else {
+            led.classList.remove('on');
+            pin.classList.remove('active');
+          }
+        }
+      }, 500);
+      
+      addSerialLine('[ANIM] Animation 2 boutons PWM démarrée');
+    }
+
+    // Animation for Exercise 10
+    function startInterruptAnimation(exercise) {
+      let pattern = 0;
+      let ledIndex = 0;
+      let lastChange = Date.now();
+      
+      simulationInterval = setInterval(() => {
+        const now = Date.now();
+        
+        // Simulate interrupt every 5 seconds
+        if (now - lastChange > 5000) {
+          pattern = (pattern + 1) % 3;
+          lastChange = now;
+          ledIndex = 0;
+          addSerialLine(`[ANIM] Interruption! Pattern ${pattern + 1}`);
+        }
+        
+        // Update LEDs based on pattern
+        exercise.leds.forEach((led, idx) => {
+          const ledEl = document.getElementById(`led-${led.id}`);
+          const pinEl = document.getElementById(`pin-${led.pin}`);
+          
+          if (ledEl && pinEl) {
+            let shouldBeOn = false;
+            
+            switch(pattern) {
+              case 0: // Simple sequence
+                shouldBeOn = (idx === ledIndex);
+                break;
+              case 1: // Reverse sequence
+                shouldBeOn = (idx === (3 - ledIndex));
+                break;
+              case 2: // Group blink
+                shouldBeOn = (idx % 2 === ledIndex % 2);
+                break;
+            }
+            
+            if (shouldBeOn) {
+              ledEl.classList.add('on');
+              pinEl.classList.add('active');
+            } else {
+              ledEl.classList.remove('on');
+              pinEl.classList.remove('active');
+            }
+          }
+        });
+        
+        ledIndex = (ledIndex + 1) % 4;
+      }, 300);
+      
+      addSerialLine('[ANIM] Animation interruption démarrée');
+    }
+
+    // Generic animation
+    function startGenericAnimation(exercise) {
       let state = false;
-      const hasLEDs = exercise.leds && exercise.leds.length > 0;
-      
-      if (!hasLEDs) {
-        addSerialLine('[ANIM] Pas d\'animation: aucune LED configurée');
-        return;
-      }
       
       simulationInterval = setInterval(() => {
         state = !state;
@@ -2807,7 +3921,7 @@ void loop() {
         });
         
         addSerialLine(state ? '[ANIM] LEDs allumées' : '[ANIM] LEDs éteintes');
-      }, 800);
+      }, 1000);
       
       addSerialLine('[ANIM] Animation générique démarrée');
     }
@@ -2839,118 +3953,68 @@ void loop() {
     // Check solution
     function checkSolution() {
       const exercise = exercises[currentExercise];
-      if (!exercise) {
-        console.error('No exercise loaded');
-        return;
-      }
+      if (!exercise) return;
       
       const code = userCode[currentExercise] || '';
       
-      // Run interpreter to check if code works
-      const interpreter = new ArduinoInterpreter();
-      const executionResult = interpreter.execute(code);
+      // Run tests
+      const testResult = exercise.test ? exercise.test(code) : {};
       
-      // Run exercise-specific tests
-      const tests = exercise.test ? exercise.test(code) : {};
-      
-      // Calculate score
-      const totalTests = Object.keys(tests).length;
-      const passedTests = Object.values(tests).filter(Boolean).length;
-      const syntaxValid = executionResult.success && !interpreter.hasErrors;
-      const hasMeaningfulOutput = executionResult.output.some(line => line.includes('✓'));
-      
-      const score = Math.round((passedTests / totalTests) * 100);
-      const finalScore = syntaxValid ? Math.min(100, score + 20) : score;
-      
+      // Setup feedback
       const feedbackArea = document.getElementById('feedback-area');
       const feedbackContent = document.getElementById('feedback-content');
       const feedbackTitle = document.getElementById('feedback-title');
       const feedbackIcon = document.getElementById('feedback-icon');
       
-      if (!feedbackArea || !feedbackContent || !feedbackTitle || !feedbackIcon) {
-        console.error('Feedback elements not found');
-        return;
-      }
+      if (!feedbackArea || !feedbackContent) return;
       
-      // Generate feedback
-      let feedback = `<p>Score: <strong>${finalScore}%</strong></p>`;
-      feedback += `<p>Syntaxe: ${syntaxValid ? '✅ Valide' : '❌ Erreur'}</p>`;
-      feedback += `<p>Tests: ${passedTests}/${totalTests} réussis</p>`;
+      let feedback = '';
+      let isSuccess = false;
+      let score = 0;
       
-      if (finalScore >= 80) {
-        feedback += `<p class="feedback-success">✓ Bon travail! Votre solution fonctionne.</p>`;
-        feedbackTitle.textContent = "Félicitations!";
-        feedbackIcon.className = "fas fa-check-circle";
-        feedbackIcon.style.color = "var(--success-color)";
+      if (testResult.isAcceptable !== undefined) {
+        score = testResult.score || 0;
+        isSuccess = testResult.isAcceptable;
         
-        // Mark exercise as completed
-        if (!completedExercises.includes(currentExercise)) {
-          completedExercises.push(currentExercise);
-          localStorage.setItem('completedExercises', JSON.stringify(completedExercises));
-          updateProgress();
-          showAchievement(`Exercice #${currentExercise} réussi!`);
+        feedback += `<p>Score: <strong>${score}%</strong></p>`;
+        feedback += `<p>${testResult.feedback || ''}</p>`;
+        
+        if (isSuccess) {
+          feedbackTitle.textContent = "Félicitations!";
+          feedbackIcon.className = "fas fa-check-circle";
+          feedbackIcon.style.color = "var(--success-color)";
+          feedback = `<p class="feedback-success">${feedback}</p>`;
+          
+          // Mark as completed
+          if (!completedExercises.includes(currentExercise)) {
+            completedExercises.push(currentExercise);
+            localStorage.setItem('completedExercises', JSON.stringify(completedExercises));
+            updateProgress();
+            showAchievement(`Exercice #${currentExercise} réussi!`);
+          }
+        } else {
+          feedbackTitle.textContent = "À améliorer";
+          feedbackIcon.className = "fas fa-exclamation-triangle";
+          feedbackIcon.style.color = "var(--warning-color)";
+          feedback = `<p class="feedback-error">${feedback}</p>`;
+          
+          // Add hints
+          feedback += `<div class="feedback-hint">
+            <h5><i class="fas fa-lightbulb"></i> Conseils:</h5>
+            <ul>`;
+          
+          exercise.hints.slice(0, 3).forEach(hint => {
+            feedback += `<li>${hint}</li>`;
+          });
+          
+          feedback += `</ul></div>`;
         }
       } else {
-        feedback += `<p class="feedback-error">✗ Il reste des améliorations à faire.</p>`;
-        feedbackTitle.textContent = "À améliorer";
-        feedbackIcon.className = "fas fa-exclamation-triangle";
-        feedbackIcon.style.color = "var(--warning-color)";
-        
-        // Add specific feedback
-        feedback += `<div class="feedback-hint">
-          <h5><i class="fas fa-lightbulb"></i> Points à vérifier:</h5>
-          <ul>`;
-        
-        if (!syntaxValid) {
-          if (executionResult.errors && executionResult.errors.length > 0) {
-            executionResult.errors.forEach(error => {
-              feedback += `<li>${error}</li>`;
-            });
-          } else if (executionResult.error) {
-            feedback += `<li>${executionResult.error}</li>`;
-          }
-        }
-        
-        Object.entries(tests).forEach(([test, passed]) => {
-          if (!passed) {
-            let hint = "";
-            switch(test) {
-              case 'hasPinMode':
-                hint = "Utilisez pinMode() pour configurer la broche en sortie";
-                break;
-              case 'hasDigitalWriteHigh':
-                hint = "Utilisez digitalWrite(pin, HIGH) pour allumer";
-                break;
-              case 'hasDigitalWriteLow':
-                hint = "Utilisez digitalWrite(pin, LOW) pour éteindre";
-                break;
-              case 'hasDelay':
-                hint = "Utilisez delay() pour les temporisations";
-                break;
-              case 'hasLoopStructure':
-                hint = "Assurez-vous d'avoir une fonction loop()";
-                break;
-              case 'hasArray':
-                hint = "Utilisez un tableau pour les broches";
-                break;
-              case 'hasForLoop':
-                hint = "Utilisez une boucle for";
-                break;
-              case 'hasDigitalWriteInLoop':
-                hint = "digitalWrite() doit être dans la boucle";
-                break;
-              case 'hasAnalogWrite':
-                hint = "Pour PWM, utilisez analogWrite()";
-                break;
-              case 'hasSetColorFunction':
-                hint = "Créez une fonction setColor()";
-                break;
-            }
-            if (hint) feedback += `<li>${hint}</li>`;
-          }
-        });
-        
-        feedback += `</ul></div>`;
+        // Fallback for exercises without test function
+        feedback = `<p>Vérification non disponible pour cet exercice.</p>`;
+        feedbackTitle.textContent = "Information";
+        feedbackIcon.className = "fas fa-info-circle";
+        feedbackIcon.style.color = "var(--primary-color)";
       }
       
       feedbackContent.innerHTML = feedback;
@@ -2967,7 +4031,7 @@ void loop() {
       const feedbackTitle = document.getElementById('feedback-title');
       const feedbackIcon = document.getElementById('feedback-icon');
       
-      if (!feedbackArea || !feedbackContent || !feedbackTitle || !feedbackIcon) return;
+      if (!feedbackArea || !feedbackContent) return;
       
       feedbackTitle.textContent = "Indices";
       feedbackIcon.className = "fas fa-lightbulb";
@@ -2999,14 +4063,14 @@ void loop() {
       const feedbackTitle = document.getElementById('feedback-title');
       const feedbackIcon = document.getElementById('feedback-icon');
       
-      if (!feedbackArea || !feedbackContent || !feedbackTitle || !feedbackIcon) return;
+      if (!feedbackArea || !feedbackContent) return;
       
       feedbackTitle.textContent = "Solution";
       feedbackIcon.className = "fas fa-eye";
       feedbackIcon.style.color = "var(--primary-color)";
       
-      let feedback = `<p>Voici la solution complète:</p>
-                     <p><small>Essayez de comprendre chaque ligne avant de copier!</small></p>`;
+      const feedback = `<p>Voici la solution complète. Essayez de comprendre chaque ligne!</p>
+                       <p><small>Après avoir étudié la solution, essayez de la réécrire vous-même.</small></p>`;
       
       feedbackContent.innerHTML = feedback;
       feedbackArea.classList.add('show');
@@ -3070,7 +4134,7 @@ void loop() {
       const feedbackTitle = document.getElementById('feedback-title');
       const feedbackIcon = document.getElementById('feedback-icon');
       
-      if (!feedbackArea || !feedbackContent || !feedbackTitle || !feedbackIcon) return;
+      if (!feedbackArea || !feedbackContent) return;
       
       let configHTML = '<h4>Configuration des LEDs</h4>';
       configHTML += '<p>Associez chaque LED à une broche GPIO:</p>';

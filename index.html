@@ -5894,6 +5894,633 @@ Configuration OTA de base
   </div>
 </section>
 <!-- =========================================== -->
+<!-- SECTION BLE MIDI/AUDIO -->
+<!-- =========================================== -->
+<section id="ble-midi">
+  <h2>BLE MIDI et Audio</h2>
+  <p>Utilisez l'ESP32 pour des applications audio via Bluetooth.</p>
+
+  <h3>BLE MIDI Controller</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Contrôleur MIDI BLE pour applications musicales
+*/</span>
+<span class="code-keyword">#include</span> &lt;BLEMIDI_Transport.h&gt;
+<span class="code-keyword">#include</span> &lt;hardware/BLEMIDI_ESP32.h&gt;
+
+BLEMIDI_CREATE_INSTANCE(<span class="code-string">"ESP32-MIDI"</span>, MIDI)
+
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> boutons[] = {13, 12, 14, 27};
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> potards[] = {32, 33, 34, 35};
+<span class="code-keyword">bool</span> etatsBoutons[4] = {<span class="code-keyword">false</span>};
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(115200);
+  
+  <span class="comment">// Configuration broches</span>
+  <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < 4; i++) {
+    <span class="function-name">pinMode</span>(boutons[i], INPUT_PULLUP);
+  }
+  
+  <span class="comment">// Initialisation BLE MIDI</span>
+  MIDI.<span class="function-name">begin</span>();
+  BLEMIDI.<span class="function-name">setHandleConnected</span>(onConnected);
+  BLEMIDI.<span class="function-name">setHandleDisconnected</span>(onDisconnected);
+  
+  Serial.<span class="function-name">println</span>("Contrôleur MIDI BLE prêt");
+}
+
+<span class="type">void</span> <span class="function-name">loop</span>() {
+  <span class="comment">// Lecture boutons</span>
+  <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < 4; i++) {
+    <span class="type">bool</span> etat = !<span class="function-name">digitalRead</span>(boutons[i]);
+    
+    <span class="keyword">if</span> (etat != etatsBoutons[i]) {
+      etatsBoutons[i] = etat;
+      
+      <span class="keyword">if</span> (etat) {
+        <span class="comment">// Note On - Note MIDI 60 (Do) + i</span>
+        MIDI.<span class="function-name">sendNoteOn</span>(60 + i, 127, 1);
+        Serial.<span class="function-name">print</span>("Note On: ");
+        Serial.<span class="function-name">println</span>(60 + i);
+      } <span class="keyword">else</span> {
+        <span class="comment">// Note Off</span>
+        MIDI.<span class="function-name">sendNoteOff</span>(60 + i, 0, 1);
+      }
+    }
+  }
+  
+  <span class="comment">// Lecture potentiomètres (Control Change)</span>
+  <span class="keyword">static</span> <span class="type">int</span> anciennesValeurs[4] = {-1};
+  
+  <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < 4; i++) {
+    <span class="type">int</span> valeur = <span class="function-name">analogRead</span>(potards[i]) / 8; <span class="comment">// 0-127</span>
+    
+    <span class="keyword">if</span> (<span class="function-name">abs</span>(valeur - anciennesValeurs[i]) > 2) {
+      anciennesValeurs[i] = valeur;
+      MIDI.<span class="function-name">sendControlChange</span>(i + 1, valeur, 1); <span class="comment">// CC 1-4</span>
+    }
+  }
+  
+  <span class="function-name">delay</span>(10);
+}
+
+<span class="type">void</span> <span class="function-name">onConnected</span>() {
+  Serial.<span class="function-name">println</span>("MIDI BLE connecté");
+}
+
+<span class="type">void</span> <span class="function-name">onDisconnected</span>() {
+  Serial.<span class="function-name">println</span>("MIDI BLE déconnecté");
+}</code></pre>
+  </div>
+
+  <h3>BLE Audio Streaming</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Streaming audio via BLE A2DP
+*/</span>
+<span class="code-keyword">#include</span> "BluetoothA2DPSource.h"
+
+BluetoothA2DPSource a2dp_source;
+<span class="code-keyword">int16_t</span> audio_data[1024];
+<span class="code-keyword">int</span> audio_index = 0;
+
+<span class="comment">// Fonction callback pour générer l'audio</span>
+<span class="type">int32_t</span> <span class="function-name">get_audio_data</span>(<span class="type">Frame</span> *frame, <span class="type">int32_t</span> frame_count) {
+  <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < frame_count; i++) {
+    <span class="comment">// Génération onde sinusoïdale (440Hz)</span>
+    <span class="type">int16_t</span> sample = 32767 * <span class="function-name">sin</span>(2 * PI * 440 * audio_index / 44100.0);
+    frame[i].channel1 = sample;
+    frame[i].channel2 = sample;
+    audio_index++;
+  }
+  <span class="keyword">return</span> frame_count;
+}
+
+<span class="type">void</span> <span class="function-name">setup</span>() {
+  Serial.<span class="function-name">begin</span>(115200);
+  
+  <span class="comment">// Configuration A2DP source</span>
+  <span class="type">static</span> <span class="type">i2s_config_t</span> i2s_config = {
+    .mode = (<span class="type">i2s_mode_t</span>)(I2S_MODE_MASTER | I2S_MODE_TX),
+    .sample_rate = 44100,
+    .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
+    .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,
+    .communication_format = I2S_COMM_FORMAT_I2S,
+    .intr_alloc_flags = 0,
+    .dma_buf_count = 8,
+    .dma_buf_len = 64
+  };
+  
+  a2dp_source.<span class="function-name">set_i2s_config</span>(i2s_config);
+  a2dp_source.<span class="function-name">start</span>("ESP32-Speaker", get_audio_data);
+  
+  Serial.<span class="function-name">println</span>("Source audio BLE démarrée");
+}
+
+<span class="type">void</span> <span class="function-name">loop</span>() {
+  <span class="function-name">delay</span>(1000);
+}</code></pre>
+  </div>
+</section>
+<!-- =========================================== -->
+<!-- SECTION GESTION MÉMOIRE -->
+<!-- =========================================== -->
+<section id="gestion-memoire">
+  <h2>Gestion mémoire sur ESP32/Arduino</h2>
+  <p>Optimisez l'utilisation mémoire pour éviter les plantages.</p>
+
+  <h3>Surveillance mémoire</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Surveillance et optimisation mémoire
+*/</span>
+<span class="code-keyword">#include</span> &lt;esp_heap_trace.h&gt;
+<span class="code-keyword">#define</span> NUM_RECORDS 100
+<span class="code-keyword">static</span> heap_trace_record_t trace_record[NUM_RECORDS];
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(115200);
+  
+  <span class="comment">// Initialisation trace mémoire</span>
+  <span class="function-name">heap_trace_init_standalone</span>(trace_record, NUM_RECORDS);
+  
+  <span class="comment">// Affichage info mémoire</span>
+  <span class="function-name">afficherMemoire</span>();
+}
+
+<span class="type">void</span> <span class="function-name">loop</span>() {
+  <span class="function-name">afficherMemoire</span>();
+  <span class="function-name">delay</span>(5000);
+}
+
+<span class="type">void</span> <span class="function-name">afficherMemoire</span>() {
+  <span class="comment">// Mémoire RAM</span>
+  Serial.<span class="function-name">print</span>("Heap libre: ");
+  Serial.<span class="function-name">print</span>(<span class="function-name">ESP.getFreeHeap</span>());
+  Serial.<span class="function-name">print</span>(" | Plus petit bloc: ");
+  Serial.<span class="function-name">println</span>(<span class="function-name">ESP.getMinFreeHeap</span>());
+  
+  Serial.<span class="function-name">print</span>("Taille heap max: ");
+  Serial.<span class="function-name">println</span>(<span class="function-name">ESP.getMaxAllocHeap</span>());
+  
+  <span class="comment">// Pile (stack)</span>
+  <span class="type">uint32_t</span> stack_start;
+  <span class="type">uint32_t</span> stack_end;
+  <span class="function-name">esp_get_free_heap_size</span>();
+  
+  <span class="comment">// Fragmentation</span>
+  Serial.<span class="function-name">print</span>("Fragmentation heap: ");
+  Serial.<span class="function-name">print</span>(<span class="function-name">ESP.getHeapFragmentation</span>());
+  Serial.<span class="function-name">println</span>("%");
+  
+  <span class="comment">// PSRAM (si disponible)</span>
+  <span class="keyword">if</span> (<span class="function-name">psramFound</span>()) {
+    Serial.<span class="function-name">print</span>("PSRAM libre: ");
+    Serial.<span class="function-name">println</span>(<span class="function-name">ESP.getFreePsram</span>());
+  }
+}
+
+<span class="comment">// Optimisation : utiliser PROGMEM pour les strings</span>
+<span class="keyword">const</span> <span class="type">char</span> texteLong[] PROGMEM = "Ce texte est stocké en mémoire flash, pas en RAM";
+
+<span class="comment">// Optimisation : pool mémoire</span>
+<span class="keyword">class</span> <span class="class-name">MemoryPool</span> {
+<span class="keyword">private</span>:
+  <span class="type">static</span> <span class="keyword">const</span> <span class="type">int</span> POOL_SIZE = 1024;
+  <span class="type">uint8_t</span> pool[POOL_SIZE];
+  <span class="type">bool</span> allocated[POOL_SIZE];
+  
+<span class="keyword">public</span>:
+  <span class="function-name">MemoryPool</span>() {
+    <span class="function-name">memset</span>(allocated, 0, <span class="keyword">sizeof</span>(allocated));
+  }
+  
+  <span class="type">void</span>* <span class="function-name">allocate</span>(<span class="type">size_t</span> size) {
+    <span class="comment">// Recherche bloc libre</span>
+    <span class="keyword">for</span> (<span class="type">int</span> i = 0; i <= POOL_SIZE - size; i++) {
+      <span class="type">bool</span> libre = <span class="keyword">true</span>;
+      <span class="keyword">for</span> (<span class="type">int</span> j = 0; j < size; j++) {
+        <span class="keyword">if</span> (allocated[i + j]) {
+          libre = <span class="keyword">false</span>;
+          <span class="keyword">break</span>;
+        }
+      }
+      
+      <span class="keyword">if</span> (libre) {
+        <span class="keyword">for</span> (<span class="type">int</span> j = 0; j < size; j++) {
+          allocated[i + j] = <span class="keyword">true</span>;
+        }
+        <span class="keyword">return</span> &pool[i];
+      }
+    }
+    <span class="keyword">return</span> <span class="keyword">nullptr</span>;
+  }
+  
+  <span class="type">void</span> <span class="function-name">deallocate</span>(<span class="type">void</span>* ptr, <span class="type">size_t</span> size) {
+    <span class="type">int</span> index = (<span class="type">uint8_t</span>*)ptr - pool;
+    <span class="keyword">if</span> (index >= 0 && index < POOL_SIZE) {
+      <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < size; i++) {
+        allocated[index + i] = <span class="keyword">false</span>;
+      }
+    }
+  }
+};</code></pre>
+  </div>
+
+  <h3>Détection fuites mémoire</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Détection de fuites mémoire
+*/</span>
+<span class="keyword">void</span> <span class="function-name">detecterFuiteMemoire</span>() {
+  <span class="type">static</span> <span class="type">uint32_t</span> dernierHeap = 0;
+  <span class="type">uint32_t</span> heapActuel = <span class="function-name">ESP.getFreeHeap</span>();
+  
+  <span class="keyword">if</span> (dernierHeap > 0) {
+    <span class="type">int32_t</span> difference = dernierHeap - heapActuel;
+    
+    <span class="keyword">if</span> (difference > 100) { <span class="comment">// Perte de plus de 100 bytes</span>
+      Serial.<span class="function-name">print</span>("Fuite mémoire détectée! Perte: ");
+      Serial.<span class="function-name">print</span>(difference);
+      Serial.<span class="function-name">println</span>(" bytes");
+      
+      <span class="comment">// Démarrage trace détaillée</span>
+      <span class="function-name">heap_trace_start</span>(HEAP_TRACE_LEAKS);
+    }
+  }
+  
+  dernierHeap = heapActuel;
+}</code></pre>
+  </div>
+</section>
+<!-- =========================================== -->
+<!-- SECTION MODE BASSE CONSOMMATION -->
+<!-- =========================================== -->
+<section id="low-power">
+  <h2>Optimisation consommation ESP32</h2>
+  <p>Réduisez la consommation pour applications sur batterie.</p>
+
+  <h3>Modes sommeil</h3>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Mode</th>
+          <th>Consommation</th>
+          <th>Temps réveil</th>
+          <th>Mémoire conservée</th>
+          <th>Utilisation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Actif</td>
+          <td>80-240 mA</td>
+          <td>-</td>
+          <td>Tout</td>
+          <td>Opération normal</td>
+        </tr>
+        <tr>
+          <td>Light Sleep</td>
+          <td>0.8 mA</td>
+          <td>~1 ms</td>
+          <td>RAM</td>
+          <td>Pauses courtes</td>
+        </tr>
+        <tr>
+          <td>Deep Sleep</td>
+          <td>10 µA</td>
+          <td>~200 ms</td>
+          <td>RTC</td>
+          <td>Longues périodes</td>
+        </tr>
+        <tr>
+          <td>Hibernation</td>
+          <td>5 µA</td>
+          <td>~1 s</td>
+          <td>RTC lent</td>
+          <td>Ultra basse consom.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Deep Sleep avec réveil périodique</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Deep Sleep avec RTC et réveil externe
+*/</span>
+<span class="type">RTC_DATA_ATTR</span> <span class="type">int</span> compteurBoot = 0;
+<span class="type">RTC_DATA_ATTR</span> <span class="type">float</span> temperatureMin = 100.0;
+<span class="type">RTC_DATA_ATTR</span> <span class="type">float</span> temperatureMax = -100.0;
+
+<span class="keyword">void</span> <span class="function-name">setup</span>() {
+  Serial.<span class="function-name">begin</span>(115200);
+  <span class="function-name">delay</span>(100);
+  
+  compteurBoot++;
+  Serial.<span class="function-name">print</span>("Boot #");
+  Serial.<span class="function-name">println</span>(compteurBoot);
+  
+  <span class="comment">// Raison du réveil</span>
+  <span class="function-name">printReveilRaison</span>();
+  
+  <span class="comment">// Mesure température (simulée)</span>
+  <span class="type">float</span> temperature = <span class="function-name">lireTemperature</span>();
+  
+  <span class="comment">// Mise à jour min/max</span>
+  temperatureMin = <span class="function-name">min</span>(temperatureMin, temperature);
+  temperatureMax = <span class="function-name">max</span>(temperatureMax, temperature);
+  
+  Serial.<span class="function-name">print</span>("Température: ");
+  Serial.<span class="function-name">println</span>(temperature);
+  Serial.<span class="function-name">print</span>("Min: ");
+  Serial.<span class="function-name">print</span>(temperatureMin);
+  Serial.<span class="function-name">print</span>(" Max: ");
+  Serial.<span class="function-name">println</span>(temperatureMax);
+  
+  <span class="comment">// Configuration prochain réveil</span>
+  <span class="function-name">configurerProchainReveil</span>();
+}
+
+<span class="type">void</span> <span class="function-name">loop</span>() {
+  <span class="comment">// Une seule exécution puis deep sleep</span>
+  
+  <span class="comment">// Envoi données si nécessaire</span>
+  <span class="keyword">if</span> (compteurBoot % 10 == 0) { <span class="comment">// Tous les 10 réveils</span>
+    <span class="function-name">envoyerDonnees</span>();
+  }
+  
+  Serial.<span class="function-name">println</span>("Entrée en Deep Sleep...");
+  
+  <span class="comment">// Deep sleep pour 5 minutes</span>
+  <span class="function-name">esp_deep_sleep</span>(5 * 60 * 1000000); <span class="comment">// microsecondes</span>
+}
+
+<span class="type">void</span> <span class="function-name">printReveilRaison</span>() {
+  <span class="type">esp_sleep_wakeup_cause_t</span> cause = <span class="function-name">esp_sleep_get_wakeup_cause</span>();
+  
+  <span class="keyword">switch</span>(cause) {
+    <span class="keyword">case</span> ESP_SLEEP_WAKEUP_EXT0:
+      Serial.<span class="function-name">println</span>("Réveil par bouton");
+      <span class="keyword">break</span>;
+    <span class="keyword">case</span> ESP_SLEEP_WAKEUP_TIMER:
+      Serial.<span class="function-name">println</span>("Réveil par timer");
+      <span class="keyword">break</span>;
+    <span class="keyword">case</span> ESP_SLEEP_WAKEUP_TOUCHPAD:
+      Serial.<span class="function-name">println</span>("Réveil par touchpad");
+      <span class="keyword">break</span>;
+    <span class="keyword">case</span> ESP_SLEEP_WAKEUP_ULP:
+      Serial.<span class="function-name">println</span>("Réveil par ULP");
+      <span class="keyword">break</span>;
+    <span class="keyword">default</span>:
+      Serial.<span class="function-name">println</span>("Premier démarrage");
+      <span class="keyword">break</span>;
+  }
+}
+
+<span class="type">void</span> <span class="function-name">configurerProchainReveil</span>() {
+  <span class="comment">// Désactive tous les réveils précédents</span>
+  <span class="function-name">esp_sleep_disable_wakeup_source</span>(ESP_SLEEP_WAKEUP_ALL);
+  
+  <span class="comment">// Active réveil par timer (5 minutes)</span>
+  <span class="function-name">esp_sleep_enable_timer_wakeup</span>(5 * 60 * 1000000);
+  
+  <span class="comment">// Active réveil par bouton (GPIO 0)</span>
+  <span class="function-name">esp_sleep_enable_ext0_wakeup</span>(GPIO_NUM_0, 0); <span class="comment">// Low level</span>
+  
+  <span class="comment">// Active réveil par touchpad</span>
+  <span class="function-name">touchAttachInterrupt</span>(T0, reveilTouchpad, 40);
+  <span class="function-name">esp_sleep_enable_touchpad_wakeup</span>();
+}
+
+<span class="type">void</span> <span class="function-name">reveilTouchpad</span>() {
+  <span class="comment">// Callback touchpad</span>
+}</code></pre>
+  </div>
+
+  <h3>Optimisation WiFi/BLE</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Réduction consommation WiFi/BLE
+*/</span>
+<span class="type">void</span> <span class="function-name">optimiserConsommation</span>() {
+  <span class="comment">// 1. WiFi</span>
+  WiFi.<span class="function-name">setSleep</span>(WIFI_PS_MIN_MODEM); <span class="comment">// Mode économie</span>
+  
+  <span class="comment">// 2. CPU</span>
+  <span class="function-name">setCpuFrequencyMhz</span>(80); <span class="comment">// Baisse fréquence CPU</span>
+  
+  <span class="comment">// 3. Périphériques inutiles</span>
+  <span class="function-name">btStop</span>(); <span class="comment">// Désactive Bluetooth</span>
+  
+  <span class="comment">// 4. LED</span>
+  <span class="function-name">digitalWrite</span>(LED_BUILTIN, LOW);
+  <span class="type">gpio_hold_t</span> hold = GPIO_HOLD_ENABLE;
+  <span class="function-name">gpio_hold_en</span>(GPIO_NUM_2);
+  
+  <span class="comment">// 5. ADC</span>
+  <span class="function-name">adc_power_off</span>();
+  
+  <span class="comment">// 6. Réduction tension</span>
+  <span class="function-name">esp_pm_configure</span>();
+}
+
+<span class="comment">// Modem Sleep entre transmissions</span>
+<span class="type">void</span> <span class="function-name">transmissionEconome</span>() {
+  WiFi.<span class="function-name">begin</span>(SSID, PASS);
+  <span class="function-name">delay</span>(100);
+  
+  <span class="comment">// Transmission rapide</span>
+  WiFiClient client;
+  client.<span class="function-name">connect</span>(SERVER, PORT);
+  client.<span class="function-name">print</span>("Données");
+  client.<span class="function-name">stop</span>();
+  
+  <span class="comment">// Coupe WiFi rapidement</span>
+  WiFi.<span class="function-name">disconnect</span>(<span class="keyword">true</span>);
+  WiFi.<span class="function-name">mode</span>(WIFI_OFF);
+}</code></pre>
+  </div>
+</section>
+<!-- =========================================== -->
+<!-- SECTION TECHNIQUES DE DÉBOGAGE -->
+<!-- =========================================== -->
+<section id="debogage">
+  <h2>Techniques avancées de débogage</h2>
+  <p>Outils et méthodes pour déboguer efficacement.</p>
+
+  <h3>Core Dump et Backtrace</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Configuration core dump pour analyse plantages
+*/</span>
+<span class="keyword">void</span> <span class="function-name">setup</span>() {
+  Serial.<span class="function-name">begin</span>(115200);
+  
+  <span class="comment">// Configuration core dump vers UART</span>
+  <span class="function-name">esp_core_dump_init</span>();
+  <span class="function-name">esp_core_dump_to_uart</span>();
+  
+  <span class="comment">// Handler exceptions</span>
+  <span class="function-name">esp_set_breakpoint_if_jtag</span>();
+  
+  Serial.<span class="function-name">println</span>("Débogage activé");
+  
+  <span class="comment">// Test plantage (décommentez pour tester)</span>
+  <span class="comment">// testPlantage();</span>
+}
+
+<span class="type">void</span> <span class="function-name">testPlantage</span>() {
+  <span class="comment">// Plantage intentionnel pour test</span>
+  <span class="type">int</span>* ptr = <span class="keyword">nullptr</span>;
+  *ptr = 42; <span class="comment">// Segfault!</span>
+}
+
+<span class="comment">// Fonction pour afficher backtrace</span>
+<span class="type">void</span> <span class="function-name">printBacktrace</span>() {
+  <span class="type">void</span>* callstack[10];
+  <span class="type">int</span> frames = <span class="function-name">backtrace</span>(callstack, 10);
+  <span class="type">char</span>** strs = <span class="function-name">backtrace_symbols</span>(callstack, frames);
+  
+  Serial.<span class="function-name">println</span>("=== Backtrace ===");
+  <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < frames; ++i) {
+    Serial.<span class="function-name">println</span>(strs[i]);
+  }
+  <span class="function-name">free</span>(strs);
+}
+
+<span class="comment">// Handler panic</span>
+<span class="keyword">extern</span> <span class="string">"C"</span> <span class="type">void</span> <span class="function-name">__real_esp_panic_handler</span>(<span class="type">void</span>* info) {
+  Serial.<span class="function-name">println</span>("=== PANIC HANDLER ===");
+  <span class="function-name">printBacktrace</span>();
+  <span class="function-name">__real_esp_panic_handler</span>(info);
+}</code></pre>
+  </div>
+
+  <h3>Debug avec GDB (PlatformIO)</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+platformio.ini pour débogage
+*/</span>
+[env:esp32dev]
+platform = espressif32
+board = esp32dev
+framework = arduino
+
+<span class="code-comment"># Configuration débogage</span>
+debug_tool = esp-prog
+debug_port = /dev/ttyUSB0
+debug_speed = 115200
+
+<span class="code-comment"># Build flags pour débogage</span>
+build_flags = 
+    -ggdb
+    -Og
+    -DDEBUG_ESP_PORT=Serial
+    -DDEBUG_ESP_CORE
+
+<span class="code-comment"># Debugger configuration</span>
+[env:esp32dev:debug]
+build_type = debug
+debug_init_break = tbreak setup
+debug_extra_cmds = 
+    monitor reset halt
+    monitor gdb_sync
+    monitor flash protect 0 0 last off</code></pre>
+  </div>
+
+  <h3>Logging avancé avec Serial</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Système de logging avancé
+*/</span>
+<span class="keyword">enum</span> <span class="class-name">LogLevel</span> {
+  LOG_ERROR,
+  LOG_WARN,
+  LOG_INFO,
+  LOG_DEBUG,
+  LOG_VERBOSE
+};
+
+<span class="keyword">class</span> <span class="class-name">Logger</span> {
+<span class="keyword">private</span>:
+  LogLevel niveau = LOG_INFO;
+  <span class="type">bool</span> avecTimestamp = <span class="keyword">true</span>;
+  
+<span class="keyword">public</span>:
+  <span class="function-name">Logger</span>(LogLevel niveau) : <span class="class-name">niveau</span>(niveau) {}
+  
+  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;
+  <span class="type">void</span> <span class="function-name">log</span>(LogLevel niveauMsg, <span class="type">const</span> T& msg) {
+    <span class="keyword">if</span> (niveauMsg <= niveau) {
+      <span class="keyword">if</span> (avecTimestamp) {
+        Serial.<span class="function-name">print</span>(<span class="function-name">millis</span>());
+        Serial.<span class="function-name">print</span>(" ");
+      }
+      
+      Serial.<span class="function-name">print</span>(<span class="function-name">getLevelString</span>(niveauMsg));
+      Serial.<span class="function-name">print</span>(": ");
+      Serial.<span class="function-name">println</span>(msg);
+    }
+  }
+  
+  <span class="type">void</span> <span class="function-name">hexDump</span>(<span class="type">const</span> <span class="type">uint8_t</span>* data, <span class="type">size_t</span> length) {
+    <span class="keyword">for</span> (<span class="type">size_t</span> i = 0; i < length; i += 16) {
+      Serial.<span class="function-name">printf</span>("%04X: ", i);
+      
+      <span class="comment">// Hex</span>
+      <span class="keyword">for</span> (<span class="type">size_t</span> j = 0; j < 16; j++) {
+        <span class="keyword">if</span> (i + j < length) {
+          Serial.<span class="function-name">printf</span>("%02X ", data[i + j]);
+        } <span class="keyword">else</span> {
+          Serial.<span class="function-name">print</span>("   ");
+        }
+        
+        <span class="keyword">if</span> (j == 7) Serial.<span class="function-name">print</span>(" ");
+      }
+      
+      Serial.<span class="function-name">print</span>(" ");
+      
+      <span class="comment">// ASCII</span>
+      <span class="keyword">for</span> (<span class="type">size_t</span> j = 0; j < 16; j++) {
+        <span class="keyword">if</span> (i + j < length) {
+          <span class="type">char</span> c = data[i + j];
+          Serial.<span class="function-name">print</span>((c >= 32 && c < 127) ? c : '.');
+        }
+      }
+      
+      Serial.<span class="function-name">println</span>();
+    }
+  }
+  
+<span class="keyword">private</span>:
+  <span class="type">const</span> <span class="type">char</span>* <span class="function-name">getLevelString</span>(LogLevel niveau) {
+    <span class="keyword">switch</span>(niveau) {
+      <span class="keyword">case</span> LOG_ERROR: <span class="keyword">return</span> "ERR";
+      <span class="keyword">case</span> LOG_WARN: <span class="keyword">return</span> "WRN";
+      <span class="keyword">case</span> LOG_INFO: <span class="keyword">return</span> "INF";
+      <span class="keyword">case</span> LOG_DEBUG: <span class="keyword">return</span> "DBG";
+      <span class="keyword">default</span>: <span class="keyword">return</span> "VRB";
+    }
+  }
+};
+
+<span class="comment">// Utilisation</span>
+Logger logger(LOG_DEBUG);
+
+<span class="type">void</span> <span class="function-name">setup</span>() {
+  Serial.<span class="function-name">begin</span>(115200);
+  logger.<span class="function-name">log</span>(LOG_INFO, "Démarrage système");
+  
+  <span class="comment">// Dump mémoire</span>
+  <span class="type">uint8_t</span> testData[] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77};
+  logger.<span class="function-name">hexDump</span>(testData, <span class="keyword">sizeof</span>(testData));
+}</code></pre>
+  </div>
+</section>
+<!-- =========================================== -->
 <!-- SECTION MULTITÂCHE FREERTOS -->
 <!-- =========================================== -->
 <section id="multitache">
@@ -6039,6 +6666,440 @@ QueueHandle_t queue;
 }</code></pre>
   </div>
 </section>
+
+
+<!-- =========================================== -->
+<!-- SECTION SSL/TLS -->
+<!-- =========================================== -->
+<section id="ssl-tls">
+  <h2>Sécurisation communications avec SSL/TLS</h2>
+  <p>Implémentation HTTPS et MQTTS sécurisés.</p>
+
+  <h3>HTTPS avec certificats</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Client HTTPS sécurisé
+*/</span>
+<span class="code-keyword">#include</span> &lt;WiFi.h&gt;
+<span class="code-keyword">#include</span> &lt;WiFiClientSecure.h&gt;
+<span class="code-keyword">#include</span> &lt;HTTPClient.h&gt;
+
+<span class="comment">// Certificat racine pour api.github.com (extrait)</span>
+<span class="keyword">const</span> <span class="type">char</span> github_cert[] PROGMEM = R"CERT(
+-----BEGIN CERTIFICATE-----
+MIIEkjCCA3qgAwIBAgIQCgFBQgAAAVOFc2oLheynCDANBgkqhkiG9w0BAQsFADA/
+MSQwIgYDVQQKExtEaWdpdGFsIFNpZ25hdHVyZSBUcnVzdCBDby4xFzAVBgNVBAMT
+DkRTVCBSb290IENBIFgzMB4XDTE2MDMxNzE2NDA0NloXDTIxMDMxNzE2NDA0Nlow
+SjELMAkGA1UEBhMCVVMxFjAUBgNVBAoTDUxldCdzIEVuY3J5cHQxIzAhBgNVBAMT
+GkxldCdzIEVuY3J5cHQgQXV0aG9yaXR5IFgzMIIBIjANBgkqhkiG9w0BAQEFAAOC
+...
+-----END CERTIFICATE-----
+)CERT";
+
+WiFiClientSecure client;
+HTTPClient https;
+
+<span class="type">void</span> <span class="function-name">setup</span>() {
+  Serial.<span class="function-name">begin</span>(115200);
+  WiFi.<span class="function-name">begin</span>(SSID, PASS);
+  
+  <span class="keyword">while</span> (WiFi.<span class="function-name">status</span>() != WL_CONNECTED) {
+    <span class="function-name">delay</span>(500);
+    Serial.<span class="function-name">print</span>(".");
+  }
+  
+  <span class="comment">// Configuration SSL</span>
+  client.<span class="function-name">setCACert</span>(github_cert);
+  
+  <span class="comment">// Options supplémentaires</span>
+  client.<span class="function-name">setTimeout</span>(10000);
+  client.<span class="function-name">setInsecure</span>(); <span class="comment">// DANGEREUX! seulement pour dev</span>
+  
+  <span class="comment">// Requête HTTPS</span>
+  <span class="function-name">requeteHTTPS</span>();
+}
+
+<span class="type">void</span> <span class="function-name">requeteHTTPS</span>() {
+  https.<span class="function-name">begin</span>(client, "https://api.github.com/repos/espressif/arduino-esp32");
+  
+  <span class="comment">// Headers</span>
+  https.<span class="function-name">addHeader</span>("User-Agent", "ESP32-HTTPS-Client");
+  https.<span class="function-name">addHeader</span>("Accept", "application/json");
+  
+  <span class="type">int</span> httpCode = https.<span class="function-name">GET</span>();
+  
+  <span class="keyword">if</span> (httpCode > 0) {
+    Serial.<span class="function-name">printf</span>("Code HTTP: %d\n", httpCode);
+    
+    <span class="keyword">if</span> (httpCode == HTTP_CODE_OK) {
+      <span class="type">String</span> payload = https.<span class="function-name">getString</span>();
+      Serial.<span class="function-name">println</span>("Réponse:");
+      Serial.<span class="function-name">println</span>(payload);
+    }
+  } <span class="keyword">else</span> {
+    Serial.<span class="function-name">printf</span>("Erreur: %s\n", https.<span class="function-name">errorToString</span>(httpCode).<span class="function-name">c_str</span>());
+  }
+  
+  https.<span class="function-name">end</span>();
+}</code></pre>
+  </div>
+
+  <h3>Gestion certificats dans LittleFS</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Chargement certificats depuis LittleFS
+*/</span>
+<span class="keyword">bool</span> <span class="function-name">chargerCertificat</span>(<span class="type">const</span> <span class="type">char</span>* chemin) {
+  File file = LittleFS.<span class="function-name">open</span>(chemin, "r");
+  
+  <span class="keyword">if</span> (!file) {
+    Serial.<span class="function-name">println</span>("Erreur ouverture certificat");
+    <span class="keyword">return</span> <span class="keyword">false</span>;
+  }
+  
+  <span class="comment">// Lecture certificat</span>
+  <span class="type">String</span> cert = file.<span class="function-name">readString</span>();
+  file.<span class="function-name">close</span>();
+  
+  <span class="comment">// Application</span>
+  <span class="keyword">if</span> (!client.<span class="function-name">setCACert</span>(cert.<span class="function-name">c_str</span>())) {
+    Serial.<span class="function-name">println</span>("Erreur chargement certificat");
+    <span class="keyword">return</span> <span class="keyword">false</span>;
+  }
+  
+  Serial.<span class="function-name">println</span>("Certificat chargé depuis LittleFS");
+  <span class="keyword">return</span> <span class="keyword">true</span>;
+}
+
+<span class="type">void</span> <span class="function-name">genererCertificatAutoSigne</span>() {
+  <span class="comment">// Génération clé RSA (démo seulement - en prod utiliser openssl)</span>
+  <span class="type">mbedtls_pk_context</span> pk;
+  <span class="function-name">mbedtls_pk_init</span>(&pk);
+  
+  <span class="comment">// Génération clé</span>
+  <span class="function-name">mbedtls_rsa_context</span> rsa;
+  <span class="function-name">mbedtls_rsa_init</span>(&rsa, MBEDTLS_RSA_PKCS_V15, 0);
+  
+  <span class="comment">// Génération auto-signée (simplifiée)</span>
+  <span class="type">mbedtls_x509write_cert</span> crt;
+  <span class="function-name">mbedtls_x509write_crt_init</span>(&crt);
+  
+  <span class="comment">// Configuration certificat</span>
+  <span class="function-name">mbedtls_x509write_crt_set_subject_key</span>(&crt, &pk);
+  <span class="function-name">mbedtls_x509write_crt_set_issuer_key</span>(&crt, &pk);
+  
+  <span class="comment">// Sauvegarde dans LittleFS</span>
+  File file = LittleFS.<span class="function-name">open</span>("/cert.pem", "w");
+  <span class="comment">// Écriture PEM...</span>
+  file.<span class="function-name">close</span>();
+  
+  <span class="function-name">mbedtls_x509write_crt_free</span>(&crt);
+  <span class="function-name">mbedtls_pk_free</span>(&pk);
+}</code></pre>
+  </div>
+</section>
+
+
+<!-- =========================================== -->
+<!-- SECTION AUTHENTIFICATION -->
+<!-- =========================================== -->
+<section id="authentification">
+  <h2>Systèmes d'authentification sécurisés</h2>
+  <p>JWT, OAuth2, API keys pour sécuriser vos APIs.</p>
+
+  <h3>JWT (JSON Web Tokens)</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Génération et validation JWT
+*/</span>
+<span class="code-keyword">#include</span> &lt;ArduinoJson.h&gt;
+<span class="code-keyword">#include</span> &lt;mbedtls/md.h&gt;
+
+<span class="keyword">class</span> <span class="class-name">JWT</span> {
+<span class="keyword">private</span>:
+  <span class="type">String</span> secret = "votre_secret_super_securise";
+  
+<span class="keyword">public</span>:
+  <span class="type">String</span> <span class="function-name">creerToken</span>(<span class="type">const</span> <span class="type">String</span>& userId, <span class="type">int</span> dureeHeures = 24) {
+    <span class="comment">// Header</span>
+    <span class="type">String</span> header = <span class="function-name">base64UrlEncode</span>("{\"alg\":\"HS256\",\"typ\":\"JWT\"}");
+    
+    <span class="comment">// Payload</span>
+    <span class="type">unsigned</span> <span class="type">long</span> iat = <span class="function-name">time</span>(<span class="keyword">nullptr</span>);
+    <span class="type">unsigned</span> <span class="type">long</span> exp = iat + (dureeHeures * 3600);
+    
+    DynamicJsonDocument payloadDoc(256);
+    payloadDoc["sub"] = userId;
+    payloadDoc["iat"] = iat;
+    payloadDoc["exp"] = exp;
+    payloadDoc["role"] = "user";
+    
+    <span class="type">String</span> payloadStr;
+    <span class="function-name">serializeJson</span>(payloadDoc, payloadStr);
+    <span class="type">String</span> payload = <span class="function-name">base64UrlEncode</span>(payloadStr);
+    
+    <span class="comment">// Signature</span>
+    <span class="type">String</span> data = header + "." + payload;
+    <span class="type">String</span> signature = <span class="function-name">signerHMAC</span>(data, secret);
+    
+    <span class="keyword">return</span> data + "." + signature;
+  }
+  
+  <span class="keyword">bool</span> <span class="function-name">validerToken</span>(<span class="type">const</span> <span class="type">String</span>& token) {
+    <span class="type">int</span> firstDot = token.<span class="function-name">indexOf</span>('.');
+    <span class="type">int</span> secondDot = token.<span class="function-name">indexOf</span>('.', firstDot + 1);
+    
+    <span class="keyword">if</span> (firstDot == -1 || secondDot == -1) {
+      <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+    
+    <span class="type">String</span> header = token.<span class="function-name">substring</span>(0, firstDot);
+    <span class="type">String</span> payload = token.<span class="function-name">substring</span>(firstDot + 1, secondDot);
+    <span class="type">String</span> signature = token.<span class="function-name">substring</span>(secondDot + 1);
+    
+    <span class="comment">// Vérification signature</span>
+    <span class="type">String</span> data = header + "." + payload;
+    <span class="type">String</span> signatureCalculee = <span class="function-name">signerHMAC</span>(data, secret);
+    
+    <span class="keyword">if</span> (signature != signatureCalculee) {
+      <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+    
+    <span class="comment">// Vérification expiration</span>
+    <span class="type">String</span> payloadDecode = <span class="function-name">base64UrlDecode</span>(payload);
+    DynamicJsonDocument payloadDoc(256);
+    <span class="type">DeserializationError</span> error = <span class="function-name">deserializeJson</span>(payloadDoc, payloadDecode);
+    
+    <span class="keyword">if</span> (error) {
+      <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+    
+    <span class="type">unsigned</span> <span class="type">long</span> exp = payloadDoc["exp"];
+    <span class="type">unsigned</span> <span class="type">long</span> now = <span class="function-name">time</span>(<span class="keyword">nullptr</span>);
+    
+    <span class="keyword">return</span> exp > now;
+  }
+  
+<span class="keyword">private</span>:
+  <span class="type">String</span> <span class="function-name">base64UrlEncode</span>(<span class="type">const</span> <span class="type">String</span>& input) {
+    <span class="comment">// Implémentation base64 URL safe</span>
+    <span class="type">String</span> output = input;
+    output.<span class="function-name">replace</span>("+", "-");
+    output.<span class="function-name">replace</span>("/", "_");
+    output.<span class="function-name">replace</span>("=", "");
+    <span class="keyword">return</span> output;
+  }
+  
+  <span class="type">String</span> <span class="function-name">signerHMAC</span>(<span class="type">const</span> <span class="type">String</span>& data, <span class="type">const</span> <span class="type">String</span>& key) {
+    <span class="type">unsigned</span> <span class="type">char</span> hmacResult[32];
+    
+    <span class="function-name">mbedtls_md_context_t</span> ctx;
+    <span class="function-name">mbedtls_md_init</span>(&ctx);
+    <span class="function-name">mbedtls_md_setup</span>(&ctx, <span class="function-name">mbedtls_md_info_from_type</span>(MBEDTLS_MD_SHA256), 1);
+    <span class="function-name">mbedtls_md_hmac_starts</span>(&ctx, (<span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span>*)key.<span class="function-name">c_str</span>(), key.<span class="function-name">length</span>());
+    <span class="function-name">mbedtls_md_hmac_update</span>(&ctx, (<span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span>*)data.<span class="function-name">c_str</span>(), data.<span class="function-name">length</span>());
+    <span class="function-name">mbedtls_md_hmac_finish</span>(&ctx, hmacResult);
+    <span class="function-name">mbedtls_md_free</span>(&ctx);
+    
+    <span class="comment">// Conversion en base64 URL</span>
+    <span class="type">String</span> result;
+    <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < 32; i++) {
+      <span class="type">char</span> buf[3];
+      <span class="function-name">sprintf</span>(buf, "%02x", hmacResult[i]);
+      result += buf;
+    }
+    
+    <span class="keyword">return</span> <span class="function-name">base64UrlEncode</span>(result);
+  }
+};
+
+<span class="comment">// Utilisation</span>
+JWT jwt;
+
+<span class="type">void</span> <span class="function-name">setup</span>() {
+  <span class="comment">// Création token</span>
+  <span class="type">String</span> token = jwt.<span class="function-name">creerToken</span>("user123", 24);
+  Serial.<span class="function-name">print</span>("Token: ");
+  Serial.<span class="function-name">println</span>(token);
+  
+  <span class="comment">// Validation</span>
+  <span class="keyword">if</span> (jwt.<span class="function-name">validerToken</span>(token)) {
+    Serial.<span class="function-name">println</span>("Token valide");
+  } <span class="keyword">else</span> {
+    Serial.<span class="function-name">println</span>("Token invalide");
+  }
+}</code></pre>
+  </div>
+</section>
+
+
+<!-- =========================================== -->
+<!-- SECTION CHIFFREMENT -->
+<!-- =========================================== -->
+<section id="chiffrement">
+  <h2>Chiffrement des données sensibles</h2>
+  <p>AES, RSA et techniques de sécurisation.</p>
+
+  <h3>AES-256 sur ESP32</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Chiffrement/déchiffrement AES-256
+*/</span>
+<span class="code-keyword">#include</span> &lt;mbedtls/aes.h&gt;
+
+<span class="keyword">class</span> <span class="class-name">AES256</span> {
+<span class="keyword">private</span>:
+  <span class="type">unsigned</span> <span class="type">char</span> key[32]; <span class="comment">// 256 bits</span>
+  <span class="type">unsigned</span> <span class="type">char</span> iv[16];  <span class="comment">// 128 bits</span>
+  
+<span class="keyword">public</span>:
+  <span class="function-name">AES256</span>(<span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span>* keyData, <span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span>* ivData) {
+    <span class="function-name">memcpy</span>(key, keyData, 32);
+    <span class="function-name">memcpy</span>(iv, ivData, 16);
+  }
+  
+  <span class="type">size_t</span> <span class="function-name">chiffrer</span>(<span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span>* input, <span class="type">size_t</span> inputLen, 
+                   <span class="type">unsigned</span> <span class="type">char</span>* output) {
+    mbedtls_aes_context aes;
+    <span class="function-name">mbedtls_aes_init</span>(&aes);
+    
+    <span class="comment">// Chiffrement CBC</span>
+    <span class="function-name">mbedtls_aes_setkey_enc</span>(&aes, key, 256);
+    
+    <span class="comment">// Padding PKCS7</span>
+    <span class="type">size_t</span> paddedLen = ((inputLen / 16) + 1) * 16;
+    <span class="type">unsigned</span> <span class="type">char</span>* paddedInput = <span class="keyword">new</span> <span class="type">unsigned</span> <span class="type">char</span>[paddedLen];
+    <span class="function-name">memcpy</span>(paddedInput, input, inputLen);
+    
+    <span class="comment">// Ajout padding</span>
+    <span class="type">unsigned</span> <span class="type">char</span> padValue = paddedLen - inputLen;
+    <span class="keyword">for</span> (<span class="type">size_t</span> i = inputLen; i < paddedLen; i++) {
+      paddedInput[i] = padValue;
+    }
+    
+    <span class="comment">// Chiffrement</span>
+    <span class="function-name">mbedtls_aes_crypt_cbc</span>(&aes, MBEDTLS_AES_ENCRYPT, paddedLen, 
+                          iv, paddedInput, output);
+    
+    <span class="function-name">mbedtls_aes_free</span>(&aes);
+    <span class="keyword">delete</span>[] paddedInput;
+    
+    <span class="keyword">return</span> paddedLen;
+  }
+  
+  <span class="type">size_t</span> <span class="function-name">dechiffrer</span>(<span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span>* input, <span class="type">size_t</span> inputLen,
+                     <span class="type">unsigned</span> <span class="type">char</span>* output) {
+    <span class="keyword">if</span> (inputLen % 16 != 0) {
+      <span class="keyword">return</span> 0; <span class="comment">// Taille invalide</span>
+    }
+    
+    mbedtls_aes_context aes;
+    <span class="function-name">mbedtls_aes_init</span>(&aes);
+    
+    <span class="comment">// Déchiffrement CBC</span>
+    <span class="function-name">mbedtls_aes_setkey_dec</span>(&aes, key, 256);
+    <span class="function-name">mbedtls_aes_crypt_cbc</span>(&aes, MBEDTLS_AES_DECRYPT, inputLen,
+                          iv, input, output);
+    
+    <span class="comment">// Suppression padding PKCS7</span>
+    <span class="type">unsigned</span> <span class="type">char</span> padValue = output[inputLen - 1];
+    <span class="keyword">if</span> (padValue > 16) {
+      <span class="function-name">mbedtls_aes_free</span>(&aes);
+      <span class="keyword">return</span> 0; <span class="comment">// Padding invalide</span>
+    }
+    
+    <span class="comment">// Vérification padding</span>
+    <span class="keyword">for</span> (<span class="type">size_t</span> i = inputLen - padValue; i < inputLen; i++) {
+      <span class="keyword">if</span> (output[i] != padValue) {
+        <span class="function-name">mbedtls_aes_free</span>(&aes);
+        <span class="keyword">return</span> 0;
+      }
+    }
+    
+    <span class="function-name">mbedtls_aes_free</span>(&aes);
+    <span class="keyword">return</span> inputLen - padValue;
+  }
+};
+
+<span class="comment">// Exemple utilisation</span>
+<span class="type">void</span> <span class="function-name">setup</span>() {
+  Serial.<span class="function-name">begin</span>(115200);
+  
+  <span class="comment">// Clé et IV (en production, générer aléatoirement)</span>
+  <span class="type">unsigned</span> <span class="type">char</span> key[32] = {
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+    0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+    0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F
+  };
+  
+  <span class="type">unsigned</span> <span class="type">char</span> iv[16] = {
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
+  };
+  
+  AES256 aes(key, iv);
+  
+  <span class="comment">// Données à chiffrer</span>
+  <span class="type">const</span> <span class="type">char</span>* texteClair = "Données sensibles à protéger";
+  <span class="type">size_t</span> longueur = <span class="function-name">strlen</span>(texteClair);
+  
+  <span class="comment">// Chiffrement</span>
+  <span class="type">unsigned</span> <span class="type">char</span> texteChiffre[128];
+  <span class="type">size_t</span> longueurChiffre = aes.<span class="function-name">chiffrer</span>(
+    (<span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span>*)texteClair, 
+    longueur, 
+    texteChiffre
+  );
+  
+  Serial.<span class="function-name">print</span>("Texte chiffré (hex): ");
+  <span class="keyword">for</span> (<span class="type">size_t</span> i = 0; i < longueurChiffre; i++) {
+    <span class="keyword">if</span> (texteChiffre[i] < 16) Serial.<span class="function-name">print</span>("0");
+    Serial.<span class="function-name">print</span>(texteChiffre[i], HEX);
+  }
+  Serial.<span class="function-name">println</span>();
+  
+  <span class="comment">// Déchiffrement</span>
+  <span class="type">unsigned</span> <span class="type">char</span> texteDechiffre[128];
+  <span class="type">size_t</span> longueurDechiffre = aes.<span class="function-name">dechiffrer</span>(
+    texteChiffre, 
+    longueurChiffre, 
+    texteDechiffre
+  );
+  
+  texteDechiffre[longueurDechiffre] = '\0';
+  Serial.<span class="function-name">print</span>("Texte déchiffré: ");
+  Serial.<span class="function-name">println</span>((<span class="type">char</span>*)texteDechiffre);
+}</code></pre>
+  </div>
+
+  <h3>Générateur de nombres aléatoires sécurisé</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Génération sécurisée de clés
+*/</span>
+<span class="keyword">void</span> <span class="function-name">genererCleSecurisee</span>() {
+  <span class="comment">// Utilisation du TRNG hardware ESP32</span>
+  <span class="function-name">esp_fill_random</span>(key, 32);
+  
+  <span class="comment">// Vérification qualité entropie</span>
+  <span class="keyword">if</span> (<span class="function-name">esp_random</span>() != 0) {
+    Serial.<span class="function-name">println</span>("TRNG actif");
+  }
+  
+  <span class="comment">// Ajout entropie supplémentaire</span>
+  <span class="type">unsigned</span> <span class="type">long</span> seed = <span class="function-name">micros</span>() ^ <span class="function-name">esp_random</span>();
+  <span class="function-name">srand</span>(seed);
+  
+  <span class="comment">// Mélange supplémentaire</span>
+  <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < 32; i++) {
+    key[i] ^= <span class="function-name">esp_random</span>() & 0xFF;
+  }
+}</code></pre>
+  </div>
+</section>
+
+
 <!-- =========================================== -->
 <!-- SECTION HOME ASSISTANT -->
 <!-- =========================================== -->
@@ -6149,16 +7210,841 @@ PubSubClient client(espClient);
 }</code></pre>
   </div>
 </section>
+<!-- =========================================== -->
+<!-- SECTION NODE-RED -->
+<!-- =========================================== -->
+<section id="node-red">
+  <h2>Intégration avec Node-RED</h2>
+  <p>Créez des flux IoT visuels avec Node-RED.</p>
 
+  <h3>ESP32 comme nœud MQTT pour Node-RED</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Communication ESP32 avec Node-RED via MQTT
+*/</span>
+<span class="code-keyword">#include</span> &lt;WiFi.h&gt;
+<span class="code-keyword">#include</span> &lt;PubSubClient.h&gt;
+
+<span class="comment">// Topics Node-RED</span>
+<span class="keyword">const</span> <span class="type">char</span>* TOPIC_TEMP = "sensors/bureau/temperature";
+<span class="keyword">const</span> <span class="type">char</span>* TOPIC_HUMIDITY = "sensors/bureau/humidity";
+<span class="keyword">const</span> <span class="type">char</span>* TOPIC_LED_CMD = "actuators/bureau/led/cmd";
+<span class="keyword">const</span> <span class="type">char</span>* TOPIC_LED_STATE = "actuators/bureau/led/state";
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+<span class="type">float</span> temperature = 0;
+<span class="type">float</span> humidity = 0;
+<span class="type">bool</span> ledState = <span class="keyword">false</span>;
+
+<span class="type">void</span> <span class="function-name">setup</span>() {
+  Serial.<span class="function-name">begin</span>(115200);
+  <span class="function-name">setupWiFi</span>();
+  
+  client.<span class="function-name">setServer</span>("192.168.1.100", 1883); <span class="comment">// IP Node-RED</span>
+  client.<span class="function-name">setCallback</span>(mqttCallback);
+  
+  <span class="comment">// Configuration périodique</span>
+  <span class="function-name">xTaskCreate</span>(
+    tacheCapteurs,
+    "Capteurs",
+    4096,
+    <span class="keyword">nullptr</span>,
+    1,
+    <span class="keyword">nullptr</span>
+  );
+}
+
+<span class="type">void</span> <span class="function-name">loop</span>() {
+  <span class="keyword">if</span> (!client.<span class="function-name">connected</span>()) {
+    <span class="function-name">reconnectMQTT</span>();
+  }
+  client.<span class="function-name">loop</span>();
+}
+
+<span class="type">void</span> <span class="function-name">tacheCapteurs</span>(<span class="type">void</span>* parameter) {
+  <span class="keyword">for</span>(;;) {
+    <span class="comment">// Lecture capteurs (simulée)</span>
+    temperature = 20.0 + (<span class="function-name">random</span>(-100, 100) / 100.0);
+    humidity = 50.0 + (<span class="function-name">random</span>(-200, 200) / 100.0);
+    
+    <span class="comment">// Publication vers Node-RED</span>
+    <span class="function-name">publierDonnees</span>();
+    
+    <span class="function-name">vTaskDelay</span>(5000 / portTICK_PERIOD_MS);
+  }
+}
+
+<span class="type">void</span> <span class="function-name">publierDonnees</span>() {
+  <span class="comment">// Format JSON pour Node-RED</span>
+  <span class="type">char</span> payload[128];
+  <span class="function-name">sprintf</span>(payload, 
+           "{\"temperature\":%.1f,\"humidity\":%.1f,\"location\":\"bureau\"}",
+           temperature, humidity);
+  
+  client.<span class="function-name">publish</span>(TOPIC_TEMP, payload);
+  
+  <span class="comment">// Publication séparée pour dashboard</span>
+  <span class="type">char</span> tempStr[10];
+  <span class="function-name">dtostrf</span>(temperature, 1, 1, tempStr);
+  client.<span class="function-name">publish</span>("dashboard/temperature", tempStr);
+}
+
+<span class="type">void</span> <span class="function-name">mqttCallback</span>(<span class="type">char</span>* topic, <span class="type">byte</span>* payload, <span class="type">unsigned</span> <span class="type">int</span> length) {
+  <span class="type">String</span> message;
+  <span class="keyword">for</span> (<span class="type">unsigned</span> <span class="type">int</span> i = 0; i < length; i++) {
+    message += (<span class="type">char</span>)payload[i];
+  }
+  
+  Serial.<span class="function-name">print</span>("Message Node-RED: ");
+  Serial.<span class="function-name">println</span>(message);
+  
+  <span class="keyword">if</span> (<span class="function-name">strcmp</span>(topic, TOPIC_LED_CMD) == 0) {
+    <span class="keyword">if</span> (message == "ON") {
+      ledState = <span class="keyword">true</span>;
+      <span class="function-name">digitalWrite</span>(LED_BUILTIN, HIGH);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (message == "OFF") {
+      ledState = <span class="keyword">false</span>;
+      <span class="function-name">digitalWrite</span>(LED_BUILTIN, LOW);
+    }
+    
+    <span class="comment">// Retour état</span>
+    client.<span class="function-name">publish</span>(TOPIC_LED_STATE, ledState ? "ON" : "OFF");
+  }
+  
+  <span class="comment">// Traitement commandes JSON</span>
+  <span class="keyword">if</span> (message.<span class="function-name">indexOf</span>("{\"command\"") >= 0) {
+    <span class="function-name">traiterCommandeJSON</span>(message);
+  }
+}</code></pre>
+  </div>
+
+  <h3>Flux Node-RED correspondant</h3>
+  <div class="code-example">
+    <h4>dashboard.json</h4>
+    <pre><code><span class="code-comment">// Export flux Node-RED</span>
+[
+  {
+    "id": "mqtt-in-temperature",
+    "type": "mqtt in",
+    "topic": "sensors/bureau/temperature",
+    "broker": "mosquitto",
+    "outputs": 1
+  },
+  {
+    "id": "function-parse-json",
+    "type": "function",
+    "func": "msg.payload = JSON.parse(msg.payload);\nreturn msg;"
+  },
+  {
+    "id": "gauge-temperature",
+    "type": "ui_gauge",
+    "group": "dashboard",
+    "order": 1,
+    "title": "Température Bureau"
+  },
+  {
+    "id": "button-led-control",
+    "type": "ui_button",
+    "group": "dashboard",
+    "order": 2,
+    "label": "LED Bureau",
+    "payload": "TOGGLE",
+    "topic": "actuators/bureau/led/cmd"
+  },
+  {
+    "id": "mqtt-out-led",
+    "type": "mqtt out",
+    "topic": "actuators/bureau/led/cmd",
+    "broker": "mosquitto"
+  },
+  {
+    "id": "mqtt-in-led-state",
+    "type": "mqtt in",
+    "topic": "actuators/bureau/led/state",
+    "broker": "mosquitto"
+  },
+  {
+    "id": "switch-led-state",
+    "type": "switch",
+    "property": "payload",
+    "rules": [
+      {"t": "eq", "v": "ON", "dt": "1"},
+      {"t": "eq", "v": "OFF", "dt": "2"}
+    ]
+  },
+  {
+    "id": "change-led-on",
+    "type": "change",
+    "rules": [
+      {"t": "set", "p": "payload", "pt": "msg", "to": "LED ON"}
+    ]
+  },
+  {
+    "id": "text-led-status",
+    "type": "ui_text",
+    "group": "dashboard",
+    "order": 3,
+    "label": "Statut LED"
+  }
+]</code></pre>
+  </div>
+</section>
+<!-- =========================================== -->
+<!-- SECTION AWS IOT / AZURE -->
+<!-- =========================================== -->
+<section id="aws-iot">
+  <h2>Intégration Cloud AWS IoT / Azure IoT</h2>
+  <p>Connectez votre ESP32 aux plateformes cloud IoT professionnelles.</p>
+
+  <h3>AWS IoT Core avec ESP32</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Connection ESP32 à AWS IoT Core
+*/</span>
+<span class="code-keyword">#include</span> &lt;WiFiClientSecure.h&gt;
+<span class="code-keyword">#include</span> &lt;PubSubClient.h&gt;
+<span class="code-keyword">#include</span> &lt;ArduinoJson.h&gt;
+
+<span class="comment">// Certificats AWS (stockés dans LittleFS)</span>
+<span class="keyword">extern</span> <span class="type">const</span> <span class="type">uint8_t</span> aws_cert_ca[] PROGMEM;
+<span class="keyword">extern</span> <span class="type">const</span> <span class="type">uint8_t</span> aws_cert_crt[] PROGMEM;
+<span class="keyword">extern</span> <span class="type">const</span> <span class="type">uint8_t</span> aws_cert_private[] PROGMEM;
+
+<span class="comment">// Configuration AWS</span>
+<span class="keyword">const</span> <span class="type">char</span>* awsEndpoint = "<span class="code-string">votre-compte-ats.iot.region.amazonaws.com</span>";
+<span class="keyword">const</span> <span class="type">char</span>* clientId = "ESP32-Thing";
+<span class="keyword">const</span> <span class="type">int</span> awsPort = 8883;
+
+WiFiClientSecure net;
+PubSubClient client(net);
+
+<span class="type">void</span> <span class="function-name">setup</span>() {
+  Serial.<span class="function-name">begin</span>(115200);
+  
+  <span class="comment">// Connexion WiFi</span>
+  <span class="function-name">connexionWiFi</span>();
+  
+  <span class="comment">// Configuration TLS</span>
+  net.<span class="function-name">setCACert</span>(aws_cert_ca);
+  net.<span class="function-name">setCertificate</span>(aws_cert_crt);
+  net.<span class="function-name">setPrivateKey</span>(aws_cert_private);
+  
+  <span class="comment">// Configuration MQTT</span>
+  client.<span class="function-name">setServer</span>(awsEndpoint, awsPort);
+  client.<span class="function-name">setCallback</span>(awsCallback);
+  
+  <span class="comment">// Connexion AWS</span>
+  <span class="function-name">connexionAWS</span>();
+}
+
+<span class="type">void</span> <span class="function-name">loop</span>() {
+  <span class="keyword">if</span> (!client.<span class="function-name">connected</span>()) {
+    <span class="function-name">reconnectAWS</span>();
+  }
+  client.<span class="function-name">loop</span>();
+  
+  <span class="comment">// Publication périodique</span>
+  <span class="keyword">static</span> <span class="type">unsigned</span> <span class="type">long</span> lastPublish = 0;
+  <span class="keyword">if</span> (<span class="function-name">millis</span>() - lastPublish > 30000) {
+    lastPublish = <span class="function-name">millis</span>();
+    <span class="function-name">publierDonneesAWS</span>();
+  }
+}
+
+<span class="type">void</span> <span class="function-name">connexionAWS</span>() {
+  <span class="keyword">while</span> (!client.<span class="function-name">connected</span>()) {
+    Serial.<span class="function-name">print</span>("Connexion AWS IoT...");
+    
+    <span class="keyword">if</span> (client.<span class="function-name">connect</span>(clientId)) {
+      Serial.<span class="function-name">println</span>("connecté");
+      
+      <span class="comment">// Abonnement topics</span>
+      client.<span class="function-name">subscribe</span>("$aws/things/ESP32-Thing/shadow/update/accepted");
+      client.<span class="function-name">subscribe</span>("$aws/things/ESP32-Thing/shadow/update/rejected");
+      client.<span class="function-name">subscribe</span>("cmd/esp32");
+    } <span class="keyword">else</span> {
+      Serial.<span class="function-name">print</span>("échec, rc=");
+      Serial.<span class="function-name">print</span>(client.<span class="function-name">state</span>());
+      Serial.<span class="function-name">println</span>(" réessai dans 5s");
+      <span class="function-name">delay</span>(5000);
+    }
+  }
+}
+
+<span class="type">void</span> <span class="function-name">publierDonneesAWS</span>() {
+  <span class="comment">// Création message Shadow</span>
+  DynamicJsonDocument shadow(512);
+  JsonObject state = shadow.<span class="function-name">createNestedObject</span>("state");
+  JsonObject reported = state.<span class="function-name">createNestedObject</span>("reported");
+  
+  reported["temperature"] = <span class="function-name">lireTemperature</span>();
+  reported["humidity"] = <span class="function-name">lireHumidite</span>();
+  reported["battery"] = <span class="function-name">lireBatterie</span>();
+  reported["timestamp"] = <span class="function-name">millis</span>();
+  
+  <span class="type">char</span> jsonBuffer[512];
+  <span class="function-name">serializeJson</span>(shadow, jsonBuffer);
+  
+  <span class="comment">// Publication Shadow Update</span>
+  <span class="type">bool</span> published = client.<span class="function-name">publish</span>(
+    "$aws/things/ESP32-Thing/shadow/update",
+    jsonBuffer
+  );
+  
+  <span class="keyword">if</span> (published) {
+    Serial.<span class="function-name">println</span>("Shadow mis à jour");
+  } <span class="keyword">else</span> {
+    Serial.<span class="function-name">println</span>("Échec publication Shadow");
+  }
+}
+
+<span class="type">void</span> <span class="function-name">awsCallback</span>(<span class="type">char</span>* topic, <span class="type">byte</span>* payload, <span class="type">unsigned</span> <span class="type">int</span> length) {
+  Serial.<span class="function-name">print</span>("Message AWS: ");
+  Serial.<span class="function-name">println</span>(topic);
+  
+  <span class="type">String</span> message;
+  <span class="keyword">for</span> (<span class="type">unsigned</span> <span class="type">int</span> i = 0; i < length; i++) {
+    message += (<span class="type">char</span>)payload[i];
+  }
+  
+  <span class="comment">// Traitement commande Shadow</span>
+  <span class="keyword">if</span> (<span class="function-name">strstr</span>(topic, "shadow/update/accepted")) {
+    DynamicJsonDocument doc(512);
+    <span class="type">DeserializationError</span> error = <span class="function-name">deserializeJson</span>(doc, message);
+    
+    <span class="keyword">if</span> (!error) {
+      <span class="keyword">if</span> (doc.<span class="function-name">containsKey</span>("state")) {
+        JsonObject state = doc["state"];
+        <span class="keyword">if</span> (state.<span class="function-name">containsKey</span>("desired")) {
+          JsonObject desired = state["desired"];
+          
+          <span class="comment">// Exécution commandes désirées</span>
+          <span class="keyword">if</span> (desired.<span class="function-name">containsKey</span>("led")) {
+            <span class="type">bool</span> ledState = desired["led"];
+            <span class="function-name">digitalWrite</span>(LED_BUILTIN, ledState);
+          }
+          
+          <span class="comment">// Mise à jour reported</span>
+          <span class="function-name">publierDonneesAWS</span>();
+        }
+      }
+    }
+  }
+}</code></pre>
+  </div>
+
+  <h3>Azure IoT Hub</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Connection à Azure IoT Hub
+*/</span>
+<span class="code-keyword">#include</span> &lt;AzureIoTHub.h&gt;
+<span class="code-keyword">#include</span> &lt;AzureIoTProtocol_MQTT.h&gt;
+
+<span class="comment">// Chaîne de connexion Azure</span>
+<span class="keyword">static</span> <span class="type">const</span> <span class="type">char</span>* connectionString = 
+  "HostName=votre-hub.azure-devices.net;"
+  "DeviceId=esp32-device;"
+  "SharedAccessKey=votre-cle";
+
+IOTHUB_DEVICE_CLIENT_LL_HANDLE deviceHandle;
+
+<span class="type">void</span> <span class="function-name">setup</span>() {
+  Serial.<span class="function-name">begin</span>(115200);
+  
+  <span class="comment">// Initialisation Azure IoT</span>
+  <span class="function-name">esp_log_level_set</span>("*", ESP_LOG_ERROR);
+  
+  <span class="keyword">if</span> (<span class="function-name">serializer_init</span>(<span class="keyword">NULL</span>) != SERIALIZER_OK) {
+    Serial.<span class="function-name">println</span>("Erreur initialisation serializer");
+    <span class="keyword">return</span>;
+  }
+  
+  <span class="comment">// Création client</span>
+  deviceHandle = <span class="function-name">IoTHubDeviceClient_LL_CreateFromConnectionString</span>(
+    connectionString, MQTT_Protocol
+  );
+  
+  <span class="keyword">if</span> (deviceHandle == <span class="keyword">NULL</span>) {
+    Serial.<span class="function-name">println</span>("Erreur création client Azure");
+    <span class="keyword">return</span>;
+  }
+  
+  <span class="comment">// Configuration callbacks</span>
+  <span class="function-name">IoTHubDeviceClient_LL_SetMessageCallback</span>(
+    deviceHandle, messageCallback, <span class="keyword">NULL</span>
+  );
+  
+  Serial.<span class="function-name">println</span>("Connecté à Azure IoT Hub");
+}
+
+<span class="type">void</span> <span class="function-name">loop</span>() {
+  <span class="comment">// DoWork Azure</span>
+  <span class="function-name">IoTHubDeviceClient_LL_DoWork</span>(deviceHandle);
+  <span class="function-name">delay</span>(10);
+  
+  <span class="comment">// Envoi télémétrie</span>
+  <span class="keyword">static</span> <span class="type">unsigned</span> <span class="type">long</span> lastSend = 0;
+  <span class="keyword">if</span> (<span class="function-name">millis</span>() - lastSend > 10000) {
+    lastSend = <span class="function-name">millis</span>();
+    <span class="function-name">envoyerTelemetrie</span>();
+  }
+}
+
+<span class="type">void</span> <span class="function-name">envoyerTelemetrie</span>() {
+  <span class="type">char</span> messageBuffer[256];
+  
+  <span class="type">float</span> temperature = <span class="function-name">lireTemperature</span>();
+  <span class="type">float</span> humidity = <span class="function-name">lireHumidite</span>();
+  
+  <span class="function-name">snprintf</span>(messageBuffer, <span class="keyword">sizeof</span>(messageBuffer),
+           "{\"temperature\":%.1f,\"humidity\":%.1f,\"deviceId\":\"esp32\"}",
+           temperature, humidity);
+  
+  IOTHUB_MESSAGE_HANDLE messageHandle = 
+    <span class="function-name">IoTHubMessage_CreateFromByteArray</span>(
+      (<span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span>*)messageBuffer, 
+      <span class="function-name">strlen</span>(messageBuffer)
+    );
+  
+  <span class="keyword">if</span> (messageHandle == <span class="keyword">NULL</span>) {
+    Serial.<span class="function-name">println</span>("Erreur création message");
+    <span class="keyword">return</span>;
+  }
+  
+  <span class="function-name">IoTHubDeviceClient_LL_SendEventAsync</span>(
+    deviceHandle, 
+    messageHandle, 
+    sendCallback, 
+    <span class="keyword">NULL</span>
+  );
+  
+  <span class="function-name">IoTHubMessage_Destroy</span>(messageHandle);
+}
+
+<span class="type">void</span> <span class="function-name">sendCallback</span>(IOTHUB_CLIENT_CONFIRMATION_RESULT result, <span class="type">void</span>* context) {
+  <span class="keyword">if</span> (result == IOTHUB_CLIENT_CONFIRMATION_OK) {
+    Serial.<span class="function-name">println</span>("Message envoyé à Azure");
+  } <span class="keyword">else</span> {
+    Serial.<span class="function-name">println</span>("Échec envoi Azure");
+  }
+}
+
+<span class="type">static</span> IOTHUBMESSAGE_DISPOSITION_RESULT <span class="function-name">messageCallback</span>(
+  IOTHUB_MESSAGE_HANDLE message, <span class="type">void</span>* context) {
+  
+  <span class="type">const</span> <span class="type">char</span>* buffer;
+  <span class="type">size_t</span> size;
+  
+  <span class="keyword">if</span> (<span class="function-name">IoTHubMessage_GetByteArray</span>(message, (<span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span>**)&buffer, &size) != IOTHUB_MESSAGE_OK) {
+    <span class="keyword">return</span> IOTHUBMESSAGE_ABANDONED;
+  }
+  
+  Serial.<span class="function-name">print</span>("Message Azure: ");
+  Serial.<span class="function-name">println</span>(buffer);
+  
+  <span class="comment">// Traitement commande Cloud-to-Device</span>
+  <span class="keyword">if</span> (<span class="function-name">strstr</span>(buffer, "\"command\":\"led_on\"")) {
+    <span class="function-name">digitalWrite</span>(LED_BUILTIN, HIGH);
+  } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="function-name">strstr</span>(buffer, "\"command\":\"led_off\"")) {
+    <span class="function-name">digitalWrite</span>(LED_BUILTIN, LOW);
+  }
+  
+  <span class="keyword">return</span> IOTHUBMESSAGE_ACCEPTED;
+}</code></pre>
+  </div>
+</section>
+<!-- =========================================== -->
+<!-- SECTION API REST AVANCÉE -->
+<!-- =========================================== -->
+<section id="api-rest">
+  <h2>API REST avancée avec ESP32</h2>
+  <p>Créez des APIs professionnelles avec authentification, versioning et documentation.</p>
+
+  <h3>Framework API avec routing</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Framework API REST complet
+*/</span>
+<span class="code-keyword">#include</span> &lt;WebServer.h&gt;
+<span class="code-keyword">#include</span> &lt;ArduinoJson.h&gt;
+
+WebServer server(80);
+
+<span class="comment">// Structure pour les routes</span>
+<span class="keyword">struct</span> <span class="class-name">Route</span> {
+  <span class="type">String</span> method;
+  <span class="type">String</span> path;
+  <span class="type">void</span> (*handler)();
+};
+
+<span class="type">Route</span> routes[] = {
+  {"GET", "/api/v1/status", handleStatus},
+  {"GET", "/api/v1/sensors", handleGetSensors},
+  {"POST", "/api/v1/sensors", handlePostSensor},
+  {"GET", "/api/v1/sensors/{id}", handleGetSensor},
+  {"PUT", "/api/v1/sensors/{id}", handleUpdateSensor},
+  {"DELETE", "/api/v1/sensors/{id}", handleDeleteSensor}
+};
+
+<span class="type">void</span> <span class="function-name">setup</span>() {
+  Serial.<span class="function-name">begin</span>(115200);
+  
+  <span class="comment">// Configuration routes</span>
+  <span class="keyword">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>& route : routes) {
+    <span class="keyword">if</span> (route.method == "GET") {
+      server.<span class="function-name">on</span>(route.path, HTTP_GET, route.handler);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (route.method == "POST") {
+      server.<span class="function-name">on</span>(route.path, HTTP_POST, route.handler);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (route.method == "PUT") {
+      server.<span class="function-name">on</span>(route.path, HTTP_PUT, route.handler);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (route.method == "DELETE") {
+      server.<span class="function-name">on</span>(route.path, HTTP_DELETE, route.handler);
+    }
+  }
+  
+  <span class="comment">// Middleware CORS</span>
+  server.<span class="function-name">onNotFound</span>([]() {
+    <span class="keyword">if</span> (server.<span class="function-name">method</span>() == HTTP_OPTIONS) {
+      server.<span class="function-name">sendHeader</span>("Access-Control-Allow-Origin", "*");
+      server.<span class="function-name">sendHeader</span>("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+      server.<span class="function-name">sendHeader</span>("Access-Control-Allow-Headers", "Content-Type, Authorization");
+      server.<span class="function-name">send</span>(204);
+    } <span class="keyword">else</span> {
+      server.<span class="function-name">send</span>(404, "application/json", "{\"error\":\"Not Found\"}");
+    }
+  });
+  
+  server.<span class="function-name">begin</span>();
+  Serial.<span class="function-name">println</span>("API démarrée");
+}
+
+<span class="type">void</span> <span class="function-name">loop</span>() {
+  server.<span class="function-name">handleClient</span>();
+}
+
+<span class="type">void</span> <span class="function-name">handleStatus</span>() {
+  <span class="comment">// Vérification authentification</span>
+  <span class="keyword">if</span> (!<span class="function-name">verifierAuth</span>()) {
+    server.<span class="function-name">send</span>(401, "application/json", "{\"error\":\"Unauthorized\"}");
+    <span class="keyword">return</span>;
+  }
+  
+  DynamicJsonDocument doc(512);
+  doc["status"] = "online";
+  doc["version"] = "1.0.0";
+  doc["uptime"] = <span class="function-name">millis</span>() / 1000;
+  doc["memory"] = <span class="function-name">ESP.getFreeHeap</span>();
+  
+  <span class="type">String</span> response;
+  <span class="function-name">serializeJson</span>(doc, response);
+  
+  server.<span class="function-name">send</span>(200, "application/json", response);
+}
+
+<span class="type">void</span> <span class="function-name">handleGetSensors</span>() {
+  <span class="keyword">if</span> (!<span class="function-name">verifierAuth</span>()) {
+    server.<span class="function-name">send</span>(401, "application/json", "{\"error\":\"Unauthorized\"}");
+    <span class="keyword">return</span>;
+  }
+  
+  <span class="comment">// Pagination</span>
+  <span class="type">int</span> page = server.<span class="function-name">arg</span>("page").<span class="function-name">toInt</span>();
+  <span class="type">int</span> limit = server.<span class="function-name">arg</span>("limit").<span class="function-name">toInt</span>();
+  <span class="keyword">if</span> (page == 0) page = 1;
+  <span class="keyword">if</span> (limit == 0) limit = 10;
+  
+  DynamicJsonDocument doc(1024);
+  JsonArray sensors = doc.<span class="function-name">createNestedArray</span>("sensors");
+  
+  <span class="comment">// Simulation données</span>
+  <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < 3; i++) {
+    JsonObject sensor = sensors.<span class="function-name">createNestedObject</span>();
+    sensor["id"] = i + 1;
+    sensor["name"] = "Sensor " + <span class="function-name">String</span>(i + 1);
+    sensor["type"] = "temperature";
+    sensor["value"] = 20.0 + i;
+    sensor["unit"] = "°C";
+  }
+  
+  doc["page"] = page;
+  doc["limit"] = limit;
+  doc["total"] = 3;
+  
+  <span class="type">String</span> response;
+  <span class="function-name">serializeJson</span>(doc, response);
+  
+  server.<span class="function-name">send</span>(200, "application/json", response);
+}
+
+<span class="type">void</span> <span class="function-name">handlePostSensor</span>() {
+  <span class="keyword">if</span> (!<span class="function-name">verifierAuth</span>()) {
+    server.<span class="function-name">send</span>(401, "application/json", "{\"error\":\"Unauthorized\"}");
+    <span class="keyword">return</span>;
+  }
+  
+  <span class="comment">// Validation Content-Type</span>
+  <span class="keyword">if</span> (server.<span class="function-name">header</span>("Content-Type") != "application/json") {
+    server.<span class="function-name">send</span>(415, "application/json", "{\"error\":\"Unsupported Media Type\"}");
+    <span class="keyword">return</span>;
+  }
+  
+  <span class="comment">// Parse JSON</span>
+  DynamicJsonDocument doc(256);
+  <span class="type">DeserializationError</span> error = <span class="function-name">deserializeJson</span>(doc, server.<span class="function-name">arg</span>("plain"));
+  
+  <span class="keyword">if</span> (error) {
+    server.<span class="function-name">send</span>(400, "application/json", "{\"error\":\"Invalid JSON\"}");
+    <span class="keyword">return</span>;
+  }
+  
+  <span class="comment">// Validation données</span>
+  <span class="keyword">if</span> (!doc.<span class="function-name">containsKey</span>("name") || !doc.<span class="function-name">containsKey</span>("value")) {
+    server.<span class="function-name">send</span>(400, "application/json", "{\"error\":\"Missing required fields\"}");
+    <span class="keyword">return</span>;
+  }
+  
+  <span class="comment">// Traitement (simulation)</span>
+  <span class="type">int</span> newId = <span class="function-name">random</span>(1000, 9999);
+  
+  DynamicJsonDocument responseDoc(256);
+  responseDoc["id"] = newId;
+  responseDoc["name"] = doc["name"];
+  responseDoc["value"] = doc["value"];
+  responseDoc["created"] = <span class="function-name">millis</span>();
+  
+  <span class="type">String</span> response;
+  <span class="function-name">serializeJson</span>(responseDoc, response);
+  
+  server.<span class="function-name">send</span>(201, "application/json", response);
+}
+
+<span class="type">bool</span> <span class="function-name">verifierAuth</span>() {
+  <span class="type">String</span> authHeader = server.<span class="function-name">header</span>("Authorization");
+  
+  <span class="keyword">if</span> (authHeader.<span class="function-name">startsWith</span>("Bearer ")) {
+    <span class="type">String</span> token = authHeader.<span class="function-name">substring</span>(7);
+    <span class="comment">// Vérification JWT ici</span>
+    <span class="keyword">return</span> <span class="function-name">verifierJWT</span>(token);
+  }
+  
+  <span class="keyword">return</span> <span class="keyword">false</span>;
+}</code></pre>
+  </div>
+
+  <h3>Documentation OpenAPI/Swagger</h3>
+  <div class="code-example">
+    <h4>openapi.yaml</h4>
+    <pre><code>openapi: 3.0.0
+info:
+  title: ESP32 IoT API
+  version: 1.0.0
+  description: API pour contrôler l'ESP32
+
+servers:
+  - url: http://esp32.local/api/v1
+
+paths:
+  /status:
+    get:
+      summary: Statut du système
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  
+  /sensors:
+    get:
+      summary: Liste des capteurs
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Liste des capteurs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorList'
+    
+    post:
+      summary: Ajouter un capteur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewSensor'
+      responses:
+        '201':
+          description: Capteur créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+
+components:
+  schemas:
+    Status:
+      type: object
+      properties:
+        status:
+          type: string
+        version:
+          type: string
+        uptime:
+          type: integer
+        memory:
+          type: integer
+    
+    Sensor:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        value:
+          type: number
+        unit:
+          type: string
+    
+    SensorList:
+      type: object
+      properties:
+        sensors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sensor'
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer</code></pre>
+  </div>
+</section>
       </section>
 
       <!-- =========================================== -->
       <!-- SECTION PROJETS PRATIQUES -->
       <!-- =========================================== -->
+       <!-- =========================================== -->
+<!-- SECTION BONNES PRATIQUES -->
+<!-- =========================================== -->
+
       <section id="projets">
         <h2>Projets pratiques Arduino/ESP</h2>
         <p>Appliquez vos connaissances avec ces projets concrets, du débutant au confirmé.</p>
-
+        <section id="best-practices">
+          <h2>Bonnes pratiques de développement IoT</h2>
+          <p>Guide complet pour des projets robustes et maintenables.</p>
+        
+          <div class="info-box">
+            <h4>Architecture recommandée</h4>
+            <ol>
+              <li><strong>Séparation des responsabilités</strong> : Classes distinctes pour communication, logique métier, configuration</li>
+              <li><strong>Configuration externe</strong> : Stocker paramètres dans LittleFS, pas en dur dans le code</li>
+              <li><strong>Gestion d'erreurs</strong> : Retry logic avec backoff exponentiel</li>
+              <li><strong>Monitoring</strong> : Logs structurés et métriques de santé</li>
+            </ol>
+          </div>
+        
+          <h3>Configuration managée</h3>
+          <div class="code-example">
+            <pre><code><span class="code-comment">/*
+        Système de configuration robuste
+        */</span>
+        <span class="keyword">class</span> <span class="class-name">Configuration</span> {
+        <span class="keyword">private</span>:
+          <span class="type">String</span> fichierConfig = "/config.json";
+          DynamicJsonDocument configDoc;
+          
+        <span class="keyword">public</span>:
+          <span class="function-name">Configuration</span>() : configDoc(1024) {}
+          
+          <span class="type">bool</span> <span class="function-name">charger</span>() {
+            File file = LittleFS.<span class="function-name">open</span>(fichierConfig, "r");
+            <span class="keyword">if</span> (!file) {
+              Serial.<span class="function-name">println</span>("Création configuration par défaut");
+              <span class="function-name">configurerDefaut</span>();
+              <span class="keyword">return</span> <span class="function-name">sauvegarder</span>();
+            }
+            
+            <span class="type">DeserializationError</span> error = <span class="function-name">deserializeJson</span>(configDoc, file);
+            file.<span class="function-name">close</span>();
+            
+            <span class="keyword">if</span> (error) {
+              Serial.<span class="function-name">println</span>("Erreur chargement config");
+              <span class="keyword">return</span> <span class="keyword">false</span>;
+            }
+            
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+          }
+          
+          <span class="type">bool</span> <span class="function-name">sauvegarder</span>() {
+            File file = LittleFS.<span class="function-name">open</span>(fichierConfig, "w");
+            <span class="keyword">if</span> (!file) {
+              <span class="keyword">return</span> <span class="keyword">false</span>;
+            }
+            
+            <span class="function-name">serializeJson</span>(configDoc, file);
+            file.<span class="function-name">close</span>();
+            
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+          }
+          
+          <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;
+          T <span class="function-name">get</span>(<span class="type">const</span> <span class="type">char</span>* key, T defaultValue) {
+            <span class="keyword">return</span> configDoc[key] | defaultValue;
+          }
+          
+          <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;
+          <span class="type">void</span> <span class="function-name">set</span>(<span class="type">const</span> <span class="type">char</span>* key, T value) {
+            configDoc[key] = value;
+          }
+          
+        <span class="keyword">private</span>:
+          <span class="type">void</span> <span class="function-name">configurerDefaut</span>() {
+            configDoc["wifi"]["ssid"] = "";
+            configDoc["wifi"]["password"] = "";
+            configDoc["mqtt"]["server"] = "";
+            configDoc["mqtt"]["port"] = 1883;
+            configDoc["device"]["name"] = "ESP32-Device";
+            configDoc["device"]["location"] = "unknown";
+            configDoc["sensors"]["interval"] = 30000;
+          }
+        };</code></pre>
+          </div>
+        
+          <h3>Guide de sécurité IoT</h3>
+          <div class="warning-box">
+            <h4>⚠️ Règles de sécurité essentielles</h4>
+            <ol>
+              <li><strong>Mots de passe forts</strong> : Pas de valeurs par défaut, rotation régulière</li>
+              <li><strong>Mises à jour</strong> : OTA sécurisé avec signature firmware</li>
+              <li><strong>Communication chiffrée</strong> : TLS 1.2+ obligatoire</li>
+              <li><strong>Principle of least privilege</strong> : Limiter accès réseau et fichiers</li>
+              <li><strong>Audit logs</strong> : Journaliser toutes les actions critiques</li>
+              <li><strong>Validation input</strong> : Sanitizer toutes les entrées utilisateur</li>
+              <li><strong>Securité physique</strong> : Protection accès UART/JTAG</li>
+            </ol>
+          </div>
+        </section>
         <div class="project-gallery">
           <!-- Projet 1 -->
           <div class="project-card">
