@@ -39,7 +39,6 @@
 
     .container {
       width: 100%;
-      max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px;
     }
@@ -111,6 +110,10 @@
       margin-bottom: 2rem;
       width: 100%;
       margin-top: 0; /* Supprime tout margin-top */
+      background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        transition: background-image 1s ease-in-out;
     }
 
     .hero h1 {
@@ -7950,101 +7953,101 @@ components:
       <section id="projets">
         <h2>Projets pratiques Arduino/ESP</h2>
         <p>Appliquez vos connaissances avec ces projets concrets, du débutant au confirmé.</p>
-        <section id="best-practices">
-          <h2>Bonnes pratiques de développement IoT</h2>
-          <p>Guide complet pour des projets robustes et maintenables.</p>
-        
-          <div class="info-box">
-            <h4>Architecture recommandée</h4>
-            <ol>
-              <li><strong>Séparation des responsabilités</strong> : Classes distinctes pour communication, logique métier, configuration</li>
-              <li><strong>Configuration externe</strong> : Stocker paramètres dans LittleFS, pas en dur dans le code</li>
-              <li><strong>Gestion d'erreurs</strong> : Retry logic avec backoff exponentiel</li>
-              <li><strong>Monitoring</strong> : Logs structurés et métriques de santé</li>
-            </ol>
-          </div>
-        
-          <h3>Configuration managée</h3>
-          <div class="code-example">
-            <pre><code><span class="code-comment">/*
-        Système de configuration robuste
-        */</span>
-        <span class="keyword">class</span> <span class="class-name">Configuration</span> {
-        <span class="keyword">private</span>:
-          <span class="type">String</span> fichierConfig = "/config.json";
-          DynamicJsonDocument configDoc;
-          
-        <span class="keyword">public</span>:
-          <span class="function-name">Configuration</span>() : configDoc(1024) {}
-          
-          <span class="type">bool</span> <span class="function-name">charger</span>() {
-            File file = LittleFS.<span class="function-name">open</span>(fichierConfig, "r");
-            <span class="keyword">if</span> (!file) {
-              Serial.<span class="function-name">println</span>("Création configuration par défaut");
-              <span class="function-name">configurerDefaut</span>();
-              <span class="keyword">return</span> <span class="function-name">sauvegarder</span>();
-            }
-            
-            <span class="type">DeserializationError</span> error = <span class="function-name">deserializeJson</span>(configDoc, file);
-            file.<span class="function-name">close</span>();
-            
-            <span class="keyword">if</span> (error) {
-              Serial.<span class="function-name">println</span>("Erreur chargement config");
-              <span class="keyword">return</span> <span class="keyword">false</span>;
-            }
-            
-            <span class="keyword">return</span> <span class="keyword">true</span>;
-          }
-          
-          <span class="type">bool</span> <span class="function-name">sauvegarder</span>() {
-            File file = LittleFS.<span class="function-name">open</span>(fichierConfig, "w");
-            <span class="keyword">if</span> (!file) {
-              <span class="keyword">return</span> <span class="keyword">false</span>;
-            }
-            
-            <span class="function-name">serializeJson</span>(configDoc, file);
-            file.<span class="function-name">close</span>();
-            
-            <span class="keyword">return</span> <span class="keyword">true</span>;
-          }
-          
-          <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;
-          T <span class="function-name">get</span>(<span class="type">const</span> <span class="type">char</span>* key, T defaultValue) {
-            <span class="keyword">return</span> configDoc[key] | defaultValue;
-          }
-          
-          <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;
-          <span class="type">void</span> <span class="function-name">set</span>(<span class="type">const</span> <span class="type">char</span>* key, T value) {
-            configDoc[key] = value;
-          }
-          
-        <span class="keyword">private</span>:
-          <span class="type">void</span> <span class="function-name">configurerDefaut</span>() {
-            configDoc["wifi"]["ssid"] = "";
-            configDoc["wifi"]["password"] = "";
-            configDoc["mqtt"]["server"] = "";
-            configDoc["mqtt"]["port"] = 1883;
-            configDoc["device"]["name"] = "ESP32-Device";
-            configDoc["device"]["location"] = "unknown";
-            configDoc["sensors"]["interval"] = 30000;
-          }
-        };</code></pre>
-          </div>
-        
-          <h3>Guide de sécurité IoT</h3>
-          <div class="warning-box">
-            <h4>⚠️ Règles de sécurité essentielles</h4>
-            <ol>
-              <li><strong>Mots de passe forts</strong> : Pas de valeurs par défaut, rotation régulière</li>
-              <li><strong>Mises à jour</strong> : OTA sécurisé avec signature firmware</li>
-              <li><strong>Communication chiffrée</strong> : TLS 1.2+ obligatoire</li>
-              <li><strong>Principle of least privilege</strong> : Limiter accès réseau et fichiers</li>
-              <li><strong>Audit logs</strong> : Journaliser toutes les actions critiques</li>
-              <li><strong>Validation input</strong> : Sanitizer toutes les entrées utilisateur</li>
-              <li><strong>Securité physique</strong> : Protection accès UART/JTAG</li>
-            </ol>
-          </div>
-        </section>
+<section id="best-practices">
+  <h2>Bonnes pratiques de développement IoT</h2>
+  <p>Guide complet pour des projets robustes et maintenables.</p>
+
+  <div class="info-box">
+    <h4>Architecture recommandée</h4>
+    <ol>
+      <li><strong>Séparation des responsabilités</strong> : Classes distinctes pour communication, logique métier, configuration</li>
+      <li><strong>Configuration externe</strong> : Stocker paramètres dans LittleFS, pas en dur dans le code</li>
+      <li><strong>Gestion d'erreurs</strong> : Retry logic avec backoff exponentiel</li>
+      <li><strong>Monitoring</strong> : Logs structurés et métriques de santé</li>
+    </ol>
+  </div>
+
+  <h3>Configuration managée</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Système de configuration robuste
+*/</span>
+<span class="keyword">class</span> <span class="class-name">Configuration</span> {
+<span class="keyword">private</span>:
+  <span class="type">String</span> fichierConfig = "/config.json";
+  DynamicJsonDocument configDoc;
+  
+<span class="keyword">public</span>:
+  <span class="function-name">Configuration</span>() : configDoc(1024) {}
+  
+  <span class="type">bool</span> <span class="function-name">charger</span>() {
+    File file = LittleFS.<span class="function-name">open</span>(fichierConfig, "r");
+    <span class="keyword">if</span> (!file) {
+      Serial.<span class="function-name">println</span>("Création configuration par défaut");
+      <span class="function-name">configurerDefaut</span>();
+      <span class="keyword">return</span> <span class="function-name">sauvegarder</span>();
+    }
+    
+    <span class="type">DeserializationError</span> error = <span class="function-name">deserializeJson</span>(configDoc, file);
+    file.<span class="function-name">close</span>();
+    
+    <span class="keyword">if</span> (error) {
+      Serial.<span class="function-name">println</span>("Erreur chargement config");
+      <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+    
+    <span class="keyword">return</span> <span class="keyword">true</span>;
+  }
+  
+  <span class="type">bool</span> <span class="function-name">sauvegarder</span>() {
+    File file = LittleFS.<span class="function-name">open</span>(fichierConfig, "w");
+    <span class="keyword">if</span> (!file) {
+      <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+    
+    <span class="function-name">serializeJson</span>(configDoc, file);
+    file.<span class="function-name">close</span>();
+    
+    <span class="keyword">return</span> <span class="keyword">true</span>;
+  }
+  
+  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;
+  T <span class="function-name">get</span>(<span class="type">const</span> <span class="type">char</span>* key, T defaultValue) {
+    <span class="keyword">return</span> configDoc[key] | defaultValue;
+  }
+  
+  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;
+  <span class="type">void</span> <span class="function-name">set</span>(<span class="type">const</span> <span class="type">char</span>* key, T value) {
+    configDoc[key] = value;
+  }
+  
+<span class="keyword">private</span>:
+  <span class="type">void</span> <span class="function-name">configurerDefaut</span>() {
+    configDoc["wifi"]["ssid"] = "";
+    configDoc["wifi"]["password"] = "";
+    configDoc["mqtt"]["server"] = "";
+    configDoc["mqtt"]["port"] = 1883;
+    configDoc["device"]["name"] = "ESP32-Device";
+    configDoc["device"]["location"] = "unknown";
+    configDoc["sensors"]["interval"] = 30000;
+  }
+};</code></pre>
+  </div>
+
+  <h3>Guide de sécurité IoT</h3>
+  <div class="warning-box">
+    <h4>⚠️ Règles de sécurité essentielles</h4>
+    <ol>
+      <li><strong>Mots de passe forts</strong> : Pas de valeurs par défaut, rotation régulière</li>
+      <li><strong>Mises à jour</strong> : OTA sécurisé avec signature firmware</li>
+      <li><strong>Communication chiffrée</strong> : TLS 1.2+ obligatoire</li>
+      <li><strong>Principle of least privilege</strong> : Limiter accès réseau et fichiers</li>
+      <li><strong>Audit logs</strong> : Journaliser toutes les actions critiques</li>
+      <li><strong>Validation input</strong> : Sanitizer toutes les entrées utilisateur</li>
+      <li><strong>Securité physique</strong> : Protection accès UART/JTAG</li>
+    </ol>
+  </div>
+</section>
         <div class="project-gallery">
           <!-- Projet 1 -->
           <div class="project-card">
@@ -8551,6 +8554,28 @@ document.addEventListener('DOMContentLoaded', function() {
   `;
   document.head.appendChild(style);
 });
+const header = document.querySelector(".hero");
+
+const images = [
+    "./image/closeup-electronic-circuit-board-with-cpu-microchip-electronic-components-background.jpg",
+    "./image/top-view-wires-tech-background.jpg",
+    "./image/using-pliers-circuit-board.jpg",
+    "./image/father-son-making-robot.jpg",
+    "./image/robot-style-car-with-joystick.jpg"
+];
+
+let index = 0;
+
+function changeHeaderBackground() {
+    header.style.backgroundImage = `url('${images[index]}')`;
+    index = (index + 1) % images.length;
+}
+
+// image au chargement
+changeHeaderBackground();
+
+// changer toutes les 3 secondes
+setInterval(changeHeaderBackground, 3000);
   </script>
 </body>
 

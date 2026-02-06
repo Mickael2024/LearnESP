@@ -40,18 +40,20 @@
         overflow-x: hidden;
         position: relative;
         padding-top: 70px; /* ESPACE POUR LE HEADER FIXE */
+
       }
 
     .container {
       width: 100%;
-      max-width: 1200px;
+
       margin: 0 auto;
       padding: 0 20px;
     }
 
     /* Header */
     header {
-        background-color: var(--primary-color);
+
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         color: white;
         padding: 1rem 0;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -61,6 +63,7 @@
         right: 0;
         z-index: 1000; /* Augmenté pour être au-dessus de tout */
         width: 100vw; /* Prend toute la largeur de la fenêtre */
+      
       }
       
 
@@ -118,13 +121,16 @@
 
     /* Hero Section */
     .hero {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         color: white;
         padding: 3rem 0;
         text-align: center;
         margin-bottom: 2rem;
         width: 100%;
         margin-top: 0; /* Supprime tout margin-top */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        transition: background-image 1s ease-in-out;
       }
 
     .hero h1 {
@@ -165,7 +171,7 @@
     /* Main Content */
     .main-content {
       display: flex;
-      flex-direction: column;
+     
       margin-bottom: 3rem;
       gap: 2rem;
       width: 100%;
@@ -875,7 +881,7 @@
         font-size: 1.2rem;
       }
       
-      
+     
       .sidebar {
         flex: 0 0 280px;
         order: 1;
@@ -995,7 +1001,9 @@
         justify-content: space-around;
         width: 100%;
       }
-      
+      .main-content{
+        flex-direction: column;
+      }
       nav ul li {
         margin: 0.2rem;
       }
@@ -2735,6 +2743,29 @@
         });
       }
     });
-  </script>
+    const header = document.querySelector(".hero");
+
+    const images = [
+        "./image/closeup-electronic-circuit-board-with-cpu-microchip-electronic-components-background.jpg",
+        "./image/top-view-wires-tech-background.jpg",
+        "./image/using-pliers-circuit-board.jpg",
+        "./image/father-son-making-robot.jpg",
+        "./image/robot-style-car-with-joystick.jpg"
+    ];
+    
+    let index = 0;
+    
+    function changeHeaderBackground() {
+        header.style.backgroundImage = `url('${images[index]}')`;
+        index = (index + 1) % images.length;
+    }
+    
+    // image au chargement
+    changeHeaderBackground();
+    
+    // changer toutes les 3 secondes
+    setInterval(changeHeaderBackground, 3000);
+      
+</script>
 </body>
 </html>

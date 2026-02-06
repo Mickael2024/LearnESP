@@ -35,7 +35,6 @@
 
     .container {
       width: 100%;
-      max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px;
     }
@@ -103,6 +102,10 @@
       padding: 3rem 0;
       text-align: center;
       margin-bottom: 2rem;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: background-image 1s ease-in-out;
     }
 
     .hero h1 {
@@ -3104,7 +3107,67 @@ function runCode() {
       addSerialLine('➡️  Corrigez la syntaxe avant de ré-exécuter');
       return;
     }
-    
+    // DANS runCode(), APRÈS la vérification de syntaxe, AJOUTER :
+// === VÉRIFICATION 6: Vérification détaillée de l'exercice ===
+const completeness = checkExerciseCompleteness(code, currentExercise);
+const orderCheck = checkInstructionOrder(code, currentExercise);
+const valueCheck = checkExactValues(code, currentExercise);
+
+if (!completeness.complete) {
+  addSerialLine('❌ CODE INCOMPLET POUR L\'EXERCICE');
+  addSerialLine('═══════════════════════════════');
+  addSerialLine(`Score: ${completeness.score}/100`);
+  
+  if (completeness.details.length > 0) {
+    addSerialLine('Éléments corrects:');
+    completeness.details.forEach(detail => {
+      addSerialLine(`   ${detail}`);
+    });
+  }
+  
+  if (completeness.missing.length > 0) {
+    addSerialLine('Éléments manquants:');
+    completeness.missing.forEach(item => {
+      addSerialLine(`   • ${item}`);
+    });
+  }
+  
+  // Afficher les problèmes d'ordre
+  if (orderCheck.issues.length > 0) {
+    addSerialLine('Problèmes d\'ordre:');
+    orderCheck.issues.forEach(issue => {
+      addSerialLine(`   ❌ ${issue}`);
+    });
+  }
+  
+  // Afficher les problèmes de valeurs
+  if (valueCheck.issues.length > 0) {
+    addSerialLine('Valeurs incorrectes:');
+    valueCheck.issues.forEach(issue => {
+      addSerialLine(`   ❌ ${issue}`);
+    });
+  }
+  
+  if (valueCheck.warnings.length > 0) {
+    addSerialLine('Suggestions:');
+    valueCheck.warnings.forEach(warning => {
+      addSerialLine(`   💡 ${warning}`);
+    });
+  }
+  
+  addSerialLine('═══════════════════════════════');
+  addSerialLine('➡️  Complétez votre code avant de continuer');
+  
+  // Mode apprentissage seulement
+  if (completeness.score < 50) {
+    addSerialLine('═══════════════════════════════');
+    addSerialLine('❌ EXÉCUTION BLOQUÉE - Code trop incomplet');
+    return;
+  }
+  
+  addSerialLine('═══════════════════════════════');
+  addSerialLine('⚠️  Exécution en mode apprentissage (code incomplet)...');
+}
     // === VÉRIFICATION 4: Code vraiment modifié ===
     if (!isCodeTrulyModified(code, exercise.template)) {
       addSerialLine('❌ Code insuffisant ou identique au template');
@@ -3950,77 +4013,897 @@ function validateArduinoSyntaxStrict(code) {
       addSerialLine('Simulation réinitialisée');
     }
 
-    // Check solution
-    function checkSolution() {
-      const exercise = exercises[currentExercise];
-      if (!exercise) return;
+    // 1. Vérifier l'ordre des instructions (pour exercices où c'est important)
+// FONCTION COMPLÈTE - PRÊTE À COPIER-COLLER
+function checkInstructionOrder(code, exerciseNum) {
+    const lines = code.split('\n');
+    const results = {
+      hasCorrectOrder: false,
+      issues: [],
+      orderDetails: [],
+      warnings: []
+    };
+    
+    // Filtrer les lignes significatives
+    const meaningfulLines = lines.filter(line => {
+      const trimmed = line.trim();
+      return trimmed && 
+             !trimmed.startsWith('//') && 
+             !trimmed.startsWith('/*') &&
+             !trimmed.startsWith('* ') &&
+             trimmed !== '{' && 
+             trimmed !== '}';
+    });
+    
+    // Exercice 1: LED Clignotante - HIGH d'abord, puis LOW
+    if (exerciseNum === 1) {
+      let highIndex = -1;
+      let lowIndex = -1;
+      let highCount = 0;
+      let lowCount = 0;
       
-      const code = userCode[currentExercise] || '';
-      
-      // Run tests
-      const testResult = exercise.test ? exercise.test(code) : {};
-      
-      // Setup feedback
-      const feedbackArea = document.getElementById('feedback-area');
-      const feedbackContent = document.getElementById('feedback-content');
-      const feedbackTitle = document.getElementById('feedback-title');
-      const feedbackIcon = document.getElementById('feedback-icon');
-      
-      if (!feedbackArea || !feedbackContent) return;
-      
-      let feedback = '';
-      let isSuccess = false;
-      let score = 0;
-      
-      if (testResult.isAcceptable !== undefined) {
-        score = testResult.score || 0;
-        isSuccess = testResult.isAcceptable;
-        
-        feedback += `<p>Score: <strong>${score}%</strong></p>`;
-        feedback += `<p>${testResult.feedback || ''}</p>`;
-        
-        if (isSuccess) {
-          feedbackTitle.textContent = "Félicitations!";
-          feedbackIcon.className = "fas fa-check-circle";
-          feedbackIcon.style.color = "var(--success-color)";
-          feedback = `<p class="feedback-success">${feedback}</p>`;
-          
-          // Mark as completed
-          if (!completedExercises.includes(currentExercise)) {
-            completedExercises.push(currentExercise);
-            localStorage.setItem('completedExercises', JSON.stringify(completedExercises));
-            updateProgress();
-            showAchievement(`Exercice #${currentExercise} réussi!`);
-          }
-        } else {
-          feedbackTitle.textContent = "À améliorer";
-          feedbackIcon.className = "fas fa-exclamation-triangle";
-          feedbackIcon.style.color = "var(--warning-color)";
-          feedback = `<p class="feedback-error">${feedback}</p>`;
-          
-          // Add hints
-          feedback += `<div class="feedback-hint">
-            <h5><i class="fas fa-lightbulb"></i> Conseils:</h5>
-            <ul>`;
-          
-          exercise.hints.slice(0, 3).forEach(hint => {
-            feedback += `<li>${hint}</li>`;
-          });
-          
-          feedback += `</ul></div>`;
+      meaningfulLines.forEach((line, index) => {
+        if (line.includes('digitalWrite(13, HIGH)')) {
+          highIndex = index;
+          highCount++;
         }
-      } else {
-        // Fallback for exercises without test function
-        feedback = `<p>Vérification non disponible pour cet exercice.</p>`;
-        feedbackTitle.textContent = "Information";
-        feedbackIcon.className = "fas fa-info-circle";
-        feedbackIcon.style.color = "var(--primary-color)";
+        if (line.includes('digitalWrite(13, LOW)')) {
+          lowIndex = index;
+          lowCount++;
+        }
+      });
+      
+      if (highCount === 0) {
+        results.issues.push("digitalWrite(13, HIGH) manquant - vous devez allumer la LED");
+      }
+      if (lowCount === 0) {
+        results.issues.push("digitalWrite(13, LOW) manquant - vous devez éteindre la LED");
+      }
+      if (highCount > 0 && lowCount > 0) {
+        if (highIndex < lowIndex) {
+          results.hasCorrectOrder = true;
+          results.orderDetails.push("✓ Ordre correct: HIGH avant LOW (allumer puis éteindre)");
+        } else {
+          results.issues.push("ORDRE INCORRECT: Vous éteignez (LOW) avant d'allumer (HIGH) - l'exercice demande d'allumer d'abord");
+          results.orderDetails.push("✗ Problème d'ordre: LOW avant HIGH");
+        }
+      }
+    }
+    
+    // Exercice 2: Séquence LED - dans l'ordre du tableau
+    else if (exerciseNum === 2) {
+      let hasSequentialDigitalWrites = false;
+      let digitalWriteCount = 0;
+      
+      meaningfulLines.forEach(line => {
+        if (line.includes('digitalWrite(leds[')) {
+          digitalWriteCount++;
+        }
+      });
+      
+      if (digitalWriteCount >= 2) {
+        hasSequentialDigitalWrites = true;
+        results.orderDetails.push("✓ Contrôle séquentiel des LEDs détecté");
+      } else if (digitalWriteCount === 1) {
+        results.issues.push("Besoin de contrôler plusieurs LEDs en séquence, pas une seule");
       }
       
-      feedbackContent.innerHTML = feedback;
-      feedbackArea.classList.add('show');
+      // Vérifier si c'est dans une boucle
+      let inForLoop = false;
+      let currentIndent = 0;
+      
+      meaningfulLines.forEach(line => {
+        if (line.includes('for(') && line.includes('i++')) {
+          inForLoop = true;
+          currentIndent = line.indexOf('for');
+        }
+        if (inForLoop && line.includes('digitalWrite(') && line.indexOf('digitalWrite') > currentIndent) {
+          results.orderDetails.push("✓ digitalWrite() dans une boucle for");
+        }
+      });
+      
+      results.hasCorrectOrder = hasSequentialDigitalWrites && digitalWriteCount >= 2;
     }
+    
+    // Exercice 3: PWM - analogWrite avant modification de brightness
+    else if (exerciseNum === 3) {
+      let analogWriteIndex = -1;
+      let brightnessChangeIndex = -1;
+      let boundaryCheckIndex = -1;
+      
+      meaningfulLines.forEach((line, index) => {
+        if (line.includes('analogWrite(')) {
+          analogWriteIndex = index;
+        }
+        if (line.includes('brightness =') || line.includes('brightness +=') || line.includes('brightness -=')) {
+          brightnessChangeIndex = index;
+        }
+        if (line.includes('brightness <= 0') || line.includes('brightness >= 255')) {
+          boundaryCheckIndex = index;
+        }
+      });
+      
+      if (analogWriteIndex !== -1) {
+        results.orderDetails.push(`✓ analogWrite() détecté`);
+      } else {
+        results.issues.push("analogWrite() manquant pour le contrôle PWM");
+      }
+      
+      if (brightnessChangeIndex !== -1) {
+        results.orderDetails.push(`✓ Modification de brightness détectée`);
+      } else {
+        results.issues.push("Modification de la variable brightness manquante");
+      }
+      
+      if (boundaryCheckIndex !== -1) {
+        results.orderDetails.push(`✓ Vérification des limites (0-255) détectée`);
+      } else {
+        results.issues.push("Vérification des limites brightness (0 ou 255) manquante");
+      }
+      
+      // Pour PWM, l'ordre est: analogWrite → brightness change → boundary check
+      if (analogWriteIndex !== -1 && brightnessChangeIndex !== -1) {
+        if (analogWriteIndex < brightnessChangeIndex) {
+          results.orderDetails.push("✓ Ordre logique: analogWrite avant modification brightness");
+          results.hasCorrectOrder = true;
+        } else {
+          results.warnings.push("Modifiez brightness avant d'appliquer analogWrite()");
+        }
+      }
+    }
+    
+    // Exercice 4: RGB - setColor défini avant d'être utilisé
+    else if (exerciseNum === 4) {
+      let setColorDefIndex = -1;
+      let setColorUseIndex = -1;
+      let hasAnalogWriteInSetColor = false;
+      
+      meaningfulLines.forEach((line, index) => {
+        if (line.includes('void setColor(')) {
+          setColorDefIndex = index;
+        }
+        if (line.includes('setColor(') && !line.includes('void setColor')) {
+          setColorUseIndex = index;
+        }
+        if (line.includes('analogWrite(') && index > setColorDefIndex && setColorDefIndex !== -1) {
+          hasAnalogWriteInSetColor = true;
+        }
+      });
+      
+      if (setColorDefIndex !== -1) {
+        results.orderDetails.push("✓ Fonction setColor() définie");
+      } else {
+        results.issues.push("Fonction setColor() manquante pour contrôler les couleurs RGB");
+      }
+      
+      if (setColorUseIndex !== -1) {
+        results.orderDetails.push("✓ Appel de setColor() détecté");
+      } else {
+        results.issues.push("Appel de setColor() manquant dans loop()");
+      }
+      
+      if (hasAnalogWriteInSetColor) {
+        results.orderDetails.push("✓ analogWrite() dans setColor()");
+      }
+      
+      // L'ordre correct: définition setColor avant son utilisation
+      if (setColorDefIndex !== -1 && setColorUseIndex !== -1) {
+        if (setColorDefIndex < setColorUseIndex) {
+          results.hasCorrectOrder = true;
+          results.orderDetails.push("✓ Ordre correct: définition setColor avant utilisation");
+        } else {
+          results.issues.push("Définissez setColor() avant de l'utiliser dans loop()");
+        }
+      }
+    }
+    
+    // Exercice 5: Feu tricolore - ordre des états: 0→1→2→3
+    else if (exerciseNum === 5) {
+      const states = ['case 0:', 'case 1:', 'case 2:', 'case 3:'];
+      let stateOrder = [];
+      let stateLines = {};
+      
+      meaningfulLines.forEach((line, index) => {
+        states.forEach(state => {
+          if (line.includes(state)) {
+            stateOrder.push(state);
+            stateLines[state] = index;
+          }
+        });
+      });
+      
+      if (stateOrder.length >= 4) {
+        const isCorrectOrder = stateOrder[0] === 'case 0:' && 
+                              stateOrder[1] === 'case 1:' && 
+                              stateOrder[2] === 'case 2:' && 
+                              stateOrder[3] === 'case 3:';
+        
+        if (isCorrectOrder) {
+          results.hasCorrectOrder = true;
+          results.orderDetails.push("✓ Ordre des états correct: Rouge → Rouge+Jaune → Vert → Jaune");
+        } else {
+          results.issues.push("Ordre des états incorrect. Doit être: case 0 (rouge) → case 1 (rouge+jaune) → case 2 (vert) → case 3 (jaune)");
+        }
+      } else if (stateOrder.length > 0) {
+        results.issues.push(`Seulement ${stateOrder.length}/4 états définis pour le feu tricolore`);
+      } else {
+        results.issues.push("Structure switch/case manquante pour les états du feu");
+      }
+    }
+    
+    // Exercice 6: Animation complexe - patterns définis avant switch
+    else if (exerciseNum === 6) {
+      let patternDefs = [];
+      let switchIndex = -1;
+      
+      meaningfulLines.forEach((line, index) => {
+        if (line.includes('void pattern')) {
+          patternDefs.push({ name: line.match(/void\s+(\w+)/)[1], index: index });
+        }
+        if (line.includes('switch(pattern)')) {
+          switchIndex = index;
+        }
+      });
+      
+      if (patternDefs.length >= 2) {
+        results.orderDetails.push(`✓ ${patternDefs.length} fonctions pattern définies`);
+      } else {
+        results.issues.push("Besoin d'au moins 2 fonctions pattern (patternCascade, patternBounce, etc.)");
+      }
+      
+      if (switchIndex !== -1) {
+        results.orderDetails.push("✓ Structure switch(pattern) détectée");
+      } else {
+        results.issues.push("Structure switch(pattern) manquante pour changer entre patterns");
+      }
+      
+      // Vérifier que les patterns sont définis avant le switch
+      let allDefinedBeforeSwitch = true;
+      patternDefs.forEach(pattern => {
+        if (pattern.index > switchIndex) {
+          allDefinedBeforeSwitch = false;
+          results.warnings.push(`Définissez ${pattern.name}() avant switch(pattern)`);
+        }
+      });
+      
+      results.hasCorrectOrder = patternDefs.length >= 2 && switchIndex !== -1 && allDefinedBeforeSwitch;
+    }
+    
+    // Exercice 7: LED avec bouton - digitalRead avant if
+    else if (exerciseNum === 7) {
+      let digitalReadIndex = -1;
+      let ifStatementIndex = -1;
+      let hasInputPullup = false;
+      
+      meaningfulLines.forEach((line, index) => {
+        if (line.includes('digitalRead(')) {
+          digitalReadIndex = index;
+        }
+        if (line.includes('if(') && (line.includes('LOW') || line.includes('HIGH'))) {
+          ifStatementIndex = index;
+        }
+        if (line.includes('INPUT_PULLUP')) {
+          hasInputPullup = true;
+        }
+      });
+      
+      if (digitalReadIndex !== -1) {
+        results.orderDetails.push("✓ digitalRead() détecté");
+      } else {
+        results.issues.push("digitalRead() manquant pour lire l'état du bouton");
+      }
+      
+      if (ifStatementIndex !== -1) {
+        results.orderDetails.push("✓ Condition if() détectée");
+      } else {
+        results.issues.push("Condition if() manquante pour réagir au bouton");
+      }
+      
+      if (hasInputPullup) {
+        results.orderDetails.push("✓ INPUT_PULLUP utilisé pour le bouton");
+      } else {
+        results.issues.push("Utilisez INPUT_PULLUP pour la configuration du bouton");
+      }
+      
+      // Ordre: digitalRead puis if
+      if (digitalReadIndex !== -1 && ifStatementIndex !== -1) {
+        if (digitalReadIndex < ifStatementIndex) {
+          results.hasCorrectOrder = true;
+          results.orderDetails.push("✓ Ordre correct: lecture bouton avant condition");
+        } else {
+          results.warnings.push("Placez digitalRead() avant la condition if()");
+        }
+      }
+    }
+    
+    // Exercice 8: Potentiomètre - analogRead avant map
+    else if (exerciseNum === 8) {
+      let analogReadIndex = -1;
+      let mapIndex = -1;
+      let delayTimeIndex = -1;
+      
+      meaningfulLines.forEach((line, index) => {
+        if (line.includes('analogRead(')) {
+          analogReadIndex = index;
+        }
+        if (line.includes('map(')) {
+          mapIndex = index;
+        }
+        if (line.includes('delayTime')) {
+          delayTimeIndex = index;
+        }
+      });
+      
+      if (analogReadIndex !== -1) {
+        results.orderDetails.push("✓ analogRead() détecté");
+      } else {
+        results.issues.push("analogRead() manquant pour lire le potentiomètre");
+      }
+      
+      if (mapIndex !== -1) {
+        results.orderDetails.push("✓ map() détecté");
+      } else {
+        results.issues.push("map() manquant pour convertir la valeur du potentiomètre");
+      }
+      
+      if (delayTimeIndex !== -1) {
+        results.orderDetails.push("✓ Variable delayTime utilisée");
+      }
+      
+      // Ordre: analogRead → map → utilisation delayTime
+      if (analogReadIndex !== -1 && mapIndex !== -1) {
+        if (analogReadIndex < mapIndex) {
+          results.hasCorrectOrder = true;
+          results.orderDetails.push("✓ Ordre correct: lecture → conversion → utilisation");
+        } else {
+          results.warnings.push("Placez analogRead() avant map()");
+        }
+      }
+    }
+    
+    // Exercice 9: 2 boutons PWM - lecture boutons avant ajustement brightness
+    else if (exerciseNum === 9) {
+      let digitalReadCount = 0;
+      let brightnessAdjustIndex = -1;
+      let constrainIndex = -1;
+      let analogWriteIndex = -1;
+      
+      meaningfulLines.forEach((line, index) => {
+        if (line.includes('digitalRead(')) {
+          digitalReadCount++;
+        }
+        if (line.includes('brightness +=') || line.includes('brightness -=')) {
+          brightnessAdjustIndex = index;
+        }
+        if (line.includes('constrain(')) {
+          constrainIndex = index;
+        }
+        if (line.includes('analogWrite(')) {
+          analogWriteIndex = index;
+        }
+      });
+      
+      if (digitalReadCount >= 2) {
+        results.orderDetails.push(`✓ ${digitalReadCount} lectures de boutons détectées`);
+      } else {
+        results.issues.push(`Besoin de 2 digitalRead() pour les 2 boutons (trouvé: ${digitalReadCount})`);
+      }
+      
+      if (brightnessAdjustIndex !== -1) {
+        results.orderDetails.push("✓ Ajustement de brightness détecté");
+      } else {
+        results.issues.push("Ajustement de brightness (+= ou -=) manquant");
+      }
+      
+      if (constrainIndex !== -1) {
+        results.orderDetails.push("✓ constrain() détecté");
+      } else {
+        results.issues.push("constrain() manquant pour limiter brightness entre 0-255");
+      }
+      
+      // Ordre: digitalRead → ajustement → constrain → analogWrite
+      let correctOrder = true;
+      if (constrainIndex !== -1 && brightnessAdjustIndex !== -1 && constrainIndex < brightnessAdjustIndex) {
+        results.warnings.push("Placez constrain() APRÈS l'ajustement de brightness");
+        correctOrder = false;
+      }
+      
+      results.hasCorrectOrder = digitalReadCount >= 2 && brightnessAdjustIndex !== -1 && constrainIndex !== -1 && correctOrder;
+    }
+    
+    // Exercice 10: Interruption - volatile avant attachInterrupt
+    else if (exerciseNum === 10) {
+      let volatileIndex = -1;
+      let attachInterruptIndex = -1;
+      let isrIndex = -1;
+      let patternSwitchIndex = -1;
+      
+      meaningfulLines.forEach((line, index) => {
+        if (line.includes('volatile')) {
+          volatileIndex = index;
+        }
+        if (line.includes('attachInterrupt(')) {
+          attachInterruptIndex = index;
+        }
+        if (line.includes('changePatternISR')) {
+          isrIndex = index;
+        }
+        if (line.includes('switch(pattern)')) {
+          patternSwitchIndex = index;
+        }
+      });
+      
+      if (volatileIndex !== -1) {
+        results.orderDetails.push("✓ Variable volatile détectée");
+      } else {
+        results.issues.push("Variable 'volatile' manquante pour la communication avec l'ISR");
+      }
+      
+      if (attachInterruptIndex !== -1) {
+        results.orderDetails.push("✓ attachInterrupt() détecté");
+      } else {
+        results.issues.push("attachInterrupt() manquant pour configurer l'interruption");
+      }
+      
+      if (isrIndex !== -1) {
+        results.orderDetails.push("✓ Fonction ISR (changePatternISR) détectée");
+      }
+      
+      if (patternSwitchIndex !== -1) {
+        results.orderDetails.push("✓ switch(pattern) détecté");
+      } else {
+        results.issues.push("Structure switch(pattern) manquante pour changer les patterns");
+      }
+      
+      // Ordre: volatile variable → ISR → attachInterrupt
+      if (volatileIndex !== -1 && attachInterruptIndex !== -1) {
+        if (volatileIndex < attachInterruptIndex) {
+          results.hasCorrectOrder = true;
+          results.orderDetails.push("✓ Ordre correct: volatile avant attachInterrupt");
+        } else {
+          results.warnings.push("Déclarez la variable volatile avant attachInterrupt()");
+        }
+      }
+    }
+    
+    // Pour les exercices non spécifiés, l'ordre est moins critique
+    else {
+      // Vérifications basiques
+      let hasSetup = false;
+      let hasLoop = false;
+      
+      meaningfulLines.forEach(line => {
+        if (line.includes('void setup()')) hasSetup = true;
+        if (line.includes('void loop()')) hasLoop = true;
+      });
+      
+      if (hasSetup && hasLoop) {
+        results.hasCorrectOrder = true;
+        results.orderDetails.push("✓ Structure Arduino de base correcte");
+      } else {
+        if (!hasSetup) results.issues.push("Fonction setup() manquante");
+        if (!hasLoop) results.issues.push("Fonction loop() manquante");
+      }
+    }
+    
+    return results;
+  }
 
+
+  // 2. Vérifier les valeurs exactes requises
+function checkExactValues(code, exerciseNum) {
+    const issues = [];
+    const warnings = [];
+    const lines = code.split('\n');
+    
+    // Exercice 1: delay(1000) exactement
+    if (exerciseNum === 1) {
+      let delay1000Count = 0;
+      let otherDelayCount = 0;
+      
+      lines.forEach((line, index) => {
+        const trimmed = line.trim();
+        if (trimmed.includes('delay(')) {
+          const delayMatch = trimmed.match(/delay\s*\(\s*(\d+)\s*\)/);
+          if (delayMatch) {
+            const value = parseInt(delayMatch[1]);
+            if (value === 1000) {
+              delay1000Count++;
+            } else {
+              otherDelayCount++;
+              issues.push(`Ligne ${index + 1}: delay(${value}) → devrait être delay(1000) pour 1 seconde`);
+            }
+          }
+        }
+        
+        // Vérifier la broche 13
+        if (trimmed.includes('digitalWrite(') && !trimmed.includes('digitalWrite(13,')) {
+          const pinMatch = trimmed.match(/digitalWrite\s*\(\s*(\d+)\s*,/);
+          if (pinMatch && pinMatch[1] !== '13') {
+            warnings.push(`Ligne ${index + 1}: digitalWrite(${pinMatch[1]}, ...) → exercice demande broche 13`);
+          }
+        }
+      });
+      
+      if (delay1000Count < 2) {
+        issues.push(`Besoin de 2× delay(1000), vous avez ${delay1000Count}`);
+      }
+      if (otherDelayCount > 0) {
+        issues.push(`Utilisez delay(1000) pour 1 seconde, pas d'autres valeurs`);
+      }
+    }
+    
+    // Exercice 2: delay(200) pour l'effet chassé
+    else if (exerciseNum === 2) {
+      let delay200Count = 0;
+      let otherDelayCount = 0;
+      
+      lines.forEach((line, index) => {
+        const trimmed = line.trim();
+        if (trimmed.includes('delay(')) {
+          const delayMatch = trimmed.match(/delay\s*\(\s*(\d+)\s*\)/);
+          if (delayMatch) {
+            const value = parseInt(delayMatch[1]);
+            if (value === 200) {
+              delay200Count++;
+            } else if (value >= 50 && value <= 1000) {
+              // Acceptable mais pas idéal
+              warnings.push(`Ligne ${index + 1}: delay(${value}) → delay(200) serait meilleur pour l'effet`);
+            } else {
+              issues.push(`Ligne ${index + 1}: delay(${value}) → délai inapproprié, utilisez ~200ms`);
+            }
+          }
+        }
+      });
+      
+      if (delay200Count === 0 && otherDelayCount === 0) {
+        issues.push("Besoin d'un delay() pour contrôler la vitesse de la séquence");
+      }
+    }
+    
+    // Exercice 3: delay(30) pour l'effet respiration
+    else if (exerciseNum === 3) {
+      let hasDelay = false;
+      let appropriateDelay = false;
+      
+      lines.forEach((line, index) => {
+        const trimmed = line.trim();
+        if (trimmed.includes('delay(')) {
+          hasDelay = true;
+          const delayMatch = trimmed.match(/delay\s*\(\s*(\d+)\s*\)/);
+          if (delayMatch) {
+            const value = parseInt(delayMatch[1]);
+            if (value >= 10 && value <= 50) {
+              appropriateDelay = true;
+            } else {
+              warnings.push(`Ligne ${index + 1}: delay(${value}) → valeur ${value > 50 ? 'trop grande' : 'trop petite'} pour un effet fluide`);
+            }
+          }
+        }
+      });
+      
+      if (!hasDelay) {
+        issues.push("Besoin d'un delay() pour contrôler la vitesse de l'effet PWM");
+      }
+    }
+    
+    // Exercice 4: setColor(255,0,0) etc.
+    else if (exerciseNum === 4) {
+      const requiredColors = [
+        { name: "Rouge", values: [255, 0, 0] },
+        { name: "Vert", values: [0, 255, 0] },
+        { name: "Bleu", values: [0, 0, 255] }
+      ];
+      
+      const codeStr = code.replace(/\s/g, '');
+      
+      requiredColors.forEach(color => {
+        const pattern = `setColor\\(${color.values.join(',')}\\)`;
+        if (!new RegExp(pattern).test(codeStr)) {
+          issues.push(`Couleur ${color.name} manquante: setColor(${color.values.join(', ')})`);
+        }
+      });
+      
+      // Vérifier delay(1000)
+      let delay1000Count = 0;
+      lines.forEach((line, index) => {
+        if (line.includes('delay(1000)')) {
+          delay1000Count++;
+        } else if (line.includes('delay(')) {
+          const delayMatch = line.match(/delay\s*\(\s*(\d+)\s*\)/);
+          if (delayMatch && parseInt(delayMatch[1]) !== 1000) {
+            warnings.push(`Ligne ${index + 1}: Utilisez delay(1000) pour 1 seconde entre les couleurs`);
+          }
+        }
+      });
+      
+      if (delay1000Count < 2) {
+        issues.push(`Besoin d'au moins 2× delay(1000) entre les changements de couleur`);
+      }
+    }
+    
+    // Exercice 5: Temporisations exactes
+    else if (exerciseNum === 5) {
+      const requiredDelays = [
+        { state: "Rouge", duration: 3000 },
+        { state: "Rouge+Jaune", duration: 1000 },
+        { state: "Vert", duration: 3000 },
+        { state: "Jaune", duration: 1000 }
+      ];
+      
+      let totalDelayChecks = 0;
+      lines.forEach((line, index) => {
+        if (line.includes('>=') && line.includes('previousMillis')) {
+          const delayMatch = line.match(/>=(\s*)(\d+)/);
+          if (delayMatch) {
+            const value = parseInt(delayMatch[2]);
+            totalDelayChecks++;
+            
+            // Vérifier si c'est une valeur attendue
+            const expectedValues = [3000, 1000];
+            if (!expectedValues.includes(value)) {
+              warnings.push(`Ligne ${index + 1}: Temporisation ${value}ms → devrait être 1000ms ou 3000ms`);
+            }
+          }
+        }
+      });
+      
+      if (totalDelayChecks < 4) {
+        issues.push(`Besoin de 4 vérifications de temporisation (3000ms et 1000ms)`);
+      }
+    }
+    
+    // Exercice 8: map(..., 0, 4095, 50, 1000)
+    else if (exerciseNum === 8) {
+      let hasMap = false;
+      let correctMap = false;
+      
+      lines.forEach((line, index) => {
+        if (line.includes('map(')) {
+          hasMap = true;
+          if (line.includes('0, 4095, 50, 1000') || line.includes('0,4095,50,1000')) {
+            correctMap = true;
+          } else {
+            issues.push(`Ligne ${index + 1}: map() incorrect → devrait être map(valeur, 0, 4095, 50, 1000)`);
+          }
+        }
+      });
+      
+      if (!hasMap) {
+        issues.push("map() manquant pour convertir la valeur du potentiomètre");
+      }
+    }
+    
+    // Exercice 9: constrain(brightness, 0, 255)
+    else if (exerciseNum === 9) {
+      let hasConstrain = false;
+      
+      lines.forEach((line, index) => {
+        if (line.includes('constrain(')) {
+          hasConstrain = true;
+          if (!line.includes('0, 255') && !line.includes('0,255')) {
+            issues.push(`Ligne ${index + 1}: constrain() incorrect → devrait être constrain(brightness, 0, 255)`);
+          }
+        }
+      });
+      
+      if (!hasConstrain) {
+        issues.push("constrain() manquant pour limiter la luminosité entre 0 et 255");
+      }
+    }
+    
+    return { issues, warnings };
+  }
+  
+
+  // 3. Vérifier la complétude globale
+function checkExerciseCompleteness(code, exerciseNum) {
+    const exercise = exercises[exerciseNum];
+    if (!exercise) return { complete: false, score: 0, details: [] };
+    
+    const cleanCode = removeCommentsAndWhitespace(code);
+    let score = 0;
+    let details = [];
+    let missing = [];
+    
+    // Points pour les éléments de base (commun à tous)
+    if (/voidsetup\(\)/.test(cleanCode)) score += 10;
+    if (/voidloop\(\)/.test(cleanCode)) score += 10;
+    
+    // Vérifications spécifiques par exercice
+    switch(exerciseNum) {
+      case 1:
+        if (/pinMode\(13,OUTPUT\)/.test(cleanCode)) { score += 20; details.push("✓ pinMode(13, OUTPUT)"); }
+        else { missing.push("pinMode(13, OUTPUT)"); }
+        
+        if (/digitalWrite\(13,HIGH\)/.test(cleanCode)) { score += 20; details.push("✓ digitalWrite(13, HIGH)"); }
+        else { missing.push("digitalWrite(13, HIGH) - pour allumer"); }
+        
+        if (/digitalWrite\(13,LOW\)/.test(cleanCode)) { score += 20; details.push("✓ digitalWrite(13, LOW)"); }
+        else { missing.push("digitalWrite(13, LOW) - pour éteindre"); }
+        
+        const delayMatches = (cleanCode.match(/delay\(1000\)/g) || []);
+        if (delayMatches.length >= 2) { score += 30; details.push("✓ 2× delay(1000)"); }
+        else { missing.push(`${2 - delayMatches.length}× delay(1000) manquant(s)`); }
+        
+        // Vérifier l'ordre
+        const orderResult = checkInstructionOrder(code, 1);
+        if (orderResult.hasCorrectOrder) { score += 20; details.push("✓ Ordre correct: HIGH avant LOW"); }
+        else { missing.push("Ordre incorrect: allumer (HIGH) avant éteindre (LOW)"); }
+        break;
+        
+      case 2:
+        if (/leds\[\]=\{.*\}/.test(cleanCode)) { score += 20; details.push("✓ Tableau leds[]"); }
+        else { missing.push("Tableau leds[] avec les broches"); }
+        
+        if (/for.*pinMode.*leds\[i\]/.test(cleanCode)) { score += 20; details.push("✓ Configuration LEDs en boucle"); }
+        else { missing.push("Boucle for pour configurer les LEDs"); }
+        
+        if (/for.*digitalWrite.*leds\[i\]/.test(cleanCode)) { score += 20; details.push("✓ Contrôle LEDs en boucle"); }
+        else { missing.push("Boucle for pour contrôler les LEDs"); }
+        
+        if (/delay\(200\)/.test(cleanCode)) { score += 20; details.push("✓ delay(200)"); }
+        else { missing.push("delay(200) pour la vitesse"); }
+        
+        if (/for.*i.*<.*4/.test(cleanCode)) { score += 20; details.push("✓ Boucle for avec 4 itérations"); }
+        else { missing.push("Boucle for de 0 à 3"); }
+        break;
+        
+      case 3:
+        if (/analogWrite\(/.test(cleanCode)) { score += 25; details.push("✓ analogWrite()"); }
+        else { missing.push("analogWrite() pour PWM"); }
+        
+        if (/brightness.*[+\-]=/.test(cleanCode)) { score += 25; details.push("✓ Modification brightness"); }
+        else { missing.push("Modification de la variable brightness"); }
+        
+        if (/if.*brightness.*[<>]=.*\d+.*\)/.test(cleanCode)) { score += 25; details.push("✓ Vérification limites"); }
+        else { missing.push("Vérification des limites (0 et 255)"); }
+        
+        if (/fadeAmount\s*=\s*-\s*fadeAmount/.test(cleanCode)) { score += 25; details.push("✓ Inversion fadeAmount"); }
+        else { missing.push("Inversion de fadeAmount aux limites"); }
+        break;
+        
+      // Continuer pour les autres exercices...
+      default:
+        // Pour les exercices non spécifiés, vérifications basiques
+        if (/pinMode\(/.test(cleanCode)) score += 25;
+        if (/digitalWrite\(/.test(cleanCode)) score += 25;
+        if (/analogWrite\(/.test(cleanCode)) score += 25;
+        if (/delay\(/.test(cleanCode)) score += 25;
+    }
+    
+    // Limiter le score à 100
+    score = Math.min(100, score);
+    
+    return {
+      complete: score >= 70,
+      score: score,
+      details: details,
+      missing: missing
+    };
+  }
+
+    // Check solution
+  // REMPLACER la fonction checkSolution() par :
+function checkSolution() {
+    const exercise = exercises[currentExercise];
+    if (!exercise) return;
+    
+    const code = userCode[currentExercise] || '';
+    
+    // Analyse complète du code
+    const completeness = checkExerciseCompleteness(code, currentExercise);
+    const orderCheck = checkInstructionOrder(code, currentExercise);
+    const valueCheck = checkExactValues(code, currentExercise);
+    
+    // Configurer le feedback
+    const feedbackArea = document.getElementById('feedback-area');
+    const feedbackContent = document.getElementById('feedback-content');
+    const feedbackTitle = document.getElementById('feedback-title');
+    const feedbackIcon = document.getElementById('feedback-icon');
+    
+    if (!feedbackArea || !feedbackContent) return;
+    
+    let feedback = '';
+    let isSuccess = completeness.complete;
+    let score = completeness.score;
+    
+    // En-tête avec score
+    feedback += `<p><strong>Score: ${score}%</strong></p>`;
+    feedback += `<div style="background: #f0f0f0; border-radius: 5px; padding: 10px; margin: 10px 0;">`;
+    
+    // Éléments corrects
+    if (completeness.details.length > 0) {
+      feedback += `<p><strong>✅ Correct:</strong></p><ul>`;
+      completeness.details.forEach(detail => {
+        feedback += `<li>${detail}</li>`;
+      });
+      feedback += `</ul>`;
+    }
+    
+    // Éléments manquants
+    if (completeness.missing.length > 0) {
+      feedback += `<p><strong>❌ Manquant:</strong></p><ul>`;
+      completeness.missing.forEach(item => {
+        feedback += `<li>${item}</li>`;
+      });
+      feedback += `</ul>`;
+    }
+    
+    feedback += `</div>`;
+    
+    // Problèmes d'ordre
+    if (orderCheck.issues.length > 0) {
+      feedback += `<div class="feedback-hint" style="margin-top: 15px;">`;
+      feedback += `<h5><i class="fas fa-sort"></i> Problèmes d'ordre:</h5><ul>`;
+      orderCheck.issues.forEach(issue => {
+        feedback += `<li>${issue}</li>`;
+      });
+      feedback += `</ul></div>`;
+    }
+    
+    // Valeurs incorrectes
+    if (valueCheck.issues.length > 0) {
+      feedback += `<div class="feedback-hint" style="margin-top: 15px; background: #ffebee;">`;
+      feedback += `<h5><i class="fas fa-exclamation-triangle"></i> Valeurs à corriger:</h5><ul>`;
+      valueCheck.issues.forEach(issue => {
+        feedback += `<li>${issue}</li>`;
+      });
+      feedback += `</ul></div>`;
+    }
+    
+    // Suggestions
+    if (valueCheck.warnings.length > 0) {
+      feedback += `<div class="feedback-hint" style="margin-top: 15px;">`;
+      feedback += `<h5><i class="fas fa-lightbulb"></i> Suggestions:</h5><ul>`;
+      valueCheck.warnings.forEach(warning => {
+        feedback += `<li>${warning}</li>`;
+      });
+      feedback += `</ul></div>`;
+    }
+    
+    // Conclusion
+    if (isSuccess && score >= 80) {
+      feedback += `<p class="feedback-success" style="margin-top: 15px; padding: 10px; border-radius: 5px;">
+                   <i class="fas fa-check-circle"></i> Félicitations! Votre code est complet et correct.</p>`;
+      feedbackTitle.textContent = "Excellent!";
+      feedbackIcon.className = "fas fa-trophy";
+      feedbackIcon.style.color = "var(--accent-color)";
+      
+      // Marquer comme complété
+      if (!completedExercises.includes(currentExercise)) {
+        completedExercises.push(currentExercise);
+        localStorage.setItem('completedExercises', JSON.stringify(completedExercises));
+        updateProgress();
+        showAchievement(`Exercice #${currentExercise} réussi avec ${score}%!`);
+      }
+    } else if (isSuccess && score >= 70) {
+      feedback += `<p class="feedback-success" style="margin-top: 15px; padding: 10px; border-radius: 5px;">
+                   <i class="fas fa-check"></i> Code acceptable mais peut être amélioré.</p>`;
+      feedbackTitle.textContent = "Bien!";
+      feedbackIcon.className = "fas fa-check-circle";
+      feedbackIcon.style.color = "var(--success-color)";
+    } else {
+      feedback += `<p class="feedback-error" style="margin-top: 15px; padding: 10px; border-radius: 5px;">
+                   <i class="fas fa-exclamation-triangle"></i> Code incomplet. Continuez à travailler!</p>`;
+      feedbackTitle.textContent = "À améliorer";
+      feedbackIcon.className = "fas fa-exclamation-triangle";
+      feedbackIcon.style.color = "var(--warning-color)";
+    }
+    
+    // Ajouter les indices si nécessaire
+    if (score < 80 && exercise.hints) {
+      feedback += `<div class="feedback-hint" style="margin-top: 15px;">`;
+      feedback += `<h5><i class="fas fa-lightbulb"></i> Rappel des objectifs:</h5><ul>`;
+      exercise.objectives.forEach(obj => {
+        feedback += `<li>${obj}</li>`;
+      });
+      feedback += `</ul></div>`;
+    }
+    
+    feedbackContent.innerHTML = feedback;
+    feedbackArea.classList.add('show');
+  }
     // Show hint
     function showHint() {
       const exercise = exercises[currentExercise];
@@ -4235,6 +5118,29 @@ function validateArduinoSyntaxStrict(code) {
         };
       }
     }
+    const header = document.querySelector(".hero");
+
+const images = [
+    "./image/closeup-electronic-circuit-board-with-cpu-microchip-electronic-components-background.jpg",
+    "./image/top-view-wires-tech-background.jpg",
+    "./image/using-pliers-circuit-board.jpg",
+    "./image/father-son-making-robot.jpg",
+    "./image/robot-style-car-with-joystick.jpg"
+];
+
+let index = 0;
+
+function changeHeaderBackground() {
+    header.style.backgroundImage = `url('${images[index]}')`;
+    index = (index + 1) % images.length;
+}
+
+// image au chargement
+changeHeaderBackground();
+
+// changer toutes les 3 secondes
+setInterval(changeHeaderBackground, 3000);
+ 
   </script>
 </body>
 </html>
