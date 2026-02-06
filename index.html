@@ -30,6 +30,11 @@
       background-color: #f5f5f5;
       color: var(--dark-color);
       line-height: 1.6;
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      padding-top: 70px; /* ESPACE POUR LE HEADER FIXE */
     }
 
     .container {
@@ -45,9 +50,11 @@
       color: white;
       padding: 1rem 0;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      position: sticky;
+      position: fixed; /* CHANGÉ de sticky à fixed */
       top: 0;
-      z-index: 100;
+      left: 0;
+      right: 0;
+      z-index: 1000; /* Augmenté pour être au-dessus de tout */
     }
 
     .header-content {
@@ -99,9 +106,11 @@
     .hero {
       background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
       color: white;
-      padding: 4rem 0;
+      padding: 3rem 0;
       text-align: center;
       margin-bottom: 2rem;
+      width: 100%;
+      margin-top: 0; /* Supprime tout margin-top */
     }
 
     .hero h1 {
@@ -461,14 +470,17 @@
 
     @media (max-width: 768px) {
       .header-content {
-        flex-direction: column;
         text-align: center;
       }
 
       nav ul {
         margin-top: 1rem;
-        justify-content: center;
+        justify-content: flex-start;
         flex-wrap: wrap;
+        flex-direction: column;
+        align-content: flex-start;
+        line-height: 4;
+        font-size: unset;
       }
 
       nav ul li {
@@ -670,6 +682,231 @@
     .active{
       color:#ffbf00 ;
     }
+    /* =========================================== */
+/* BOUTON UNIQUE TOGGLE HAUT/BAS */
+/* =========================================== */
+.scroll-toggle-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border: none;
+  cursor: pointer;
+  z-index: 999;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  opacity: 0;
+  transform: translateY(20px) scale(0.9);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+.scroll-toggle-btn.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.scroll-toggle-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+}
+
+.scroll-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+.scroll-toggle-btn.scroll-to-top .fa-arrow-down {
+  display: none;
+}
+
+.scroll-toggle-btn.scroll-to-top .fa-arrow-up {
+  display: block;
+}
+
+.scroll-toggle-btn .fa-arrow-up {
+  display: none;
+}
+
+/* Animation de pulsation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 151, 156, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 151, 156, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 151, 156, 0);
+  }
+}
+
+.scroll-toggle-btn.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .scroll-toggle-btn {
+    bottom: 20px;
+    right: 20px;
+    width: 55px;
+    height: 55px;
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .scroll-toggle-btn {
+    bottom: 15px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+}
+/* =========================================== */
+/* BOUTON HAMBURGER POUR MOBILE */
+/* =========================================== */
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+}
+
+.hamburger-btn:focus {
+  outline: 2px solid var(--accent-color);
+  border-radius: 4px;
+}
+
+/* Menu mobile */
+.nav-menu {
+  display: flex;
+  list-style: none;
+  transition: all 0.3s ease;
+}
+
+/* Overlay pour mobile */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+/* =========================================== */
+/* RESPONSIVE HEADER */
+/* =========================================== */
+@media (max-width: 768px) {
+  /* Bouton hamburger visible seulement sur mobile */
+  .hamburger-btn {
+    display: block;
+  }
+
+  /* Navigation originale cachée sur mobile */
+  nav {
+    position: fixed;
+    top: 70px; /* Hauteur du header */
+    left: -100%;
+    width: 280px;
+    height: calc(100vh - 70px);
+    background-color: var(--primary-color);
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+  }
+
+  nav.active {
+    left: 0;
+  }
+
+  /* Menu en colonne pour mobile */
+  .nav-menu {
+    flex-direction: column;
+    padding: 1rem 0;
+    width: 100%;
+  }
+
+  .nav-menu li {
+    margin: 0;
+    width: 100%;
+  }
+
+  .nav-menu li a {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    
+    font-size: 1rem;
+  }
+
+  .nav-menu li a i {
+    width: 24px;
+    margin-right: 12px;
+    font-size: 1.1rem;
+  }
+
+  .nav-menu li a:hover,
+  .nav-menu li a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    padding-left: 2rem;
+  }
+
+  /* Ajustement du header-content */
+  .header-content {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  nav {
+    width: 50%;
+    left: -100%;
+  }
+
+  .nav-menu li a {
+    padding: 1.2rem 1.5rem;
+  }
+}
+
+/* Animation du bouton hamburger vers croix */
+.hamburger-btn .fa-times {
+  display: none;
+}
+
+.hamburger-btn.active .fa-bars {
+  display: none;
+}
+
+.hamburger-btn.active .fa-times {
+  display: inline-block;
+}
   </style>
 </head>
 
@@ -681,12 +918,16 @@
         <i class="fas fa-microchip"></i>
         <div><span></span> Arduino/ESP </div>
       </div>
+      <button class="hamburger-btn" aria-label="Menu">
+        <i class="fas fa-bars"></i>
+      </button>
+      
       <nav>
         <ul>
           <li><a href="index.html" class="active"><i class="fas fa-home"></i> Accueil</a></li>
           <li><a href="./pratique.html"><i class="fas fa-graduation-cap"></i> pratique</a></li>
           <li><a href="./exemple.html"><i class="fas fa-code"></i> Exemples</a></li>
-          <li><a href="#references"><i class="fas fa-book"></i> Référence</a></li>
+          <li><a href="./reference.html"><i class="fas fa-book"></i> Référence</a></li>
           <li><a href="./exercice.html"><i class="fas fa-pencil-alt"></i> Exercices</a></li>
         </ul>
       </nav>
@@ -701,7 +942,10 @@
       <a href="#structure" class="cta-button">Commencer l'apprentissage <i class="fas fa-arrow-right"></i></a>
     </div>
   </section>
-
+<!-- Bouton unique de navigation haut/bas -->
+<button class="scroll-toggle-btn" title="Aller en bas">
+  <i class="fas fa-arrow-down"></i>
+</button>
   <!-- Main Content -->
   <div class="container main-content">
     <!-- Sidebar avec navigation complète -->
@@ -2907,7 +3151,233 @@ variablePartagee++;
   <span class="code-function">delay</span>(1000);  <span class="code-comment">// Pause entre les motifs</span>
 }</code></pre>
         </div>
+<!-- =========================================== -->
+<!-- SECTION LED PWM - MANQUANTE -->
+<!-- =========================================== -->
+<section id="led-pwm">
+  <h3>Contrôle PWM (Pulse Width Modulation) des LEDs</h3>
+  
+  <p>Le PWM (Modulation par Largeur d'Impulsion) permet de faire varier l'intensité lumineuse d'une LED en contrôlant le rapport cyclique d'un signal numérique.</p>
+  
+  <div class="info-box">
+    <p><strong>Principe du PWM :</strong> Au lieu d'allumer/éteindre complètement une LED, on l'allume et l'éteint très rapidement. La luminosité perçue dépend du temps relatif où elle est allumée.</p>
+  </div>
+  
+  <h4>Broches PWM sur Arduino</h4>
+  
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Carte Arduino</th>
+          <th>Broches PWM</th>
+          <th>Fréquence PWM</th>
+          <th>Résolution</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Arduino Uno/Nano</td>
+          <td>3, 5, 6, 9, 10, 11</td>
+          <td>490 Hz (broches 5,6: 980 Hz)</td>
+          <td>8 bits (0-255)</td>
+        </tr>
+        <tr>
+          <td>Arduino Mega</td>
+          <td>2-13, 44-46</td>
+          <td>490 Hz</td>
+          <td>8 bits (0-255)</td>
+        </tr>
+        <tr>
+          <td>ESP32</td>
+          <td>Toutes les broches GPIO*</td>
+          <td>Variable (jusqu'à 40 MHz)</td>
+          <td>1-16 bits</td>
+        </tr>
+        <tr>
+          <td>ESP8266</td>
+          <td>Toutes les broches digitales</td>
+          <td>1 kHz</td>
+          <td>10 bits (0-1023)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <h4>Fonction analogWrite()</h4>
+  
+  <div class="code-example">
+    <h5>Syntaxe de base</h5>
+    <pre><code><span class="code-comment">// Contrôle PWM d'une LED</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> LED_PIN = 9;  <span class="code-comment">// Broche PWM</span>
 
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-comment">// Pas besoin de pinMode() pour analogWrite()</span>
+  <span class="code-comment">// Mais c'est une bonne pratique de le mettre</span>
+  <span class="code-function">pinMode</span>(LED_PIN, OUTPUT);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Éteint complètement (0%)</span>
+  <span class="code-function">analogWrite</span>(LED_PIN, 0);
+  <span class="code-function">delay</span>(1000);
+  
+  <span class="code-comment">// 25% de luminosité</span>
+  <span class="code-function">analogWrite</span>(LED_PIN, 64);  <span class="code-comment">// 25% de 255 = 64</span>
+  <span class="code-function">delay</span>(1000);
+  
+  <span class="code-comment">// 50% de luminosité</span>
+  <span class="code-function">analogWrite</span>(LED_PIN, 128); <span class="code-comment">// 50% de 255 = 128</span>
+  <span class="code-function">delay</span>(1000);
+  
+  <span class="code-comment">// 75% de luminosité</span>
+  <span class="code-function">analogWrite</span>(LED_PIN, 191); <span class="code-comment">// 75% de 255 = 191</span>
+  <span class="code-function">delay</span>(1000);
+  
+  <span class="code-comment">// Pleine luminosité (100%)</span>
+  <span class="code-function">analogWrite</span>(LED_PIN, 255); <span class="code-comment">// 100% de 255 = 255</span>
+  <span class="code-function">delay</span>(1000);
+}</code></pre>
+  </div>
+  
+  <h4>Effet de respiration (fade in/out)</h4>
+  
+  <div class="code-example">
+    <h5>Effet de respiration complet</h5>
+    <pre><code><span class="code-comment">/*
+  Effet de respiration LED
+  Variation progressive de la luminosité
+*/</span>
+
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> LED_PIN = 9;
+<span class="code-keyword">int</span> luminosite = 0;
+<span class="code-keyword">int</span> increment = 5;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-comment">// La broche 9 supporte PWM sur Arduino Uno</span>
+  Serial.<span class="code-function">begin</span>(9600);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Effet de respiration LED PWM"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Applique la luminosité courante</span>
+  <span class="code-function">analogWrite</span>(LED_PIN, luminosite);
+  
+  <span class="code-comment">// Change la luminosité pour le prochain cycle</span>
+  luminosite = luminosite + increment;
+  
+  <span class="code-comment">// Inverse la direction aux limites</span>
+  <span class="code-keyword">if</span> (luminosite <= 0 || luminosite >= 255) {
+    increment = -increment;
+    
+    <span class="code-comment">// Affiche le changement de direction</span>
+    Serial.<span class="code-function">print</span>(<span class="code-string">"Direction inversee: "</span>);
+    Serial.<span class="code-function">println</span>(increment > 0 ? <span class="code-string">"Montée"</span> : <span class="code-string">"Descente"</span>);
+  }
+  
+  <span class="code-comment">// Affiche la luminosité actuelle</span>
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Luminosite: "</span>);
+  Serial.<span class="code-function">print</span>(luminosite);
+  Serial.<span class="code-function">print</span>(<span class="code-string">" ("</span>);
+  Serial.<span class="code-function">print</span>((luminosite * 100) / 255);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"%)"</span>);
+  
+  <span class="code-function">delay</span>(30);  <span class="code-comment">// Contrôle la vitesse de l'effet</span>
+}</code></pre>
+  </div>
+  
+  <h4>PWM avec ESP32 (résolution supérieure)</h4>
+  
+  <div class="code-example">
+    <h5>Configuration PWM avancée ESP32</h5>
+    <pre><code><span class="code-comment">/*
+  PWM avancé sur ESP32
+  Résolution 16 bits et fréquence configurable
+*/</span>
+
+<span class="code-comment">// Bibliothèque pour PWM ESP32</span>
+<span class="code-keyword">#include</span> &lt;Arduino.h&gt;
+
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> LED_PIN = 16;      <span class="code-comment">// GPIO16</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> FREQUENCE = 5000;  <span class="code-comment">// 5 kHz</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> CANAL_PWM = 0;     <span class="code-comment">// Canal PWM (0-15)</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> RESOLUTION = 12;   <span class="code-comment">// 12 bits (0-4095)</span>
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(115200);
+  
+  <span class="code-comment">// Configuration du PWM ESP32</span>
+  ledcSetup(CANAL_PWM, FREQUENCE, RESOLUTION);
+  ledcAttachPin(LED_PIN, CANAL_PWM);
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"PWM ESP32 configure:"</span>);
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Frequence: "</span>);
+  Serial.<span class="code-function">print</span>(FREQUENCE);
+  Serial.<span class="code-function">println</span>(<span class="code-string">" Hz"</span>);
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Resolution: "</span>);
+  Serial.<span class="code-function">print</span>(RESOLUTION);
+  Serial.<span class="code-function">print</span>(<span class="code-string">" bits ("</span>);
+  Serial.<span class="code-function">print</span>((1 << RESOLUTION) - 1);
+  Serial.<span class="code-function">println</span>(<span class="code-string">" niveaux)"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Effet de respiration avec haute résolution</span>
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> dutyCycle = 0; dutyCycle <= 4095; dutyCycle += 10) {
+    ledcWrite(CANAL_PWM, dutyCycle);
+    <span class="code-function">delay</span>(1);
+  }
+  
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> dutyCycle = 4095; dutyCycle >= 0; dutyCycle -= 10) {
+    ledcWrite(CANAL_PWM, dutyCycle);
+    <span class="code-function">delay</span>(1);
+  }
+}</code></pre>
+  </div>
+  
+  <div class="warning-box">
+    <p><strong>Attention :</strong> Sur ESP32, la fonction <code>analogWrite()</code> n'existe pas par défaut. Il faut utiliser les fonctions <code>ledcSetup()</code>, <code>ledcAttachPin()</code> et <code>ledcWrite()</code>.</p>
+  </div>
+  
+  <h4>Applications pratiques du PWM</h4>
+  
+  <div class="cards">
+    <div class="card">
+      <i class="fas fa-lightbulb"></i>
+      <h5>Contrôle de luminosité</h5>
+      <p>Variation progressive de l'éclairage LED</p>
+    </div>
+    <div class="card">
+      <i class="fas fa-cogs"></i>
+      <h5>Contrôle de moteurs</h5>
+      <p>Variation de vitesse des moteurs DC</p>
+    </div>
+    <div class="card">
+      <i class="fas fa-sliders-h"></i>
+      <h5>Servomoteurs</h5>
+      <p>Contrôle de position avec signal PWM</p>
+    </div>
+    <div class="card">
+      <i class="fas fa-wave-square"></i>
+      <h5>Génération de signaux</h5>
+      <p>Création de formes d'onde simples</p>
+    </div>
+  </div>
+  
+  <div class="exercise">
+    <h4><i class="fas fa-pencil-alt"></i> Exercice pratique</h4>
+    <p><strong>Objectif :</strong> Créer un variateur de lumière contrôlé par potentiomètre.</p>
+    <p><strong>Matériel requis :</strong></p>
+    <ul>
+      <li>Arduino Uno</li>
+      <li>LED</li>
+      <li>Résistance 220Ω</li>
+      <li>Potentiomètre 10kΩ</li>
+      <li>Breadboard et fils</li>
+    </ul>
+    <p><strong>Consignes :</strong> Connectez le potentiomètre à l'entrée analogique A0 et la LED à la broche PWM 9. Écrivez un programme qui lit la valeur du potentiomètre (0-1023) et l'applique à la LED en convertissant l'échelle (0-255).</p>
+  </div>
+</section>
         <h3 id="led-rvb">LED RGB (Cathode commune)</h3>
         <div class="code-example">
           <pre><code><span class="code-comment">/*
@@ -3246,6 +3716,397 @@ LEDController led2(9, <span class="code-keyword">false</span>);   <span class="c
   }
 }</code></pre>
         </div>
+        <!-- =========================================== -->
+<!-- SECTION BIBLIOTHÈQUES STANDARD - MANQUANTE -->
+<!-- =========================================== -->
+<section id="biblio-standard">
+  <h3>Bibliothèques Arduino standard</h3>
+  
+  <p>L'IDE Arduino inclut un ensemble de bibliothèques standard qui facilitent le développement en fournissant des fonctions prêtes à l'emploi pour des tâches courantes.</p>
+  
+  <div class="info-box">
+    <p><strong>Inclure une bibliothèque :</strong> Utilisez <code>#include &lt;NomBibliotheque.h&gt;</code> en haut de votre sketch. Les bibliothèques standard sont automatiquement disponibles dans l'IDE.</p>
+  </div>
+  
+  <h4>Principales bibliothèques standard</h4>
+  
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Bibliothèque</th>
+          <th>Description</th>
+          <th>Fonctions principales</th>
+          <th>Exemple d'utilisation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>EEPROM.h</strong></td>
+          <td>Gestion de la mémoire EEPROM</td>
+          <td>EEPROM.read(), EEPROM.write()</td>
+          <td>Sauvegarde de données</td>
+        </tr>
+        <tr>
+          <td><strong>Servo.h</strong></td>
+          <td>Contrôle de servomoteurs</td>
+          <td>Servo.attach(), Servo.write()</td>
+          <td>Robots, systèmes de contrôle</td>
+        </tr>
+        <tr>
+          <td><strong>Stepper.h</strong></td>
+          <td>Contrôle de moteurs pas-à-pas</td>
+          <td>Stepper.step(), Stepper.setSpeed()</td>
+          <td>Imprimantes 3D, CNC</td>
+        </tr>
+        <tr>
+          <td><strong>SPI.h</strong></td>
+          <td>Communication SPI</td>
+          <td>SPI.begin(), SPI.transfer()</td>
+          <td>Écrans, cartes SD, capteurs</td>
+        </tr>
+        <tr>
+          <td><strong>Wire.h</strong></td>
+          <td>Communication I2C/TWI</td>
+          <td>Wire.begin(), Wire.read()</td>
+          <td>Capteurs, afficheurs</td>
+        </tr>
+        <tr>
+          <td><strong>LiquidCrystal.h</strong></td>
+          <td>Contrôle d'écrans LCD</td>
+          <td>LiquidCrystal.begin(), print()</td>
+          <td>Affichage d'informations</td>
+        </tr>
+        <tr>
+          <td><strong>SD.h</strong></td>
+          <td>Lecture/écriture cartes SD</td>
+          <td>SD.begin(), SD.open()</td>
+          <td>Enregistrement de données</td>
+        </tr>
+        <tr>
+          <td><strong>SoftwareSerial.h</strong></td>
+          <td>Port série logiciel</td>
+          <td>SoftwareSerial.read()</td>
+          <td>Communication série additionnelle</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <h4>Exemples détaillés d'utilisation</h4>
+  
+  <h5>1. Bibliothèque EEPROM - Sauvegarde de données</h5>
+  
+  <div class="code-example">
+    <h5>Sauvegarde et lecture en EEPROM</h5>
+    <pre><code><span class="code-comment">/*
+  Utilisation de la mémoire EEPROM
+  Sauvegarde de données persistantes
+*/</span>
+
+<span class="code-keyword">#include</span> &lt;EEPROM.h&gt;
+
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> ADRESSE_COMPTEUR = 0;  <span class="code-comment">// Adresse en EEPROM</span>
+<span class="code-keyword">int</span> compteur;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(9600);
+  
+  <span class="code-comment">// Lecture du compteur depuis l'EEPROM</span>
+  EEPROM.<span class="code-function">get</span>(ADRESSE_COMPTEUR, compteur);
+  
+  <span class="code-keyword">if</span> (<span class="code-function">isnan</span>(compteur)) {  <span class="code-comment">// Première utilisation</span>
+    compteur = 0;
+    Serial.<span class="code-function">println</span>(<span class="code-string">"Initialisation du compteur"</span>);
+  }
+  
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Compteur actuel: "</span>);
+  Serial.<span class="code-function">println</span>(compteur);
+  
+  <span class="code-comment">// Incrémente le compteur</span>
+  compteur++;
+  
+  <span class="code-comment">// Sauvegarde en EEPROM</span>
+  EEPROM.<span class="code-function">put</span>(ADRESSE_COMPTEUR, compteur);
+  
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Nouveau compteur: "</span>);
+  Serial.<span class="code-function">println</span>(compteur);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Donnees sauvegardees en EEPROM"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Programme qui s'exécute une seule fois</span>
+  <span class="code-function">delay</span>(1000);
+}</code></pre>
+  </div>
+  
+  <div class="info-box">
+    <p><strong>Note :</strong> La mémoire EEPROM a une durée de vie limitée (environ 100,000 cycles d'écriture). Évitez d'écrire fréquemment aux mêmes adresses.</p>
+  </div>
+  
+  <h5>2. Bibliothèque Servo - Contrôle de servomoteur</h5>
+  
+  <div class="code-example">
+    <h5>Contrôle précis d'un servomoteur</h5>
+    <pre><code><span class="code-comment">/*
+  Contrôle d'un servomoteur avec potentiomètre
+*/</span>
+
+<span class="code-keyword">#include</span> &lt;Servo.h&gt;
+
+Servo monServo;            <span class="code-comment">// Création d'un objet Servo</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> PIN_SERVO = 9;   <span class="code-comment">// Broche du servomoteur</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> PIN_POT = A0;     <span class="code-comment">// Potentiomètre</span>
+<span class="code-keyword">int</span> anglePrecedent = 0;    <span class="code-comment">// Pour détecter les changements</span>
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(9600);
+  
+  <span class="code-comment">// Attache le servomoteur à la broche</span>
+  monServo.<span class="code-function">attach</span>(PIN_SERVO);
+  
+  <span class="code-comment">// Position initiale à 90° (milieu)</span>
+  monServo.<span class="code-function">write</span>(90);
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Controle servomoteur avec potentiometre"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Lecture du potentiomètre (0-1023)</span>
+  <span class="code-keyword">int</span> valeurPot = <span class="code-function">analogRead</span>(PIN_POT);
+  
+  <span class="code-comment">// Conversion en angle (0-180 degrés)</span>
+  <span class="code-keyword">int</span> angle = <span class="code-function">map</span>(valeurPot, 0, 1023, 0, 180);
+  
+  <span class="code-comment">// Déplacement du servomoteur seulement si l'angle a changé</span>
+  <span class="code-keyword">if</span> (<span class="code-function">abs</span>(angle - anglePrecedent) > 2) {
+    monServo.<span class="code-function">write</span>(angle);
+    anglePrecedent = angle;
+    
+    <span class="code-comment">// Affichage des informations</span>
+    Serial.<span class="code-function">print</span>(<span class="code-string">"Potentiometre: "</span>);
+    Serial.<span class="code-function">print</span>(valeurPot);
+    Serial.<span class="code-function">print</span>(<span class="code-string">" | Angle: "</span>);
+    Serial.<span class="code-function">print</span>(angle);
+    Serial.<span class="code-function">println</span>(<span class="code-string">"°"</span>);
+  }
+  
+  <span class="code-function">delay</span>(20);  <span class="code-comment">// Délai pour stabilité</span>
+}</code></pre>
+  </div>
+  
+  <h5>3. Bibliothèque LiquidCrystal - Affichage LCD</h5>
+  
+  <div class="code-example">
+    <h5>Affichage sur écran LCD 16x2</h5>
+    <pre><code><span class="code-comment">/*
+  Affichage d'informations sur écran LCD
+  Connexion standard 4 bits
+*/</span>
+
+<span class="code-keyword">#include</span> &lt;LiquidCrystal.h&gt;
+
+<span class="code-comment">// Initialisation LCD (RS, EN, D4, D5, D6, D7)</span>
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+<span class="code-keyword">int</span> compteur = 0;
+<span class="code-keyword">unsigned</span> <span class="code-keyword">long</span> dernierUpdate = 0;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-comment">// Initialisation de l'écran (16 colonnes, 2 lignes)</span>
+  lcd.<span class="code-function">begin</span>(16, 2);
+  
+  <span class="code-comment">// Message d'accueil</span>
+  lcd.<span class="code-function">print</span>(<span class="code-string">"Bienvenue!"</span>);
+  <span class="code-function">delay</span>(2000);
+  
+  lcd.<span class="code-function">clear</span>();
+  lcd.<span class="code-function">print</span>(<span class="code-string">"Compteur: 0"</span>);
+  lcd.<span class="code-function">setCursor</span>(0, 1);
+  lcd.<span class="code-function">print</span>(<span class="code-string">"Temp: 20.5C"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-keyword">unsigned</span> <span class="code-keyword">long</span> maintenant = <span class="code-function">millis</span>();
+  
+  <span class="code-keyword">if</span> (maintenant - dernierUpdate > 1000) {
+    dernierUpdate = maintenant;
+    
+    <span class="code-comment">// Incrémente le compteur</span>
+    compteur++;
+    
+    <span class="code-comment">// Simulation de température</span>
+    <span class="code-keyword">float</span> temperature = 20.0 + (<span class="code-function">sin</span>(compteur * 0.1) * 5.0);
+    
+    <span class="code-comment">// Mise à jour de l'affichage</span>
+    lcd.<span class="code-function">clear</span>();
+    lcd.<span class="code-function">setCursor</span>(0, 0);
+    lcd.<span class="code-function">print</span>(<span class="code-string">"Compteur: "</span>);
+    lcd.<span class="code-function">print</span>(compteur);
+    
+    lcd.<span class="code-function">setCursor</span>(0, 1);
+    lcd.<span class="code-function">print</span>(<span class="code-string">"Temp: "</span>);
+    lcd.<span class="code-function">print</span>(temperature, 1);
+    lcd.<span class="code-function">print</span>((<span class="code-type">char</span>)223);  <span class="code-comment">// Symbole degré</span>
+    lcd.<span class="code-function">print</span>(<span class="code-string">"C"</span>);
+    
+    <span class="code-comment">// Affichage barre de progression</span>
+    <span class="code-keyword">int</span> progression = compteur % 17;  <span class="code-comment">// 0-16</span>
+    lcd.<span class="code-function">setCursor</span>(progression, 0);
+    lcd.<span class="code-function">print</span>(<span class="code-string">"&gt;"</span>);  <span class="code-comment">// Curseur de progression</span>
+  }
+  
+  <span class="code-function">delay</span>(100);
+}</code></pre>
+  </div>
+  
+  <h4>Bibliothèques de communication</h4>
+  
+  <h5>4. Bibliothèque Wire - Communication I2C</h5>
+  
+  <div class="code-example">
+    <h5>Communication I2C avec capteur</h5>
+    <pre><code><span class="code-comment">/*
+  Communication I2C avec un périphérique
+  Exemple avec scan de bus I2C
+*/</span>
+
+<span class="code-keyword">#include</span> &lt;Wire.h&gt;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Wire.<span class="code-function">begin</span>();        <span class="code-comment">// Rejoint le bus I2C en tant que master</span>
+  Serial.<span class="code-function">begin</span>(9600);
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Scan du bus I2C..."</span>);
+  
+  <span class="code-keyword">int</span> peripheriquesTrouves = 0;
+  
+  <span class="code-keyword">for</span> (<span class="code-keyword">byte</span> adresse = 1; adresse < 127; adresse++) {
+    Wire.<span class="code-function">beginTransmission</span>(adresse);
+    <span class="code-keyword">byte</span> erreur = Wire.<span class="code-function">endTransmission</span>();
+    
+    <span class="code-keyword">if</span> (erreur == 0) {
+      Serial.<span class="code-function">print</span>(<span class="code-string">"Peripherique I2C trouve a l'adresse 0x"</span>);
+      <span class="code-keyword">if</span> (adresse < 16) Serial.<span class="code-function">print</span>(<span class="code-string">"0"</span>);
+      Serial.<span class="code-function">print</span>(adresse, HEX);
+      Serial.<span class="code-function">println</span>();
+      
+      peripheriquesTrouves++;
+    }
+  }
+  
+  <span class="code-keyword">if</span> (peripheriquesTrouves == 0) {
+    Serial.<span class="code-function">println</span>(<span class="code-string">"Aucun peripherique I2C trouve"</span>);
+  } <span class="code-keyword">else</span> {
+    Serial.<span class="code-function">print</span>(<span class="code-string">"Total: "</span>);
+    Serial.<span class="code-function">print</span>(peripheriquesTrouves);
+    Serial.<span class="code-function">println</span>(<span class="code-string">" peripherique(s) I2C"</span>);
+  }
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Le scan ne s'exécute qu'une fois</span>
+  <span class="code-function">delay</span>(5000);
+}</code></pre>
+  </div>
+  
+  <h5>5. Bibliothèque SPI - Communication série haute vitesse</h5>
+  
+  <div class="code-example">
+    <h5>Configuration SPI de base</h5>
+    <pre><code><span class="code-comment">/*
+  Configuration de la communication SPI
+*/</span>
+
+<span class="code-keyword">#include</span> &lt;SPI.h&gt;
+
+<span class="code-comment">// Broches SPI (dépendent de la carte)</span>
+<span class="code-keyword">#ifdef</span> ARDUINO_AVR_UNO
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> PIN_SS = 10;    <span class="code-comment">// Slave Select</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> PIN_MOSI = 11;   <span class="code-comment">// Master Out Slave In</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> PIN_MISO = 12;   <span class="code-comment">// Master In Slave Out</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> PIN_SCK = 13;    <span class="code-comment">// Serial Clock</span>
+<span class="code-keyword">#endif</span>
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(9600);
+  
+  <span class="code-comment">// Initialisation SPI</span>
+  SPI.<span class="code-function">begin</span>();
+  
+  <span class="code-comment">// Configuration des broches</span>
+  <span class="code-function">pinMode</span>(PIN_SS, OUTPUT);
+  digitalWrite(PIN_SS, HIGH);  <span class="code-comment">// Désactive l'esclave par défaut</span>
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"SPI initialise"</span>);
+  
+  <span class="code-comment">// Test d'envoi de données</span>
+  <span class="code-function">envoyerDonneesSPI</span>(0xAA);  <span class="code-comment">// Donnée de test</span>
+}
+
+<span class="code-keyword">void</span> <span class="code-function">envoyerDonneesSPI</span>(<span class="code-keyword">byte</span> donnee) {
+  digitalWrite(PIN_SS, LOW);   <span class="code-comment">// Sélectionne l'esclave</span>
+  
+  <span class="code-comment">// Envoi de la donnée</span>
+  <span class="code-keyword">byte</span> reponse = SPI.<span class="code-function">transfer</span>(donnee);
+  
+  digitalWrite(PIN_SS, HIGH);  <span class="code-comment">// Libère l'esclave</span>
+  
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Donnee envoyee: 0x"</span>);
+  Serial.<span class="code-function">print</span>(donnee, HEX);
+  Serial.<span class="code-function">print</span>(<span class="code-string">" | Reponse: 0x"</span>);
+  Serial.<span class="code-function">println</span>(reponse, HEX);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Envoi périodique de données</span>
+  <span class="code-keyword">static</span> <span class="code-keyword">unsigned</span> <span class="code-keyword">long</span> dernierEnvoi = 0;
+  <span class="code-keyword">static</span> <span class="code-keyword">byte</span> compteur = 0;
+  
+  <span class="code-keyword">if</span> (<span class="code-function">millis</span>() - dernierEnvoi > 1000) {
+    dernierEnvoi = <span class="code-function">millis</span>();
+    
+    <span class="code-function">envoyerDonneesSPI</span>(compteur);
+    compteur++;
+  }
+  
+  <span class="code-function">delay</span>(10);
+}</code></pre>
+  </div>
+  
+  <h4>Bonnes pratiques avec les bibliothèques</h4>
+  
+  <div class="info-box">
+    <ol>
+      <li><strong>Vérifiez la documentation :</strong> Chaque bibliothèque a sa propre documentation avec des exemples</li>
+      <li><strong>Gestion de la mémoire :</strong> Certaines bibliothèques consomment beaucoup de mémoire (SD, Ethernet)</li>
+      <li><strong>Compatibilité :</strong> Vérifiez que la bibliothèque est compatible avec votre carte</li>
+      <li><strong>Version :</strong> Certaines bibliothèques peuvent avoir des versions différentes</li>
+      <li><strong>Conflits :</strong> Évitez d'inclure des bibliothèques qui utilisent les mêmes ressources</li>
+    </ol>
+  </div>
+  
+  <div class="exercise">
+    <h4><i class="fas fa-pencil-alt"></i> Exercice pratique</h4>
+    <p><strong>Objectif :</strong> Créer un enregistreur de données avec EEPROM et affichage LCD.</p>
+    <p><strong>Matériel requis :</strong></p>
+    <ul>
+      <li>Arduino Uno</li>
+      <li>Écran LCD 16x2</li>
+      <li>Capteur de température (DHT11 ou simulation)</li>
+      <li>Bouton poussoir</li>
+    </ul>
+    <p><strong>Consignes :</strong></p>
+    <ol>
+      <li>Affichez la température actuelle sur la première ligne du LCD</li>
+      <li>Sur la deuxième ligne, affichez la température maximale enregistrée</li>
+      <li>Utilisez l'EEPROM pour sauvegarder la température maximale</li>
+      <li>Un bouton doit permettre de réinitialiser le maximum</li>
+      <li>Utilisez les bibliothèques <code>LiquidCrystal.h</code> et <code>EEPROM.h</code></li>
+    </ol>
+  </div>
+  
+</section>
       </section>
 
       <!-- =========================================== -->
@@ -3336,112 +4197,7 @@ LEDController led2(9, <span class="code-keyword">false</span>);   <span class="c
 }</code></pre>
         </div>
 
-        <h3 id="switch-case">Structure switch-case</h3>
-        <div class="code-example">
-          <pre><code><span class="code-comment">/*
-  Exemple de switch-case pour un menu de commandes
-*/</span>
-
-<span class="code-keyword">char</span> commande;
-<span class="code-keyword">int</span> ledPin = 13;
-
-<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
-  Serial.<span class="code-function">begin</span>(9600);
-  <span class="code-function">pinMode</span>(ledPin, OUTPUT);
-  
-  Serial.<span class="code-function">println</span>(<span class="code-string">"Systeme de commandes LED"</span>);
-  Serial.<span class="code-function">println</span>(<span class="code-string">"Commandes disponibles:"</span>);
-  Serial.<span class="code-function">println</span>(<span class="code-string">"  a - Allumer LED"</span>);
-  Serial.<span class="code-function">println</span>(<span class="code-string">"  e - Eteindre LED"</span>);
-  Serial.<span class="code-function">println</span>(<span class="code-string">"  c - Clignoter LED"</span>);
-  Serial.<span class="code-function">println</span>(<span class="code-string">"  s - SOS"</span>);
-  Serial.<span class="code-function">println</span>(<span class="code-string">"  q - Quitter"</span>);
-}
-
-<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
-  <span class="code-keyword">if</span> (Serial.<span class="code-function">available</span>()) {
-    commande = Serial.<span class="code-function">read</span>();
-    
-    <span class="code-comment">// Structure switch-case pour traiter la commande</span>
-    <span class="code-keyword">switch</span> (commande) {
-      <span class="code-keyword">case</span> <span class="code-string">'a'</span>:
-      <span class="code-keyword">case</span> <span class="code-string">'A'</span>:
-        Serial.<span class="code-function">println</span>(<span class="code-string">"Commande: Allumer LED"</span>);
-        <span class="code-function">digitalWrite</span>(ledPin, HIGH);
-        <span class="code-keyword">break</span>;
-        
-      <span class="code-keyword">case</span> <span class="code-string">'e'</span>:
-      <span class="code-keyword">case</span> <span class="code-string">'E'</span>:
-        Serial.<span class="code-function">println</span>(<span class="code-string">"Commande: Eteindre LED"</span>);
-        <span class="code-function">digitalWrite</span>(ledPin, LOW);
-        <span class="code-keyword">break</span>;
-        
-      <span class="code-keyword">case</span> <span class="code-string">'c'</span>:
-      <span class="code-keyword">case</span> <span class="code-string">'C'</span>:
-        Serial.<span class="code-function">println</span>(<span class="code-string">"Commande: Clignoter LED"</span>);
-        <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 0; i < 5; i++) {
-          <span class="code-function">digitalWrite</span>(ledPin, HIGH);
-          <span class="code-function">delay</span>(200);
-          <span class="code-function">digitalWrite</span>(ledPin, LOW);
-          <span class="code-function">delay</span>(200);
-        }
-        <span class="code-keyword">break</span>;
-        
-      <span class="code-keyword">case</span> <span class="code-string">'s'</span>:
-      <span class="code-keyword">case</span> <span class="code-string">'S'</span>:
-        Serial.<span class="code-function">println</span>(<span class="code-string">"Commande: SOS"</span>);
-        <span class="code-function">sosSignal</span>();
-        <span class="code-keyword">break</span>;
-        
-      <span class="code-keyword">case</span> <span class="code-string">'q'</span>:
-      <span class="code-keyword">case</span> <span class="code-string">'Q'</span>:
-        Serial.<span class="code-function">println</span>(<span class="code-string">"Fin du programme"</span>);
-        <span class="code-keyword">while</span> (1) { <span class="code-comment">// Boucle infinie pour arrêter</span>
-          <span class="code-function">delay</span>(1000);
-        }
-        <span class="code-keyword">break</span>;
-        
-      <span class="code-keyword">case</span> <span class="code-string">'\n'</span>:
-      <span class="code-keyword">case</span> <span class="code-string">'\r'</span>:
-        <span class="code-comment">// Ignorer les caractères de nouvelle ligne</span>
-        <span class="code-keyword">break</span>;
-        
-      <span class="code-keyword">default</span>:
-        Serial.<span class="code-function">println</span>(<span class="code-string">"Commande inconnue"</span>);
-        Serial.<span class="code-function">println</span>(<span class="code-string">"Tapez 'h' pour l'aide"</span>);
-        <span class="code-keyword">break</span>;
-    }
-  }
-}
-
-<span class="code-keyword">void</span> <span class="code-function">sosSignal</span>() {
-  <span class="code-comment">// S (3 courts)</span>
-  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 0; i < 3; i++) {
-    <span class="code-function">digitalWrite</span>(ledPin, HIGH);
-    <span class="code-function">delay</span>(200);
-    <span class="code-function">digitalWrite</span>(ledPin, LOW);
-    <span class="code-function">delay</span>(200);
-  }
-  
-  <span class="code-comment">// O (3 longs)</span>
-  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 0; i < 3; i++) {
-    <span class="code-function">digitalWrite</span>(ledPin, HIGH);
-    <span class="code-function">delay</span>(600);
-    <span class="code-function">digitalWrite</span>(ledPin, LOW);
-    <span class="code-function">delay</span>(200);
-  }
-  
-  <span class="code-comment">// S (3 courts)</span>
-  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 0; i < 3; i++) {
-    <span class="code-function">digitalWrite</span>(ledPin, HIGH);
-    <span class="code-function">delay</span>(200);
-    <span class="code-function">digitalWrite</span>(ledPin, LOW);
-    <span class="code-function">delay</span>(200);
-  }
-  
-  <span class="code-function">delay</span>(1000);
-}</code></pre>
-        </div>
+      
 
         <h3 id="boucles">Boucles de répétition</h3>
         <div class="code-example">
@@ -3559,6 +4315,113 @@ LEDController led2(9, <span class="code-keyword">false</span>);   <span class="c
   Serial.<span class="code-function">println</span>();
   
   <span class="code-function">delay</span>(3000);
+}</code></pre>
+        </div>
+
+        <h3 id="switch-case">Structure switch-case</h3>
+        <div class="code-example">
+          <pre><code><span class="code-comment">/*
+  Exemple de switch-case pour un menu de commandes
+*/</span>
+
+<span class="code-keyword">char</span> commande;
+<span class="code-keyword">int</span> ledPin = 13;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(9600);
+  <span class="code-function">pinMode</span>(ledPin, OUTPUT);
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Systeme de commandes LED"</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Commandes disponibles:"</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"  a - Allumer LED"</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"  e - Eteindre LED"</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"  c - Clignoter LED"</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"  s - SOS"</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"  q - Quitter"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-keyword">if</span> (Serial.<span class="code-function">available</span>()) {
+    commande = Serial.<span class="code-function">read</span>();
+    
+    <span class="code-comment">// Structure switch-case pour traiter la commande</span>
+    <span class="code-keyword">switch</span> (commande) {
+      <span class="code-keyword">case</span> <span class="code-string">'a'</span>:
+      <span class="code-keyword">case</span> <span class="code-string">'A'</span>:
+        Serial.<span class="code-function">println</span>(<span class="code-string">"Commande: Allumer LED"</span>);
+        <span class="code-function">digitalWrite</span>(ledPin, HIGH);
+        <span class="code-keyword">break</span>;
+        
+      <span class="code-keyword">case</span> <span class="code-string">'e'</span>:
+      <span class="code-keyword">case</span> <span class="code-string">'E'</span>:
+        Serial.<span class="code-function">println</span>(<span class="code-string">"Commande: Eteindre LED"</span>);
+        <span class="code-function">digitalWrite</span>(ledPin, LOW);
+        <span class="code-keyword">break</span>;
+        
+      <span class="code-keyword">case</span> <span class="code-string">'c'</span>:
+      <span class="code-keyword">case</span> <span class="code-string">'C'</span>:
+        Serial.<span class="code-function">println</span>(<span class="code-string">"Commande: Clignoter LED"</span>);
+        <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 0; i < 5; i++) {
+          <span class="code-function">digitalWrite</span>(ledPin, HIGH);
+          <span class="code-function">delay</span>(200);
+          <span class="code-function">digitalWrite</span>(ledPin, LOW);
+          <span class="code-function">delay</span>(200);
+        }
+        <span class="code-keyword">break</span>;
+        
+      <span class="code-keyword">case</span> <span class="code-string">'s'</span>:
+      <span class="code-keyword">case</span> <span class="code-string">'S'</span>:
+        Serial.<span class="code-function">println</span>(<span class="code-string">"Commande: SOS"</span>);
+        <span class="code-function">sosSignal</span>();
+        <span class="code-keyword">break</span>;
+        
+      <span class="code-keyword">case</span> <span class="code-string">'q'</span>:
+      <span class="code-keyword">case</span> <span class="code-string">'Q'</span>:
+        Serial.<span class="code-function">println</span>(<span class="code-string">"Fin du programme"</span>);
+        <span class="code-keyword">while</span> (1) { <span class="code-comment">// Boucle infinie pour arrêter</span>
+          <span class="code-function">delay</span>(1000);
+        }
+        <span class="code-keyword">break</span>;
+        
+      <span class="code-keyword">case</span> <span class="code-string">'\n'</span>:
+      <span class="code-keyword">case</span> <span class="code-string">'\r'</span>:
+        <span class="code-comment">// Ignorer les caractères de nouvelle ligne</span>
+        <span class="code-keyword">break</span>;
+        
+      <span class="code-keyword">default</span>:
+        Serial.<span class="code-function">println</span>(<span class="code-string">"Commande inconnue"</span>);
+        Serial.<span class="code-function">println</span>(<span class="code-string">"Tapez 'h' pour l'aide"</span>);
+        <span class="code-keyword">break</span>;
+    }
+  }
+}
+
+<span class="code-keyword">void</span> <span class="code-function">sosSignal</span>() {
+  <span class="code-comment">// S (3 courts)</span>
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 0; i < 3; i++) {
+    <span class="code-function">digitalWrite</span>(ledPin, HIGH);
+    <span class="code-function">delay</span>(200);
+    <span class="code-function">digitalWrite</span>(ledPin, LOW);
+    <span class="code-function">delay</span>(200);
+  }
+  
+  <span class="code-comment">// O (3 longs)</span>
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 0; i < 3; i++) {
+    <span class="code-function">digitalWrite</span>(ledPin, HIGH);
+    <span class="code-function">delay</span>(600);
+    <span class="code-function">digitalWrite</span>(ledPin, LOW);
+    <span class="code-function">delay</span>(200);
+  }
+  
+  <span class="code-comment">// S (3 courts)</span>
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 0; i < 3; i++) {
+    <span class="code-function">digitalWrite</span>(ledPin, HIGH);
+    <span class="code-function">delay</span>(200);
+    <span class="code-function">digitalWrite</span>(ledPin, LOW);
+    <span class="code-function">delay</span>(200);
+  }
+  
+  <span class="code-function">delay</span>(1000);
 }</code></pre>
         </div>
       </section>
@@ -3694,245 +4557,7 @@ WiFiServer server(80);
 }</code></pre>
         </div>
 
-        <h3 id="mqtt">Communication MQTT (Internet des Objets)</h3>
-        <div class="info-box">
-          <h4>Explication du Code MQTT ESP</h4>
-          <p>Ce code implémente un <strong>client MQTT complet</strong> sur ESP32/ESP8266 pour l'Internet des Objets (IoT).</p>
-          
-          <h5>Qu'est-ce que MQTT ?</h5>
-          <p><strong>MQTT (Message Queuing Telemetry Transport)</strong> est un protocole de messagerie léger conçu pour les appareils IoT. Il fonctionne sur le modèle <strong>publish/subscribe</strong> :</p>
-          <ul>
-              <li><strong>Broker</strong> : Serveur central qui gère les messages (ex: broker.hivemq.com)</li>
-              <li><strong>Publisher</strong> : Envoie des messages sur des "topics"</li>
-              <li><strong>Subscriber</strong> : Reçoit des messages des topics auxquels il est abonné</li>
-          </ul>
-          
-          <h5>Architecture du code :</h5>
-          <ol>
-              <li><strong>Connexion WiFi</strong> : L'ESP se connecte d'abord au réseau</li>
-              <li><strong>Connexion MQTT</strong> : Établit une connexion avec le broker MQTT public</li>
-              <li><strong>Abonnement</strong> : S'abonne aux topics pour recevoir des commandes</li>
-              <li><strong>Publication</strong> : Envoie périodiquement des données (température)</li>
-              <li><strong>Callback</strong> : Traite les messages reçus via une fonction callback</li>
-          </ol>
-          
-          <h5>Topics utilisés :</h5>
-          <ul>
-              <li><code>maison/salon/temperature</code> → Publication des données de température</li>
-              <li><code>maison/salon/led/commande</code> → Réception des commandes pour la LED</li>
-              <li><code>maison/salon/led/etat</code> → Publication de l'état de la LED</li>
-          </ul>
-          
-          <h5>Fonctionnement en détail :</h5>
-          
-          <div class="code-example" style="margin: 1rem 0; padding: 1rem;">
-              <h6>1. Setup MQTT</h6>
-              <pre style="margin: 0; font-size: 0.9rem;">client.setServer(mqtt_server, mqtt_port);
-      client.setCallback(callback);</pre>
-              <p style="margin-top: 0.5rem;">Configure le broker et la fonction de callback pour traiter les messages reçus.</p>
-          </div>
-          
-          <div class="code-example" style="margin: 1rem 0; padding: 1rem;">
-              <h6>2. Fonction Callback</h6>
-              <pre style="margin: 0; font-size: 0.9rem;">void callback(char* topic, byte* payload, unsigned int length) {
-        // Traite les messages reçus
-      }</pre>
-              <p style="margin-top: 0.5rem;">Appelée automatiquement quand un message arrive sur un topic auquel on est abonné.</p>
-          </div>
-          
-          <div class="code-example" style="margin: 1rem 0; padding: 1rem;">
-              <h6>3. Publication de données</h6>
-              <pre style="margin: 0; font-size: 0.9rem;">client.publish(topic_temperature, tempString);</pre>
-              <p style="margin-top: 0.5rem;">Envoie les données de température toutes les 5 secondes.</p>
-          </div>
-          
-          <div class="code-example" style="margin: 1rem 0; padding: 1rem;">
-              <h6>4. Abonnement aux topics</h6>
-              <pre style="margin: 0; font-size: 0.9rem;">client.subscribe(topic_led);</pre>
-              <p style="margin-top: 0.5rem;">S'abonne au topic des commandes LED pour pouvoir les recevoir.</p>
-          </div>
-          
-          <h5>Avantages de MQTT pour l'IoT :</h5>
-          <ul>
-              <li><strong>Léger</strong> : Peu de consommation de mémoire et bande passante</li>
-              <li><strong>Asynchrone</strong> : Les appareils peuvent publier/s'abonner indépendamment</li>
-              <li><strong>Scalable</strong> : Supporte des milliers de clients connectés</li>
-              <li><strong>Fiabilité</strong> : Niveaux de qualité de service (QoS) garantissant la livraison</li>
-              <li><strong>Sécurité</strong> : Supporte l'authentification et le chiffrement</li>
-          </ul>
-          
-          <h5>Cas d'usage typiques :</h5>
-          <ul>
-              <li><strong>Domotique</strong> : Contrôle à distance des appareils</li>
-              <li><strong>Monitoring</strong> : Surveillance de capteurs environnementaux</li>
-              <li><strong>Télémétrie</strong> : Collecte de données à partir de plusieurs sources</li>
-              <li><strong>Notifications</strong> : Alertes et notifications en temps réel</li>
-          </ul>
-          
-          <div class="warning-box">
-              <p><strong>Points importants :</strong></p>
-              <ul>
-                  <li>Le broker MQTT peut être local (Mosquitto) ou cloud (HiveMQ, AWS IoT)</li>
-                  <li>Les topics sont hiérarchiques (ex: <code>maison/etage1/salon/temperature</code>)</li>
-                  <li>MQTT maintient une connexion persistante avec le broker</li>
-                  <li>Parfait pour les connexions intermittentes ou à faible bande passante</li>
-              </ul>
-          </div>
-          
-          <p>Avec ce code, l'ESP32 devient un <strong>nœud IoT intelligent</strong> qui peut envoyer des données au cloud et recevoir des commandes à distance, ouvrant la porte à des applications domotiques et industrielles avancées.</p>
-      </div>
-        <div class="code-example">
-          <pre><code><span class="code-comment">/*
-  Client MQTT avec ESP32
-  Publie la température et reçoit des commandes
-  Nécessite la bibliothèque PubSubClient
-*/</span>
-
-<span class="code-keyword">#include</span> &lt;WiFi.h&gt;
-<span class="code-keyword">#include</span> &lt;PubSubClient.h&gt;
-
-<span class="code-comment">// Configuration WiFi</span>
-<span class="code-keyword">const</span> <span class="code-type">char</span>* ssid = <span class="code-string">"Votre_SSID"</span>;
-<span class="code-keyword">const</span> <span class="code-type">char</span>* password = <span class="code-string">"Votre_Mot_De_Passe"</span>;
-
-<span class="code-comment">// Configuration MQTT</span>
-<span class="code-keyword">const</span> <span class="code-type">char</span>* mqtt_server = <span class="code-string">"broker.hivemq.com"</span>;  <span class="code-comment">// Broker public gratuit</span>
-<span class="code-keyword">const</span> <span class="code-keyword">int</span> mqtt_port = 1883;
-<span class="code-keyword">const</span> <span class="code-type">char</span>* mqtt_client_id = <span class="code-string">"ESP32_Client_01"</span>;
-
-<span class="code-comment">// Topics MQTT</span>
-<span class="code-keyword">const</span> <span class="code-type">char</span>* topic_temperature = <span class="code-string">"maison/salon/temperature"</span>;
-<span class="code-keyword">const</span> <span class="code-type">char</span>* topic_led = <span class="code-string">"maison/salon/led/commande"</span>;
-<span class="code-keyword">const</span> <span class="code-type">char</span>* topic_led_status = <span class="code-string">"maison/salon/led/etat"</span>;
-
-<span class="code-comment">// Broches</span>
-<span class="code-keyword">const</span> <span class="code-keyword">int</span> ledPin = 2;
-<span class="code-keyword">const</span> <span class="code-keyword">int</span> sensorPin = 34;  <span class="code-comment">// Broche ADC pour capteur simulé</span>
-
-<span class="code-comment">// Objets</span>
-WiFiClient espClient;
-PubSubClient client(espClient);
-
-<span class="code-comment">// Variables</span>
-<span class="code-keyword">bool</span> ledState = <span class="code-keyword">false</span>;
-<span class="code-keyword">unsigned</span> <span class="code-keyword">long</span> lastMsg = 0;
-
-<span class="code-comment">// Connexion WiFi</span>
-<span class="code-keyword">void</span> <span class="code-function">setup_wifi</span>() {
-  <span class="code-function">delay</span>(10);
-  Serial.<span class="code-function">println</span>();
-  Serial.<span class="code-function">print</span>(<span class="code-string">"Connexion au WiFi: "</span>);
-  Serial.<span class="code-function">println</span>(ssid);
-  
-  WiFi.<span class="code-function">begin</span>(ssid, password);
-  
-  <span class="code-keyword">while</span> (WiFi.<span class="code-function">status</span>() != WL_CONNECTED) {
-    <span class="code-function">delay</span>(500);
-    Serial.<span class="code-function">print</span>(<span class="code-string">"."</span>);
-  }
-  
-  Serial.<span class="code-function">println</span>(<span class="code-string">""</span>);
-  Serial.<span class="code-function">println</span>(<span class="code-string">"WiFi connecte"</span>);
-  Serial.<span class="code-function">print</span>(<span class="code-string">"Adresse IP: "</span>);
-  Serial.<span class="code-function">println</span>(WiFi.<span class="code-function">localIP</span>());
-}
-
-<span class="code-comment">// Callback pour les messages MQTT reçus</span>
-<span class="code-keyword">void</span> <span class="code-function">callback</span>(<span class="code-type">char</span>* topic, <span class="code-type">byte</span>* payload, <span class="code-keyword">unsigned</span> <span class="code-keyword">int</span> length) {
-  Serial.<span class="code-function">print</span>(<span class="code-string">"Message recu sur le topic: "</span>);
-  Serial.<span class="code-function">println</span>(topic);
-  
-  <span class="code-comment">// Conversion du payload en String</span>
-  <span class="code-type">String</span> message;
-  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 0; i < length; i++) {
-    message += (<span class="code-type">char</span>)payload[i];
-  }
-  Serial.<span class="code-function">print</span>(<span class="code-string">"Message: "</span>);
-  Serial.<span class="code-function">println</span>(message);
-  
-  <span class="code-comment">// Traitement selon le topic</span>
-  <span class="code-keyword">if</span> (<span class="code-function">strcmp</span>(topic, topic_led) == 0) {
-    <span class="code-keyword">if</span> (message == <span class="code-string">"ON"</span>) {
-      ledState = <span class="code-keyword">true</span>;
-      <span class="code-function">digitalWrite</span>(ledPin, HIGH);
-      client.<span class="code-function">publish</span>(topic_led_status, <span class="code-string">"LED ON"</span>);
-      Serial.<span class="code-function">println</span>(<span class="code-string">"LED allumee"</span>);
-    } <span class="code-keyword">else</span> <span class="code-keyword">if</span> (message == <span class="code-string">"OFF"</span>) {
-      ledState = <span class="code-keyword">false</span>;
-      <span class="code-function">digitalWrite</span>(ledPin, LOW);
-      client.<span class="code-function">publish</span>(topic_led_status, <span class="code-string">"LED OFF"</span>);
-      Serial.<span class="code-function">println</span>(<span class="code-string">"LED eteinte"</span>);
-    }
-  }
-}
-
-<span class="code-comment">// Reconnexion MQTT</span>
-<span class="code-keyword">void</span> <span class="code-function">reconnect</span>() {
-  <span class="code-keyword">while</span> (!client.<span class="code-function">connected</span>()) {
-    Serial.<span class="code-function">print</span>(<span class="code-string">"Connexion au broker MQTT..."</span>);
-    
-    <span class="code-keyword">if</span> (client.<span class="code-function">connect</span>(mqtt_client_id)) {
-      Serial.<span class="code-function">println</span>(<span class="code-string">"connecte"</span>);
       
-      <span class="code-comment">// Abonnement aux topics</span>
-      client.<span class="code-function">subscribe</span>(topic_led);
-      Serial.<span class="code-function">print</span>(<span class="code-string">"Abonne au topic: "</span>);
-      Serial.<span class="code-function">println</span>(topic_led);
-      
-      <span class="code-comment">// Publication d'un message de connexion</span>
-      client.<span class="code-function">publish</span>(topic_led_status, <span class="code-string">"ESP32 connecte"</span>);
-    } <span class="code-keyword">else</span> {
-      Serial.<span class="code-function">print</span>(<span class="code-string">"echec, rc="</span>);
-      Serial.<span class="code-function">print</span>(client.<span class="code-function">state</span>());
-      Serial.<span class="code-function">println</span>(<span class="code-string">" nouvel essai dans 5 secondes"</span>);
-      <span class="code-function">delay</span>(5000);
-    }
-  }
-}
-
-<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
-  Serial.<span class="code-function">begin</span>(115200);
-  
-  <span class="code-comment">// Configuration des broches</span>
-  <span class="code-function">pinMode</span>(ledPin, OUTPUT);
-  <span class="code-function">digitalWrite</span>(ledPin, LOW);
-  
-  <span class="code-comment">// Connexion WiFi</span>
-  <span class="code-function">setup_wifi</span>();
-  
-  <span class="code-comment">// Configuration MQTT</span>
-  client.<span class="code-function">setServer</span>(mqtt_server, mqtt_port);
-  client.<span class="code-function">setCallback</span>(callback);
-}
-
-<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
-  <span class="code-keyword">if</span> (!client.<span class="code-function">connected</span>()) {
-    <span class="code-function">reconnect</span>();
-  }
-  client.<span class="code-function">loop</span>();
-  
-  <span class="code-comment">// Publication périodique de la température (simulée)</span>
-  <span class="code-keyword">unsigned</span> <span class="code-keyword">long</span> now = <span class="code-function">millis</span>();
-  <span class="code-keyword">if</span> (now - lastMsg > 5000) {
-    lastMsg = now;
-    
-    <span class="code-comment">// Lecture de la température simulée (20-30°C)</span>
-    <span class="code-keyword">int</span> sensorValue = <span class="code-function">analogRead</span>(sensorPin);
-    <span class="code-keyword">float</span> temperature = 20.0 + (sensorValue / 4095.0) * 10.0;
-    
-    <span class="code-comment">// Conversion en String</span>
-    <span class="code-type">char</span> tempString[8];
-    <span class="code-function">dtostrf</span>(temperature, 1, 2, tempString);
-    
-    <span class="code-comment">// Publication</span>
-    Serial.<span class="code-function">print</span>(<span class="code-string">"Temperature: "</span>);
-    Serial.<span class="code-function">print</span>(tempString);
-    Serial.<span class="code-function">println</span>(<span class="code-string">"°C"</span>);
-    
-    client.<span class="code-function">publish</span>(topic_temperature, tempString);
-  }
-}</code></pre>
-        </div>
         <!-- Bluetooth (ESP32) -->
         <section id="bluetooth">
           <h3>Communication Bluetooth avec ESP32</h3>
@@ -4281,6 +4906,245 @@ temp = <span class="code-function">constrain</span>(temp, 15.0, 35.0);  <span cl
 }</code></pre>
           </div>
         </section>
+        <h3 id="mqtt">Communication MQTT (Internet des Objets)</h3>
+        <div class="info-box">
+          <h4>Explication du Code MQTT ESP</h4>
+          <p>Ce code implémente un <strong>client MQTT complet</strong> sur ESP32/ESP8266 pour l'Internet des Objets (IoT).</p>
+          
+          <h5>Qu'est-ce que MQTT ?</h5>
+          <p><strong>MQTT (Message Queuing Telemetry Transport)</strong> est un protocole de messagerie léger conçu pour les appareils IoT. Il fonctionne sur le modèle <strong>publish/subscribe</strong> :</p>
+          <ul>
+              <li><strong>Broker</strong> : Serveur central qui gère les messages (ex: broker.hivemq.com)</li>
+              <li><strong>Publisher</strong> : Envoie des messages sur des "topics"</li>
+              <li><strong>Subscriber</strong> : Reçoit des messages des topics auxquels il est abonné</li>
+          </ul>
+          
+          <h5>Architecture du code :</h5>
+          <ol>
+              <li><strong>Connexion WiFi</strong> : L'ESP se connecte d'abord au réseau</li>
+              <li><strong>Connexion MQTT</strong> : Établit une connexion avec le broker MQTT public</li>
+              <li><strong>Abonnement</strong> : S'abonne aux topics pour recevoir des commandes</li>
+              <li><strong>Publication</strong> : Envoie périodiquement des données (température)</li>
+              <li><strong>Callback</strong> : Traite les messages reçus via une fonction callback</li>
+          </ol>
+          
+          <h5>Topics utilisés :</h5>
+          <ul>
+              <li><code>maison/salon/temperature</code> → Publication des données de température</li>
+              <li><code>maison/salon/led/commande</code> → Réception des commandes pour la LED</li>
+              <li><code>maison/salon/led/etat</code> → Publication de l'état de la LED</li>
+          </ul>
+          
+          <h5>Fonctionnement en détail :</h5>
+          
+          <div class="code-example" style="margin: 1rem 0; padding: 1rem;">
+              <h6>1. Setup MQTT</h6>
+              <pre style="margin: 0; font-size: 0.9rem;">client.setServer(mqtt_server, mqtt_port);
+      client.setCallback(callback);</pre>
+              <p style="margin-top: 0.5rem;">Configure le broker et la fonction de callback pour traiter les messages reçus.</p>
+          </div>
+          
+          <div class="code-example" style="margin: 1rem 0; padding: 1rem;">
+              <h6>2. Fonction Callback</h6>
+              <pre style="margin: 0; font-size: 0.9rem;">void callback(char* topic, byte* payload, unsigned int length) {
+        // Traite les messages reçus
+      }</pre>
+              <p style="margin-top: 0.5rem;">Appelée automatiquement quand un message arrive sur un topic auquel on est abonné.</p>
+          </div>
+          
+          <div class="code-example" style="margin: 1rem 0; padding: 1rem;">
+              <h6>3. Publication de données</h6>
+              <pre style="margin: 0; font-size: 0.9rem;">client.publish(topic_temperature, tempString);</pre>
+              <p style="margin-top: 0.5rem;">Envoie les données de température toutes les 5 secondes.</p>
+          </div>
+          
+          <div class="code-example" style="margin: 1rem 0; padding: 1rem;">
+              <h6>4. Abonnement aux topics</h6>
+              <pre style="margin: 0; font-size: 0.9rem;">client.subscribe(topic_led);</pre>
+              <p style="margin-top: 0.5rem;">S'abonne au topic des commandes LED pour pouvoir les recevoir.</p>
+          </div>
+          
+          <h5>Avantages de MQTT pour l'IoT :</h5>
+          <ul>
+              <li><strong>Léger</strong> : Peu de consommation de mémoire et bande passante</li>
+              <li><strong>Asynchrone</strong> : Les appareils peuvent publier/s'abonner indépendamment</li>
+              <li><strong>Scalable</strong> : Supporte des milliers de clients connectés</li>
+              <li><strong>Fiabilité</strong> : Niveaux de qualité de service (QoS) garantissant la livraison</li>
+              <li><strong>Sécurité</strong> : Supporte l'authentification et le chiffrement</li>
+          </ul>
+          
+          <h5>Cas d'usage typiques :</h5>
+          <ul>
+              <li><strong>Domotique</strong> : Contrôle à distance des appareils</li>
+              <li><strong>Monitoring</strong> : Surveillance de capteurs environnementaux</li>
+              <li><strong>Télémétrie</strong> : Collecte de données à partir de plusieurs sources</li>
+              <li><strong>Notifications</strong> : Alertes et notifications en temps réel</li>
+          </ul>
+          
+          <div class="warning-box">
+              <p><strong>Points importants :</strong></p>
+              <ul>
+                  <li>Le broker MQTT peut être local (Mosquitto) ou cloud (HiveMQ, AWS IoT)</li>
+                  <li>Les topics sont hiérarchiques (ex: <code>maison/etage1/salon/temperature</code>)</li>
+                  <li>MQTT maintient une connexion persistante avec le broker</li>
+                  <li>Parfait pour les connexions intermittentes ou à faible bande passante</li>
+              </ul>
+          </div>
+          
+          <p>Avec ce code, l'ESP32 devient un <strong>nœud IoT intelligent</strong> qui peut envoyer des données au cloud et recevoir des commandes à distance, ouvrant la porte à des applications domotiques et industrielles avancées.</p>
+      </div>
+        <div class="code-example">
+          <pre><code><span class="code-comment">/*
+  Client MQTT avec ESP32
+  Publie la température et reçoit des commandes
+  Nécessite la bibliothèque PubSubClient
+*/</span>
+
+<span class="code-keyword">#include</span> &lt;WiFi.h&gt;
+<span class="code-keyword">#include</span> &lt;PubSubClient.h&gt;
+
+<span class="code-comment">// Configuration WiFi</span>
+<span class="code-keyword">const</span> <span class="code-type">char</span>* ssid = <span class="code-string">"Votre_SSID"</span>;
+<span class="code-keyword">const</span> <span class="code-type">char</span>* password = <span class="code-string">"Votre_Mot_De_Passe"</span>;
+
+<span class="code-comment">// Configuration MQTT</span>
+<span class="code-keyword">const</span> <span class="code-type">char</span>* mqtt_server = <span class="code-string">"broker.hivemq.com"</span>;  <span class="code-comment">// Broker public gratuit</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> mqtt_port = 1883;
+<span class="code-keyword">const</span> <span class="code-type">char</span>* mqtt_client_id = <span class="code-string">"ESP32_Client_01"</span>;
+
+<span class="code-comment">// Topics MQTT</span>
+<span class="code-keyword">const</span> <span class="code-type">char</span>* topic_temperature = <span class="code-string">"maison/salon/temperature"</span>;
+<span class="code-keyword">const</span> <span class="code-type">char</span>* topic_led = <span class="code-string">"maison/salon/led/commande"</span>;
+<span class="code-keyword">const</span> <span class="code-type">char</span>* topic_led_status = <span class="code-string">"maison/salon/led/etat"</span>;
+
+<span class="code-comment">// Broches</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> ledPin = 2;
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> sensorPin = 34;  <span class="code-comment">// Broche ADC pour capteur simulé</span>
+
+<span class="code-comment">// Objets</span>
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+<span class="code-comment">// Variables</span>
+<span class="code-keyword">bool</span> ledState = <span class="code-keyword">false</span>;
+<span class="code-keyword">unsigned</span> <span class="code-keyword">long</span> lastMsg = 0;
+
+<span class="code-comment">// Connexion WiFi</span>
+<span class="code-keyword">void</span> <span class="code-function">setup_wifi</span>() {
+  <span class="code-function">delay</span>(10);
+  Serial.<span class="code-function">println</span>();
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Connexion au WiFi: "</span>);
+  Serial.<span class="code-function">println</span>(ssid);
+  
+  WiFi.<span class="code-function">begin</span>(ssid, password);
+  
+  <span class="code-keyword">while</span> (WiFi.<span class="code-function">status</span>() != WL_CONNECTED) {
+    <span class="code-function">delay</span>(500);
+    Serial.<span class="code-function">print</span>(<span class="code-string">"."</span>);
+  }
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">""</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"WiFi connecte"</span>);
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Adresse IP: "</span>);
+  Serial.<span class="code-function">println</span>(WiFi.<span class="code-function">localIP</span>());
+}
+
+<span class="code-comment">// Callback pour les messages MQTT reçus</span>
+<span class="code-keyword">void</span> <span class="code-function">callback</span>(<span class="code-type">char</span>* topic, <span class="code-type">byte</span>* payload, <span class="code-keyword">unsigned</span> <span class="code-keyword">int</span> length) {
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Message recu sur le topic: "</span>);
+  Serial.<span class="code-function">println</span>(topic);
+  
+  <span class="code-comment">// Conversion du payload en String</span>
+  <span class="code-type">String</span> message;
+  <span class="code-keyword">for</span> (<span class="code-keyword">int</span> i = 0; i < length; i++) {
+    message += (<span class="code-type">char</span>)payload[i];
+  }
+  Serial.<span class="code-function">print</span>(<span class="code-string">"Message: "</span>);
+  Serial.<span class="code-function">println</span>(message);
+  
+  <span class="code-comment">// Traitement selon le topic</span>
+  <span class="code-keyword">if</span> (<span class="code-function">strcmp</span>(topic, topic_led) == 0) {
+    <span class="code-keyword">if</span> (message == <span class="code-string">"ON"</span>) {
+      ledState = <span class="code-keyword">true</span>;
+      <span class="code-function">digitalWrite</span>(ledPin, HIGH);
+      client.<span class="code-function">publish</span>(topic_led_status, <span class="code-string">"LED ON"</span>);
+      Serial.<span class="code-function">println</span>(<span class="code-string">"LED allumee"</span>);
+    } <span class="code-keyword">else</span> <span class="code-keyword">if</span> (message == <span class="code-string">"OFF"</span>) {
+      ledState = <span class="code-keyword">false</span>;
+      <span class="code-function">digitalWrite</span>(ledPin, LOW);
+      client.<span class="code-function">publish</span>(topic_led_status, <span class="code-string">"LED OFF"</span>);
+      Serial.<span class="code-function">println</span>(<span class="code-string">"LED eteinte"</span>);
+    }
+  }
+}
+
+<span class="code-comment">// Reconnexion MQTT</span>
+<span class="code-keyword">void</span> <span class="code-function">reconnect</span>() {
+  <span class="code-keyword">while</span> (!client.<span class="code-function">connected</span>()) {
+    Serial.<span class="code-function">print</span>(<span class="code-string">"Connexion au broker MQTT..."</span>);
+    
+    <span class="code-keyword">if</span> (client.<span class="code-function">connect</span>(mqtt_client_id)) {
+      Serial.<span class="code-function">println</span>(<span class="code-string">"connecte"</span>);
+      
+      <span class="code-comment">// Abonnement aux topics</span>
+      client.<span class="code-function">subscribe</span>(topic_led);
+      Serial.<span class="code-function">print</span>(<span class="code-string">"Abonne au topic: "</span>);
+      Serial.<span class="code-function">println</span>(topic_led);
+      
+      <span class="code-comment">// Publication d'un message de connexion</span>
+      client.<span class="code-function">publish</span>(topic_led_status, <span class="code-string">"ESP32 connecte"</span>);
+    } <span class="code-keyword">else</span> {
+      Serial.<span class="code-function">print</span>(<span class="code-string">"echec, rc="</span>);
+      Serial.<span class="code-function">print</span>(client.<span class="code-function">state</span>());
+      Serial.<span class="code-function">println</span>(<span class="code-string">" nouvel essai dans 5 secondes"</span>);
+      <span class="code-function">delay</span>(5000);
+    }
+  }
+}
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(115200);
+  
+  <span class="code-comment">// Configuration des broches</span>
+  <span class="code-function">pinMode</span>(ledPin, OUTPUT);
+  <span class="code-function">digitalWrite</span>(ledPin, LOW);
+  
+  <span class="code-comment">// Connexion WiFi</span>
+  <span class="code-function">setup_wifi</span>();
+  
+  <span class="code-comment">// Configuration MQTT</span>
+  client.<span class="code-function">setServer</span>(mqtt_server, mqtt_port);
+  client.<span class="code-function">setCallback</span>(callback);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-keyword">if</span> (!client.<span class="code-function">connected</span>()) {
+    <span class="code-function">reconnect</span>();
+  }
+  client.<span class="code-function">loop</span>();
+  
+  <span class="code-comment">// Publication périodique de la température (simulée)</span>
+  <span class="code-keyword">unsigned</span> <span class="code-keyword">long</span> now = <span class="code-function">millis</span>();
+  <span class="code-keyword">if</span> (now - lastMsg > 5000) {
+    lastMsg = now;
+    
+    <span class="code-comment">// Lecture de la température simulée (20-30°C)</span>
+    <span class="code-keyword">int</span> sensorValue = <span class="code-function">analogRead</span>(sensorPin);
+    <span class="code-keyword">float</span> temperature = 20.0 + (sensorValue / 4095.0) * 10.0;
+    
+    <span class="code-comment">// Conversion en String</span>
+    <span class="code-type">char</span> tempString[8];
+    <span class="code-function">dtostrf</span>(temperature, 1, 2, tempString);
+    
+    <span class="code-comment">// Publication</span>
+    Serial.<span class="code-function">print</span>(<span class="code-string">"Temperature: "</span>);
+    Serial.<span class="code-function">print</span>(tempString);
+    Serial.<span class="code-function">println</span>(<span class="code-string">"°C"</span>);
+    
+    client.<span class="code-function">publish</span>(topic_temperature, tempString);
+  }
+}</code></pre>
+        </div>
 
         <!-- Serveur Web ESP -->
         <section id="web-server">
@@ -4941,6 +5805,206 @@ DHT dht(DHTPIN, DHTTYPE);
         }
       });
     });
+    // ===========================================
+// BOUTON TOGGLE HAUT/BAS
+// ===========================================
+// ===========================================
+// MENU HAMBURGER POUR MOBILE
+// ===========================================
+document.addEventListener('DOMContentLoaded', function() {
+  const hamburgerBtn = document.querySelector('.hamburger-btn');
+  const nav = document.querySelector('nav');
+  const navLinks = document.querySelectorAll('.nav-menu a');
+  let mobileOverlay = document.querySelector('.mobile-overlay');
+
+  // Crée l'overlay s'il n'existe pas
+  if (!mobileOverlay) {
+    mobileOverlay = document.createElement('div');
+    mobileOverlay.className = 'mobile-overlay';
+    document.body.appendChild(mobileOverlay);
+  }
+
+  // Fonction pour ouvrir/fermer le menu
+  function toggleMenu() {
+    hamburgerBtn.classList.toggle('active');
+    nav.classList.toggle('active');
+    mobileOverlay.classList.toggle('active');
+    document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+  }
+
+  // Événement sur le bouton hamburger
+  hamburgerBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  // Ferme le menu en cliquant sur l'overlay
+  mobileOverlay.addEventListener('click', function() {
+    if (nav.classList.contains('active')) {
+      toggleMenu();
+    }
+  });
+
+  // Ferme le menu en cliquant sur un lien
+  navLinks.forEach(link => {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 768) {
+        toggleMenu();
+      }
+    });
+  });
+
+  // Ferme le menu en appuyant sur Échap
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && nav.classList.contains('active')) {
+      toggleMenu();
+    }
+  });
+
+  // Ajuste le menu lors du redimensionnement
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 768) {
+      // Sur desktop, s'assure que le menu est visible
+      hamburgerBtn.classList.remove('active');
+      nav.classList.remove('active');
+      mobileOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
+});
+document.addEventListener('DOMContentLoaded', function() {
+  // Crée le bouton s'il n'existe pas
+  if (!document.querySelector('.scroll-toggle-btn')) {
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'scroll-toggle-btn';
+    toggleBtn.title = 'Aller en bas';
+    toggleBtn.innerHTML = '<i class="fas fa-arrow-down"></i><i class="fas fa-arrow-up"></i>';
+    document.body.appendChild(toggleBtn);
+  }
+
+  const toggleBtn = document.querySelector('.scroll-toggle-btn');
+  let isScrollingToBottom = true;
+  let isScrolling = false;
+  let scrollTimeout;
+
+  // Fonction pour afficher/cacher le bouton
+  function toggleButtonVisibility() {
+    const scrollPosition = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    
+    // Affiche le bouton seulement si on peut scroller
+    if (documentHeight > windowHeight + 100) {
+      // Affiche après un certain défilement vers le bas
+      if (scrollPosition > 300) {
+        toggleBtn.classList.add('visible');
+        
+        // Ajoute une pulsation la première fois
+        if (!toggleBtn.classList.contains('pulsed')) {
+          toggleBtn.classList.add('pulse');
+          setTimeout(() => {
+            toggleBtn.classList.remove('pulse');
+            toggleBtn.classList.add('pulsed');
+          }, 4000);
+        }
+      } else {
+        toggleBtn.classList.remove('visible');
+      }
+      
+      // Change l'icône et le titre selon la position
+      if (scrollPosition > documentHeight - windowHeight - 100) {
+        // Près du bas → montre flèche vers le haut
+        isScrollingToBottom = false;
+        toggleBtn.classList.add('scroll-to-top');
+        toggleBtn.title = 'Retour en haut';
+      } else {
+        // Autre part → montre flèche vers le bas
+        isScrollingToBottom = true;
+        toggleBtn.classList.remove('scroll-to-top');
+        toggleBtn.title = 'Aller en bas';
+      }
+    } else {
+      toggleBtn.classList.remove('visible');
+    }
+  }
+
+  // Fonction pour scroller
+  function scrollToDestination() {
+    if (isScrolling) return;
+    
+    isScrolling = true;
+    
+    if (isScrollingToBottom) {
+      // Va en bas
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth'
+      });
+    } else {
+      // Va en haut
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+    
+    // Animation de clic
+    toggleBtn.style.transform = 'scale(0.9)';
+    setTimeout(() => {
+      toggleBtn.style.transform = '';
+    }, 200);
+    
+    // Délai avant de pouvoir recliquer
+    setTimeout(() => {
+      isScrolling = false;
+    }, 1000);
+  }
+
+  // Événements
+  toggleBtn.addEventListener('click', scrollToDestination);
+  
+  // Cache le bouton pendant le défilement
+  window.addEventListener('scroll', function() {
+    toggleBtn.classList.remove('visible');
+    
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      toggleButtonVisibility();
+    }, 150);
+  });
+  
+  // Initialisation
+  setTimeout(toggleButtonVisibility, 500);
+  
+  // Réinitialise lors du redimensionnement
+  window.addEventListener('resize', function() {
+    toggleButtonVisibility();
+  });
+  
+  // Pour le mode mobile tactile
+  toggleBtn.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    this.style.transform = 'scale(0.95)';
+  });
+  
+  toggleBtn.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    this.style.transform = '';
+    scrollToDestination();
+  });
+  
+  // Ajoute les styles pour les icônes si nécessaire
+  const style = document.createElement('style');
+  style.textContent = `
+    .scroll-toggle-btn i {
+      transition: transform 0.3s ease;
+    }
+    .scroll-toggle-btn:hover i {
+      transform: scale(1.2);
+    }
+  `;
+  document.head.appendChild(style);
+});
   </script>
 </body>
 

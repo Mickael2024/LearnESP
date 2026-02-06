@@ -1,0 +1,2740 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArduinoLearn - Référence Complète</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #00979c;
+      --secondary-color: #00696b;
+      --accent-color: #ff9800;
+      --light-color: #f8f9fa;
+      --dark-color: #333;
+      --gray-color: #6c757d;
+      --code-bg: #f4f4f4;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    html {
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+        background-color: #f5f5f5;
+        color: var(--dark-color);
+        line-height: 1.6;
+        width: 100%;
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+        padding-top: 70px; /* ESPACE POUR LE HEADER FIXE */
+      }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 1rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        position: fixed; /* CHANGÉ de sticky à fixed */
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000; /* Augmenté pour être au-dessus de tout */
+        width: 100vw; /* Prend toute la largeur de la fenêtre */
+      }
+      
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .logo i {
+      margin-right: 10px;
+      color: var(--accent-color);
+    }
+
+    .logo span {
+      color: var(--accent-color);
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    nav ul li {
+      margin: 0.3rem 0.5rem;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+      padding: 5px 10px;
+      border-radius: 4px;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    nav ul li a:hover {
+      color: var(--accent-color);
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Hero Section */
+    .hero {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+        margin-bottom: 2rem;
+        width: 100%;
+        margin-top: 0; /* Supprime tout margin-top */
+      }
+
+    .hero h1 {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+      word-wrap: break-word;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      opacity: 0.9;
+      line-height: 1.5;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background-color: var(--accent-color);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      margin-top: 1rem;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      color: white;
+    }
+
+    /* Main Content */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 3rem;
+      gap: 2rem;
+      width: 100%;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 100%;
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      order: 2;
+      max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .sidebar h3 {
+      color: var(--primary-color);
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #eee;
+      font-size: 1.3rem;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      width: 100%;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 0.5rem;
+      width: 100%;
+    }
+
+    .sidebar ul li a {
+      color: var(--dark-color);
+      text-decoration: none;
+      display: block;
+      padding: 0.5rem 0.8rem;
+      border-radius: 4px;
+      transition: all 0.3s;
+      font-size: 0.95rem;
+      width: 100%;
+    }
+
+    .sidebar ul li a:hover,
+    .sidebar ul li a.active {
+      background-color: #e9f7f7;
+      color: var(--primary-color);
+      padding-left: 1.2rem;
+    }
+
+    .sidebar ul li a i {
+      margin-right: 8px;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Sub-menu */
+    .sub-menu {
+      margin-left: 1.5rem;
+      border-left: 2px solid #eee;
+      padding-left: 0.5rem;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      width: calc(100% - 1.5rem);
+    }
+
+    .sub-menu li {
+      margin-bottom: 0.3rem !important;
+    }
+
+    .sub-menu a {
+      font-size: 0.9rem !important;
+      padding: 0.3rem 0.8rem !important;
+    }
+
+    /* Content */
+    .content {
+      width: 100%;
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      order: 1;
+    }
+
+    .content h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid #eee;
+      font-size: 1.8rem;
+      word-wrap: break-word;
+    }
+
+    .content h3 {
+      color: var(--secondary-color);
+      margin: 1.5rem 0 1rem;
+      padding-top: 1rem;
+      font-size: 1.4rem;
+    }
+
+    .content h4 {
+      color: var(--primary-color);
+      margin: 1.2rem 0 0.8rem;
+      font-size: 1.2rem;
+    }
+
+    .content p {
+      margin-bottom: 1.2rem;
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
+
+    .content ul,
+    .content ol {
+      margin-left: 1.2rem;
+      margin-bottom: 1.5rem;
+      padding-left: 0.5rem;
+    }
+
+    .content li {
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+    }
+
+    /* Code examples */
+    .code-example {
+      background-color: var(--code-bg);
+      border-left: 4px solid var(--primary-color);
+      padding: 1.2rem;
+      margin: 1.2rem 0;
+      border-radius: 0 8px 8px 0;
+      overflow-x: auto;
+      width: 100%;
+    }
+
+    .code-example h4 {
+      color: var(--secondary-color);
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+    }
+
+    pre {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      tab-size: 2;
+      width: 100%;
+    }
+
+    .code-comment {
+      color: #6a9955;
+    }
+
+    .code-keyword {
+      color: #569cd6;
+      font-weight: bold;
+    }
+
+    .code-function {
+      color: #ff0000;
+    }
+
+    .code-value {
+      color: #ce9178;
+    }
+
+    .code-type {
+      color: #4ec9b0;
+    }
+
+    .code-string {
+      color: #ce9178;
+    }
+
+    .code-number {
+      color: #b5cea8;
+    }
+
+    .code-define {
+      color: #c586c0;
+    }
+
+    /* Cards */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.2rem;
+      margin: 1.5rem 0;
+      width: 100%;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+      border-top: 4px solid var(--primary-color);
+      width: 100%;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .card i {
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 0.8rem;
+    }
+
+    .card h3 {
+      color: var(--primary-color);
+      margin-bottom: 0.8rem;
+      font-size: 1.2rem;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .card ul, .card ol {
+      margin-left: 1rem;
+      font-size: 0.9rem;
+    }
+
+    /* Tables */
+    .table-container {
+      width: 100%;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      min-width: 600px;
+    }
+
+    th {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.8rem;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 0.8rem;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #e9f7f7;
+    }
+
+    /* Info boxes */
+    .info-box {
+      background-color: #e9f7f7;
+      border-left: 4px solid var(--primary-color);
+      padding: 1.2rem;
+      margin: 1.5rem 0;
+      border-radius: 0 8px 8px 0;
+      width: 100%;
+    }
+
+    .warning-box {
+      background-color: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1.2rem;
+      margin: 1.5rem 0;
+      border-radius: 0 8px 8px 0;
+      width: 100%;
+    }
+
+    .success-box {
+      background-color: #d4edda;
+      border-left: 4px solid var(--success-color);
+      padding: 1.2rem;
+      margin: 1.5rem 0;
+      border-radius: 0 8px 8px 0;
+      width: 100%;
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--dark-color);
+      color: white;
+      padding: 2rem 0 1rem;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-section {
+      width: 100%;
+    }
+
+    .footer-section h3 {
+      color: var(--accent-color);
+      margin-bottom: 1.2rem;
+      font-size: 1.2rem;
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section ul li {
+      margin-bottom: 0.6rem;
+    }
+
+    .footer-section ul li a {
+      color: #ddd;
+      text-decoration: none;
+      transition: color 0.3s;
+      display: inline-block;
+    }
+
+    .footer-section ul li a:hover {
+      color: var(--accent-color);
+    }
+
+    .copyright {
+      text-align: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid #444;
+      color: #aaa;
+      font-size: 0.9rem;
+      width: 100%;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .tab {
+      padding: 0.8rem 1rem;
+      background-color: #f1f1f1;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--gray-color);
+      transition: all 0.3s;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      margin-right: 0.2rem;
+      margin-bottom: 0.2rem;
+      flex: 1;
+      min-width: 100px;
+      text-align: center;
+    }
+
+    .tab:hover {
+      background-color: #e9e9e9;
+    }
+
+    .tab.active {
+      background-color: white;
+      color: var(--primary-color);
+      border-bottom: 3px solid var(--primary-color);
+    }
+
+    .tab-content {
+      display: none;
+      width: 100%;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      background-color: #e9f7f7;
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      width: 100%;
+    }
+
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .breadcrumb span {
+      color: var(--gray-color);
+    }
+
+    .breadcrumb i {
+      margin: 0 8px;
+      color: var(--gray-color);
+    }
+
+    /* Exercise section */
+    .exercise {
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1.2rem;
+      margin: 1.5rem 0;
+      width: 100%;
+    }
+
+    .exercise h4 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      font-size: 1.2rem;
+    }
+
+    .exercise h4 i {
+      margin-right: 10px;
+    }
+
+    /* Next/Prev buttons */
+    .nav-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #eee;
+      width: 100%;
+    }
+
+    .nav-button {
+      padding: 0.8rem 1.2rem;
+      background-color: var(--primary-color);
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
+      text-align: center;
+      width: 100%;
+    }
+
+    .nav-button:hover {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+
+    .nav-button.prev i {
+      margin-right: 8px;
+    }
+
+    .nav-button.next i {
+      margin-left: 8px;
+    }
+
+    /* Project gallery */
+    .project-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.2rem;
+      margin: 1.5rem 0;
+      width: 100%;
+    }
+
+    .project-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      width: 100%;
+    }
+
+    .project-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .project-image {
+      height: 150px;
+      background-color: #e9f7f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-color);
+      font-size: 2.5rem;
+      width: 100%;
+    }
+
+    .project-content {
+      padding: 1.2rem;
+      width: 100%;
+    }
+
+    .project-content h4 {
+      color: var(--primary-color);
+      margin-bottom: 0.8rem;
+      font-size: 1.2rem;
+    }
+
+    .difficulty {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+    }
+
+    .difficulty.beginner {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .difficulty.intermediate {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .difficulty.advanced {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .active {
+      color: #ffbf00;
+    }
+
+    /* Styles spécifiques à la page référence */
+    .reference-category {
+      margin: 1.5rem 0;
+      padding: 1.2rem;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary-color);
+      width: 100%;
+    }
+
+    .quick-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin: 1.5rem 0;
+      width: 100%;
+    }
+
+    .quick-nav a {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      display: inline-block;
+      text-align: center;
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .quick-nav a:hover {
+      background-color: var(--secondary-color);
+    }
+
+    .function-table {
+      width: 100%;
+      margin: 1.2rem 0;
+      min-width: 600px;
+    }
+
+    .function-table th {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.8rem;
+      white-space: nowrap;
+    }
+
+    .function-table td {
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      word-break: break-word;
+    }
+
+    .function-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .function-table code {
+      background-color: var(--code-bg);
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+
+    .pinout-diagram {
+      background-color: #f0f8ff;
+      padding: 1.2rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      text-align: center;
+      width: 100%;
+    }
+
+    .pinout-diagram img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      min-width: 600px;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      border: 1px solid #ddd;
+      padding: 0.8rem;
+      text-align: center;
+      word-break: break-word;
+    }
+
+    .comparison-table th {
+      background-color: var(--primary-color);
+      color: white;
+      white-space: nowrap;
+    }
+
+    .compatibility-badge {
+      display: inline-block;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin: 0.2rem;
+    }
+
+    .compatible {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .not-compatible {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .partial-compatible {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .search-box {
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background-color: #e9f7f7;
+      border-radius: 8px;
+      width: 100%;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 2px solid var(--primary-color);
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    /* =========================================== */
+    /* RESPONSIVE DESIGN - ÉCRANS MOYENS (Tablettes) */
+    /* =========================================== */
+    @media (min-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero p {
+        font-size: 1.2rem;
+      }
+      
+      
+      .sidebar {
+        flex: 0 0 280px;
+        order: 1;
+      }
+      
+      .content {
+        flex: 1;
+        order: 2;
+      }
+      
+      .nav-buttons {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+      
+      .nav-button {
+        width: auto;
+        min-width: 200px;
+      }
+      
+      .header-content {
+        flex-wrap: nowrap;
+      }
+      
+      nav ul li {
+        margin-left: 1rem;
+      }
+    }
+
+    /* =========================================== */
+    /* RESPONSIVE DESIGN - GRANDS ÉCRANS (Ordinateurs) */
+    /* =========================================== */
+    @media (min-width: 992px) {
+      .container {
+        padding: 0 30px;
+      }
+      
+      .hero {
+        padding: 4rem 0;
+      }
+      
+      .hero h1 {
+        font-size: 2.8rem;
+      }
+      
+      .sidebar {
+        flex: 0 0 300px;
+        position: sticky;
+        top: 100px;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+      
+      .content {
+        padding: 2rem;
+      }
+      
+      .cards {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+      
+      .project-gallery {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+      
+      .footer-content {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* =========================================== */
+    /* RESPONSIVE DESIGN - TRÈS PETITS ÉCRANS (Mobile) */
+    /* =========================================== */
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 15px;
+      }
+      
+      .hero {
+        padding: 2rem 0;
+      }
+      
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+      
+      .hero p {
+        font-size: 1rem;
+      }
+      
+      .content, .sidebar {
+        padding: 1rem;
+      }
+      
+      .content h2 {
+        font-size: 1.6rem;
+      }
+      
+      .content h3 {
+        font-size: 1.3rem;
+      }
+      
+      .cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .quick-nav a {
+        min-width: 100px;
+        flex: 0 0 calc(50% - 0.4rem);
+      }
+      
+      .logo {
+        font-size: 1.5rem;
+      }
+      
+      nav ul {
+        justify-content: space-around;
+        width: 100%;
+      }
+      
+      nav ul li {
+        margin: 0.2rem;
+      }
+      
+      nav ul li a {
+        padding: 4px 8px;
+        font-size: 0.9rem;
+      }
+      
+      .function-table, .comparison-table {
+        min-width: 400px;
+        font-size: 0.85rem;
+      }
+      
+      th, td {
+        padding: 0.6rem !important;
+        font-size: 0.8rem;
+      }
+    }
+
+    /* =========================================== */
+    /* RESPONSIVE DESIGN - TRÈS TRÈS PETITS ÉCRANS */
+    /* =========================================== */
+    @media (max-width: 320px) {
+      .hero h1 {
+        font-size: 1.6rem;
+      }
+      
+      .container {
+        padding: 0 10px;
+      }
+      
+      .content, .sidebar {
+        padding: 0.8rem;
+      }
+      
+      .quick-nav a {
+        flex: 0 0 100%;
+      }
+      
+      .function-table, .comparison-table {
+        min-width: 300px;
+        font-size: 0.8rem;
+      }
+      
+      th, td {
+        padding: 0.4rem !important;
+        font-size: 0.75rem;
+      }
+    }
+
+    /* =========================================== */
+    /* UTILITAIRES ET CORRECTIONS GLOBALES */
+    /* =========================================== */
+    
+    /* Empêche les débordements horizontaux */
+    * {
+      max-width: 100%;
+    }
+    
+    /* Images responsives */
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* Liens long texte */
+    a {
+      word-break: break-word;
+    }
+    
+    /* Code long */
+    code, pre {
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+    
+    /* Tables sur mobile */
+    @media (max-width: 767px) {
+      .table-container {
+        position: relative;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      
+      .table-container::after {
+        content: "← Défilement horizontal →";
+        position: absolute;
+        top: -25px;
+        right: 10px;
+        font-size: 0.8rem;
+        color: var(--gray-color);
+        background: rgba(255,255,255,0.9);
+        padding: 2px 8px;
+        border-radius: 3px;
+      }
+    }
+    
+    /* Amélioration de l'accessibilité */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    
+    /* Mode sombre (optionnel) */
+   
+</style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container header-content">
+      <div class="logo">
+        <i class="fas fa-microchip"></i>
+        <div><span></span> Arduino/ESP </div>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+          <!-- <li><a href="pratique.html"><i class="fas fa-graduation-cap"></i> Pratique</a></li> -->
+          <li><a href="./exemple.html"><i class="fas fa-code"></i> Exemples</a></li>
+          <li><a href="./reference.html" class="active"><i class="fas fa-book"></i> Référence</a></li>
+          <li><a href="./exercice.html"><i class="fas fa-pencil-alt"></i> Exercices</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Référence Arduino/ESP Complète</h1>
+      <p>Documentation technique détaillée des fonctions, bibliothèques, broches et spécifications</p>
+      <a href="#fonctions" class="cta-button">Explorer la référence <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container main-content">
+    <!-- Sidebar avec navigation -->
+    <aside class="sidebar">
+      <h3><i class="fas fa-list"></i> Navigation Rapide</h3>
+      <ul>
+        <li><a href="#introduction"><i class="fas fa-info-circle"></i> Introduction</a></li>
+        <li><a href="#fonctions"><i class="fas fa-code"></i> Fonctions de base</a></li>
+        <li><a href="#broches"><i class="fas fa-microchip"></i> Broches Arduino</a></li>
+        <li><a href="#operateurs"><i class="fas fa-calculator"></i> Opérateurs</a></li>
+        <li><a href="#constantes"><i class="fas fa-flag"></i> Constantes</a></li>
+        <li><a href="#types"><i class="fas fa-memory"></i> Types de données</a></li>
+        <li><a href="#bibliotheques"><i class="fas fa-book"></i> Bibliothèques</a></li>
+        <li><a href="#esp32"><i class="fas fa-wifi"></i> ESP32 Spécifique</a></li>
+        <li><a href="#esp8266"><i class="fas fa-wifi"></i> ESP8266 Spécifique</a></li>
+        <li><a href="#compatibilite"><i class="fas fa-exchange-alt"></i> Compatibilité</a></li>
+        <li><a href="#troubleshooting"><i class="fas fa-bug"></i> Dépannage</a></li>
+      </ul>
+
+      <h3 style="margin-top: 2rem;"><i class="fas fa-search"></i> Recherche</h3>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Rechercher une fonction...">
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <main class="content">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="index.html">Accueil</a> <i class="fas fa-chevron-right"></i>
+        <span>Référence complète</span>
+      </div>
+
+      <!-- Navigation rapide -->
+      <div class="quick-nav">
+        <a href="#fonctions">Fonctions</a>
+        <a href="#broches">Broches</a>
+        <a href="#bibliotheques">Bibliothèques</a>
+        <a href="#esp32">ESP32</a>
+        <a href="#troubleshooting">Dépannage</a>
+      </div>
+
+      <!-- Introduction -->
+      <section id="introduction">
+        <h2>Introduction à la référence</h2>
+        <p>Cette page constitue la documentation technique complète des cartes Arduino et ESP. Vous y trouverez toutes les informations nécessaires pour programmer efficacement vos microcontrôleurs.</p>
+
+        <div class="info-box">
+          <p><strong>Conseil :</strong> Utilisez Ctrl+F (Cmd+F sur Mac) pour rechercher rapidement un terme dans cette page.</p>
+        </div>
+
+        <h3>Comment utiliser cette référence</h3>
+        <ul>
+          <li><strong>Navigation par sidebar :</strong> Cliquez sur les sections à gauche pour accéder directement au contenu</li>
+          <li><strong>Recherche :</strong> Utilisez la barre de recherche pour trouver des fonctions spécifiques</li>
+          <li><strong>Exemples :</strong> Chaque fonction est accompagnée d'un exemple d'utilisation</li>
+          <li><strong>Compatibilité :</strong> Vérifiez les badges de compatibilité pour votre carte</li>
+        </ul>
+      </section>
+
+      <!-- Fonctions de base -->
+      <section id="fonctions">
+        <h2>Fonctions Arduino de base</h2>
+        <p>Liste complète des fonctions intégrées à l'environnement Arduino.</p>
+
+        <div class="reference-category">
+          <h3><i class="fas fa-terminal"></i> Entrées/Sorties Digitales</h3>
+          
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Fonction</th>
+                <th>Description</th>
+                <th>Syntaxe</th>
+                <th>Exemple</th>
+                <th>Compatibilité</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>pinMode()</code></td>
+                <td>Configure une broche en entrée ou sortie</td>
+                <td>pinMode(pin, mode)</td>
+                <td><code>pinMode(13, OUTPUT);</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>digitalWrite()</code></td>
+                <td>Écrit un état HIGH ou LOW sur une broche</td>
+                <td>digitalWrite(pin, value)</td>
+                <td><code>digitalWrite(13, HIGH);</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>digitalRead()</code></td>
+                <td>Lit l'état d'une broche d'entrée</td>
+                <td>digitalRead(pin)</td>
+                <td><code>int val = digitalRead(2);</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3><i class="fas fa-wave-square"></i> Entrées/Sorties Analogiques</h3>
+          
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Fonction</th>
+                <th>Description</th>
+                <th>Syntaxe</th>
+                <th>Exemple</th>
+                <th>Compatibilité</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>analogRead()</code></td>
+                <td>Lit la valeur d'une broche analogique</td>
+                <td>analogRead(pin)</td>
+                <td><code>int val = analogRead(A0);</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>analogWrite()</code></td>
+                <td>Écrit une valeur PWM sur une broche</td>
+                <td>analogWrite(pin, value)</td>
+                <td><code>analogWrite(9, 128);</code></td>
+                <td><span class="compatibility-badge partial-compatible">Sauf ESP</span></td>
+              </tr>
+              <tr>
+                <td><code>analogReference()</code></td>
+                <td>Configure la référence de tension</td>
+                <td>analogReference(type)</td>
+                <td><code>analogReference(INTERNAL);</code></td>
+                <td><span class="compatibility-badge partial-compatible">Arduino</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3><i class="fas fa-clock"></i> Fonctions de temps</h3>
+          
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Fonction</th>
+                <th>Description</th>
+                <th>Syntaxe</th>
+                <th>Exemple</th>
+                <th>Compatibilité</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>delay()</code></td>
+                <td>Pause en millisecondes</td>
+                <td>delay(ms)</td>
+                <td><code>delay(1000);</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>delayMicroseconds()</code></td>
+                <td>Pause en microsecondes</td>
+                <td>delayMicroseconds(us)</td>
+                <td><code>delayMicroseconds(500);</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>millis()</code></td>
+                <td>Temps écoulé depuis le démarrage (ms)</td>
+                <td>millis()</td>
+                <td><code>unsigned long t = millis();</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>micros()</code></td>
+                <td>Temps écoulé depuis le démarrage (µs)</td>
+                <td>micros()</td>
+                <td><code>unsigned long t = micros();</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3><i class="fas fa-calculator"></i> Fonctions mathématiques</h3>
+          
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Fonction</th>
+                <th>Description</th>
+                <th>Syntaxe</th>
+                <th>Exemple</th>
+                <th>Compatibilité</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>min()</code></td>
+                <td>Retourne le plus petit de deux nombres</td>
+                <td>min(x, y)</td>
+                <td><code>int m = min(10, 20);</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>max()</code></td>
+                <td>Retourne le plus grand de deux nombres</td>
+                <td>max(x, y)</td>
+                <td><code>int m = max(10, 20);</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>abs()</code></td>
+                <td>Valeur absolue</td>
+                <td>abs(x)</td>
+                <td><code>int a = abs(-10);</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>constrain()</code></td>
+                <td>Contraint une valeur entre un min et un max</td>
+                <td>constrain(x, min, max)</td>
+                <td><code>int c = constrain(val, 0, 100);</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>map()</code></td>
+                <td>Change l'échelle d'une valeur</td>
+                <td>map(value, fromLow, fromHigh, toLow, toHigh)</td>
+                <td><code>int m = map(val, 0, 1023, 0, 255);</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3><i class="fas fa-random"></i> Fonctions aléatoires</h3>
+          
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Fonction</th>
+                <th>Description</th>
+                <th>Syntaxe</th>
+                <th>Exemple</th>
+                <th>Compatibilité</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>random()</code></td>
+                <td>Génère un nombre aléatoire</td>
+                <td>random(max) ou random(min, max)</td>
+                <td><code>int r = random(10, 100);</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>randomSeed()</code></td>
+                <td>Initialise le générateur aléatoire</td>
+                <td>randomSeed(seed)</td>
+                <td><code>randomSeed(analogRead(0));</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3><i class="fas fa-exchange-alt"></i> Communication série</h3>
+          
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Fonction</th>
+                <th>Description</th>
+                <th>Syntaxe</th>
+                <th>Exemple</th>
+                <th>Compatibilité</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Serial.begin()</code></td>
+                <td>Initialise la communication série</td>
+                <td>Serial.begin(speed)</td>
+                <td><code>Serial.begin(9600);</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>Serial.print()</code></td>
+                <td>Envoie des données au port série</td>
+                <td>Serial.print(data)</td>
+                <td><code>Serial.print("Hello");</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>Serial.println()</code></td>
+                <td>Envoie des données avec retour à la ligne</td>
+                <td>Serial.println(data)</td>
+                <td><code>Serial.println("Hello");</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>Serial.read()</code></td>
+                <td>Lit les données du port série</td>
+                <td>Serial.read()</td>
+                <td><code>char c = Serial.read();</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+              <tr>
+                <td><code>Serial.available()</code></td>
+                <td>Retourne le nombre d'octets disponibles</td>
+                <td>Serial.available()</td>
+                <td><code>if(Serial.available()) {}</code></td>
+                <td><span class="compatibility-badge compatible">Toutes</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Broches Arduino -->
+      <section id="broches">
+        <h2>Broches Arduino - Référence complète</h2>
+        <p>Description détaillée des broches pour les différentes cartes Arduino.</p>
+
+        <div class="pinout-diagram">
+          <h3>Arduino Uno - Brochage</h3>
+          <p><strong>Broches digitales :</strong> 0-13 (broches 0 et 1 pour Serial)</p>
+          <p><strong>Broches analogiques :</strong> A0-A5 (entrées seulement)</p>
+          <p><strong>Broches PWM :</strong> 3, 5, 6, 9, 10, 11 (marquées ~)</p>
+          <p><strong>Communication :</strong> 0(RX), 1(TX) - Serial</p>
+        </div>
+
+        <div class="table-container">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Carte</th>
+                <th>Microcontrôleur</th>
+                <th>Broches Digitales</th>
+                <th>Broches Analogiques</th>
+                <th>Broches PWM</th>
+                <th>Mémoire Flash</th>
+                <th>SRAM</th>
+                <th>EEPROM</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Arduino Uno</strong></td>
+                <td>ATmega328P</td>
+                <td>14</td>
+                <td>6</td>
+                <td>6</td>
+                <td>32 KB</td>
+                <td>2 KB</td>
+                <td>1 KB</td>
+              </tr>
+              <tr>
+                <td><strong>Arduino Nano</strong></td>
+                <td>ATmega328P</td>
+                <td>14</td>
+                <td>8</td>
+                <td>6</td>
+                <td>32 KB</td>
+                <td>2 KB</td>
+                <td>1 KB</td>
+              </tr>
+              <tr>
+                <td><strong>Arduino Mega</strong></td>
+                <td>ATmega2560</td>
+                <td>54</td>
+                <td>16</td>
+                <td>15</td>
+                <td>256 KB</td>
+                <td>8 KB</td>
+                <td>4 KB</td>
+              </tr>
+              <tr>
+                <td><strong>Arduino Leonardo</strong></td>
+                <td>ATmega32U4</td>
+                <td>20</td>
+                <td>12</td>
+                <td>7</td>
+                <td>32 KB</td>
+                <td>2.5 KB</td>
+                <td>1 KB</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Broches spéciales</h3>
+        
+        <div class="cards">
+          <div class="card">
+            <i class="fas fa-bolt"></i>
+            <h4>Alimentation</h4>
+            <ul>
+              <li><strong>5V :</strong> Sortie 5V régulée</li>
+              <li><strong>3.3V :</strong> Sortie 3.3V régulée</li>
+              <li><strong>GND :</strong> Masse (ground)</li>
+              <li><strong>VIN :</strong> Tension d'entrée (7-12V)</li>
+            </ul>
+          </div>
+          
+          <div class="card">
+            <i class="fas fa-exchange-alt"></i>
+            <h4>Communication</h4>
+            <ul>
+              <li><strong>0(RX), 1(TX) :</strong> UART (Serial)</li>
+              <li><strong>SCL, SDA :</strong> I2C (A4, A5 sur Uno)</li>
+              <li><strong>MOSI, MISO, SCK, SS :</strong> SPI</li>
+            </ul>
+          </div>
+          
+          <div class="card">
+            <i class="fas fa-cogs"></i>
+            <h4>Spéciales</h4>
+            <ul>
+              <li><strong>LED_BUILTIN :</strong> LED intégrée (13)</li>
+              <li><strong>AREF :</strong> Référence analogique</li>
+              <li><strong>RESET :</strong> Réinitialisation</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Opérateurs -->
+      <section id="operateurs">
+        <h2>Opérateurs en C++/Arduino</h2>
+        
+        <div class="reference-category">
+          <h3>Opérateurs arithmétiques</h3>
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Opérateur</th>
+                <th>Description</th>
+                <th>Exemple</th>
+                <th>Résultat</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>+</td><td>Addition</td><td>5 + 3</td><td>8</td></tr>
+              <tr><td>-</td><td>Soustraction</td><td>5 - 3</td><td>2</td></tr>
+              <tr><td>*</td><td>Multiplication</td><td>5 * 3</td><td>15</td></tr>
+              <tr><td>/</td><td>Division</td><td>10 / 3</td><td>3 (entier)</td></tr>
+              <tr><td>%</td><td>Modulo (reste)</td><td>10 % 3</td><td>1</td></tr>
+              <tr><td>++</td><td>Incrémentation</td><td>i++</td><td>i = i + 1</td></tr>
+              <tr><td>--</td><td>Décrémentation</td><td>i--</td><td>i = i - 1</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3>Opérateurs de comparaison</h3>
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Opérateur</th>
+                <th>Description</th>
+                <th>Exemple</th>
+                <th>Résultat</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>==</td><td>Égal à</td><td>5 == 3</td><td>false</td></tr>
+              <tr><td>!=</td><td>Différent de</td><td>5 != 3</td><td>true</td></tr>
+              <tr><td>&lt;</td><td>Inférieur à</td><td>5 &lt; 3</td><td>false</td></tr>
+              <tr><td>&gt;</td><td>Supérieur à</td><td>5 &gt; 3</td><td>true</td></tr>
+              <tr><td>&lt;=</td><td>Inférieur ou égal</td><td>5 &lt;= 5</td><td>true</td></tr>
+              <tr><td>&gt;=</td><td>Supérieur ou égal</td><td>5 &gt;= 3</td><td>true</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3>Opérateurs logiques</h3>
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Opérateur</th>
+                <th>Description</th>
+                <th>Exemple</th>
+                <th>Résultat</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>&&</td><td>ET logique</td><td>true && false</td><td>false</td></tr>
+              <tr><td>||</td><td>OU logique</td><td>true || false</td><td>true</td></tr>
+              <tr><td>!</td><td>NON logique</td><td>!true</td><td>false</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3>Opérateurs bit à bit</h3>
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Opérateur</th>
+                <th>Description</th>
+                <th>Exemple</th>
+                <th>Résultat</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>&</td><td>ET bit à bit</td><td>0b1010 & 0b1100</td><td>0b1000</td></tr>
+              <tr><td>|</td><td>OU bit à bit</td><td>0b1010 | 0b1100</td><td>0b1110</td></tr>
+              <tr><td>^</td><td>XOR bit à bit</td><td>0b1010 ^ 0b1100</td><td>0b0110</td></tr>
+              <tr><td>~</td><td>Complément à un</td><td>~0b1010</td><td>0b0101</td></tr>
+              <tr><td>&lt;&lt;</td><td>Décalage à gauche</td><td>0b1010 &lt;&lt; 1</td><td>0b10100</td></tr>
+              <tr><td>&gt;&gt;</td><td>Décalage à droite</td><td>0b1010 &gt;&gt; 1</td><td>0b0101</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Constantes -->
+      <section id="constantes">
+        <h2>Constantes prédéfinies</h2>
+        
+        <div class="reference-category">
+          <h3>Constantes d'entrée/sortie</h3>
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Constante</th>
+                <th>Valeur</th>
+                <th>Description</th>
+                <th>Utilisation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>INPUT</td><td>0x0</td><td>Mode entrée</td><td>pinMode(pin, INPUT)</td></tr>
+              <tr><td>OUTPUT</td><td>0x1</td><td>Mode sortie</td><td>pinMode(pin, OUTPUT)</td></tr>
+              <tr><td>INPUT_PULLUP</td><td>0x2</td><td>Mode entrée avec pull-up</td><td>pinMode(pin, INPUT_PULLUP)</td></tr>
+              <tr><td>HIGH</td><td>1</td><td>Niveau logique haut</td><td>digitalWrite(pin, HIGH)</td></tr>
+              <tr><td>LOW</td><td>0</td><td>Niveau logique bas</td><td>digitalWrite(pin, LOW)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3>Constantes de référence analogique</h3>
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Constante</th>
+                <th>Valeur</th>
+                <th>Description</th>
+                <th>Carte</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>DEFAULT</td><td>-</td><td>5V ou 3.3V selon carte</td><td>Toutes</td></tr>
+              <tr><td>INTERNAL</td><td>1.1V</td><td>Référence interne 1.1V</td><td>ATmega328</td></tr>
+              <tr><td>INTERNAL1V1</td><td>1.1V</td><td>Référence interne 1.1V</td><td>ATmega2560</td></tr>
+              <tr><td>INTERNAL2V56</td><td>2.56V</td><td>Référence interne 2.56V</td><td>ATmega2560</td></tr>
+              <tr><td>EXTERNAL</td><td>-</td><td>Tension externe sur AREF</td><td>Toutes</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3>Constantes spéciales</h3>
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Constante</th>
+                <th>Description</th>
+                <th>Valeur sur Uno</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>LED_BUILTIN</td><td>Broche de la LED intégrée</td><td>13</td></tr>
+              <tr><td>true</td><td>Valeur booléenne vrai</td><td>1</td></tr>
+              <tr><td>false</td><td>Valeur booléenne faux</td><td>0</td></tr>
+              <tr><td>PI</td><td>Constante π (3.14159...)</td><td>3.141592653589793</td></tr>
+              <tr><td>DEG_TO_RAD</td><td>Conversion degrés → radians</td><td>0.017453292519943</td></tr>
+              <tr><td>RAD_TO_DEG</td><td>Conversion radians → degrés</td><td>57.29577951308232</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Types de données -->
+      <section id="types">
+        <h2>Types de données en C++/Arduino</h2>
+        
+        <div class="table-container">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Taille (bits)</th>
+                <th>Plage de valeurs</th>
+                <th>Exemple</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>boolean</code></td>
+                <td>8</td>
+                <td>0 (false) ou 1 (true)</td>
+                <td><code>boolean led = true;</code></td>
+                <td>Valeur booléenne</td>
+              </tr>
+              <tr>
+                <td><code>char</code></td>
+                <td>8</td>
+                <td>-128 à 127</td>
+                <td><code>char c = 'A';</code></td>
+                <td>Caractère ASCII</td>
+              </tr>
+              <tr>
+                <td><code>byte</code></td>
+                <td>8</td>
+                <td>0 à 255</td>
+                <td><code>byte b = 200;</code></td>
+                <td>Nombre non signé</td>
+              </tr>
+              <tr>
+                <td><code>int</code></td>
+                <td>16</td>
+                <td>-32,768 à 32,767</td>
+                <td><code>int i = -1000;</code></td>
+                <td>Entier signé</td>
+              </tr>
+              <tr>
+                <td><code>unsigned int</code></td>
+                <td>16</td>
+                <td>0 à 65,535</td>
+                <td><code>unsigned int ui = 50000;</code></td>
+                <td>Entier non signé</td>
+              </tr>
+              <tr>
+                <td><code>long</code></td>
+                <td>32</td>
+                <td>-2,147,483,648 à 2,147,483,647</td>
+                <td><code>long l = 1000000L;</code></td>
+                <td>Entier long signé</td>
+              </tr>
+              <tr>
+                <td><code>unsigned long</code></td>
+                <td>32</td>
+                <td>0 à 4,294,967,295</td>
+                <td><code>unsigned long ul = 4000000000UL;</code></td>
+                <td>Entier long non signé</td>
+              </tr>
+              <tr>
+                <td><code>float</code></td>
+                <td>32</td>
+                <td>-3.4×10³⁸ à 3.4×10³⁸</td>
+                <td><code>float f = 3.14159;</code></td>
+                <td>Nombre à virgule flottante</td>
+              </tr>
+              <tr>
+                <td><code>double</code></td>
+                <td>32*</td>
+                <td>-3.4×10³⁸ à 3.4×10³⁸</td>
+                <td><code>double d = 3.1415926535;</code></td>
+                <td>Double précision*</td>
+              </tr>
+              <tr>
+                <td><code>String</code></td>
+                <td>Variable</td>
+                <td>Chaîne de caractères</td>
+                <td><code>String s = "Hello";</code></td>
+                <td>Objet chaîne</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="code-comment" style="margin-top: 0.5rem; text-align: center;">* Sur Arduino, <code>double</code> a la même taille que <code>float</code> (32 bits)</p>
+        </div>
+
+        <div class="info-box">
+          <h4><i class="fas fa-lightbulb"></i> Conseils sur les types de données</h4>
+          <ul>
+            <li>Utilisez <code>byte</code> pour économiser de la mémoire quand les valeurs sont petites</li>
+            <li>Préférez <code>unsigned</code> pour les compteurs et mesures</li>
+            <li>Évitez <code>float</code> et <code>double</code> si possible (lents sur Arduino)</li>
+            <li>Utilisez <code>String</code> avec parcimonie (fragmente la mémoire)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Bibliothèques -->
+      <section id="bibliotheques">
+        <h2>Bibliothèques Arduino - Référence</h2>
+        
+        <div class="reference-category">
+          <h3>Bibliothèques standard</h3>
+          
+          <div class="cards">
+            <div class="card">
+              <i class="fas fa-cogs"></i>
+              <h4>Servo.h</h4>
+              <p>Contrôle de servomoteurs</p>
+              <ul>
+                <li><code>Servo.attach(pin)</code></li>
+                <li><code>Servo.write(angle)</code></li>
+                <li><code>Servo.read()</code></li>
+              </ul>
+            </div>
+            
+            <div class="card">
+              <i class="fas fa-exchange-alt"></i>
+              <h4>Wire.h</h4>
+              <p>Communication I2C</p>
+              <ul>
+                <li><code>Wire.begin()</code></li>
+                <li><code>Wire.read()</code></li>
+                <li><code>Wire.write()</code></li>
+              </ul>
+            </div>
+            
+            <div class="card">
+              <i class="fas fa-broadcast-tower"></i>
+              <h4>SPI.h</h4>
+              <p>Communication SPI</p>
+              <ul>
+                <li><code>SPI.begin()</code></li>
+                <li><code>SPI.transfer()</code></li>
+                <li><code>SPI.setClockDivider()</code></li>
+              </ul>
+            </div>
+            
+            <div class="card">
+              <i class="fas fa-save"></i>
+              <h4>EEPROM.h</h4>
+              <p>Mémoire persistante</p>
+              <ul>
+                <li><code>EEPROM.read()</code></li>
+                <li><code>EEPROM.write()</code></li>
+                <li><code>EEPROM.update()</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="reference-category">
+          <h3>Bibliothèques populaires additionnelles</h3>
+          
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Bibliothèque</th>
+                <th>Description</th>
+                <th>Installation</th>
+                <th>Site officiel</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Adafruit SSD1306</strong></td>
+                <td>Contrôle d'écrans OLED</td>
+                <td>Gestionnaire de bibliothèques</td>
+                <td>adafruit.com</td>
+              </tr>
+              <tr>
+                <td><strong>DHT sensor library</strong></td>
+                <td>Capteurs DHT11/DHT22</td>
+                <td>Gestionnaire de bibliothèques</td>
+                <td>github.com</td>
+              </tr>
+              <tr>
+                <td><strong>PubSubClient</strong></td>
+                <td>Client MQTT</td>
+                <td>Gestionnaire de bibliothèques</td>
+                <td>github.com</td>
+              </tr>
+              <tr>
+                <td><strong>FastLED</strong></td>
+                <td>Contrôle de LEDs adressables</td>
+                <td>Gestionnaire de bibliothèques</td>
+                <td>fastled.io</td>
+              </tr>
+              <tr>
+                <td><strong>OneWire</strong></td>
+                <td>Communication 1-Wire</td>
+                <td>Gestionnaire de bibliothèques</td>
+                <td>github.com</td>
+              </tr>
+              <tr>
+                <td><strong>RTClib</strong></td>
+                <td>Horloge temps réel</td>
+                <td>Gestionnaire de bibliothèques</td>
+                <td>adafruit.com</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3>Bibliothèques ESP32/ESP8266 spécifiques</h3>
+          
+          <div class="cards">
+            <div class="card">
+              <i class="fas fa-wifi"></i>
+              <h4>WiFi.h (ESP32)</h4>
+              <p>Connexion WiFi</p>
+              <ul>
+                <li><code>WiFi.begin(ssid, pass)</code></li>
+                <li><code>WiFi.localIP()</code></li>
+                <li><code>WiFi.status()</code></li>
+              </ul>
+            </div>
+            
+            <div class="card">
+              <i class="fas fa-bluetooth"></i>
+              <h4>BluetoothSerial.h</h4>
+              <p>Bluetooth ESP32</p>
+              <ul>
+                <li><code>SerialBT.begin()</code></li>
+                <li><code>SerialBT.available()</code></li>
+                <li><code>SerialBT.write()</code></li>
+              </ul>
+            </div>
+            
+            <div class="card">
+              <i class="fas fa-server"></i>
+              <h4>WebServer.h</h4>
+              <p>Serveur web ESP</p>
+              <ul>
+                <li><code>WebServer server(80)</code></li>
+                <li><code>server.on()</code></li>
+                <li><code>server.handleClient()</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ESP32 Spécifique -->
+      <section id="esp32">
+        <h2>ESP32 - Spécifications et fonctions</h2>
+        
+        <div class="info-box">
+          <h4><i class="fas fa-info-circle"></i> Caractéristiques principales ESP32</h4>
+          <ul>
+            <li><strong>CPU :</strong> Dual-core Xtensa LX6 (240 MHz)</li>
+            <li><strong>WiFi :</strong> 802.11 b/g/n (2.4 GHz)</li>
+            <li><strong>Bluetooth :</strong> Classic et BLE 4.2</li>
+            <li><strong>RAM :</strong> 520 KB SRAM</li>
+            <li><strong>Flash :</strong> 4 MB (varie selon modèle)</li>
+            <li><strong>GPIO :</strong> Jusqu'à 34 broches</li>
+            <li><strong>ADC :</strong> 12 bits (18 canaux)</li>
+            <li><strong>DAC :</strong> 8 bits (2 canaux)</li>
+          </ul>
+        </div>
+
+        <h3>Fonctions spécifiques ESP32</h3>
+        
+        <div class="reference-category">
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Fonction</th>
+                <th>Description</th>
+                <th>Bibliothèque</th>
+                <th>Exemple</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>ledcSetup()</code></td>
+                <td>Configure le PWM</td>
+                <td>Arduino.h</td>
+                <td><code>ledcSetup(0, 5000, 12);</code></td>
+              </tr>
+              <tr>
+                <td><code>ledcAttachPin()</code></td>
+                <td>Attache une broche au PWM</td>
+                <td>Arduino.h</td>
+                <td><code>ledcAttachPin(16, 0);</code></td>
+              </tr>
+              <tr>
+                <td><code>ledcWrite()</code></td>
+                <td>Écrit une valeur PWM</td>
+                <td>Arduino.h</td>
+                <td><code>ledcWrite(0, 2048);</code></td>
+              </tr>
+              <tr>
+                <td><code>touchRead()</code></td>
+                <td>Lit un capteur tactile</td>
+                <td>Arduino.h</td>
+                <td><code>int val = touchRead(4);</code></td>
+              </tr>
+              <tr>
+                <td><code>hallRead()</code></td>
+                <td>Lit le capteur Hall</td>
+                <td>Arduino.h</td>
+                <td><code>int val = hallRead();</code></td>
+              </tr>
+              <tr>
+                <td><code>esp_deep_sleep_start()</code></td>
+                <td>Mise en veille profonde</td>
+                <td>esp_sleep.h</td>
+                <td><code>esp_deep_sleep_start();</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Broches ESP32 - Limitations</h3>
+        
+        <div class="warning-box">
+          <h4><i class="fas fa-exclamation-triangle"></i> Broches à utiliser avec précaution</h4>
+          <ul>
+            <li><strong>GPIO 6-11 :</strong> Connectées à la flash interne (ne pas utiliser)</li>
+            <li><strong>GPIO 34-39 :</strong> Entrées seulement (pas de pull-up interne)</li>
+            <li><strong>GPIO 0 :</strong> Boot mode (peut interférer avec le téléchargement)</li>
+            <li><strong>GPIO 2 :</strong> LED intégrée sur certaines cartes</li>
+            <li><strong>GPIO 12 :</strong> Boot voltage (peut causer des problèmes au démarrage)</li>
+          </ul>
+        </div>
+
+        <h3>Broches analogiques ESP32</h3>
+        
+        <table class="function-table">
+          <thead>
+            <tr>
+              <th>Broche ADC</th>
+              <th>GPIO</th>
+              <th>Résolution</th>
+              <th>Plage</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>ADC1_CH0</td><td>36</td><td rowspan="8">12 bits</td><td rowspan="8">0-4095</td><td>Entrée seulement</td></tr>
+            <tr><td>ADC1_CH3</td><td>39</td><td>Entrée seulement</td></tr>
+            <tr><td>ADC1_CH4</td><td>32</td><td></td></tr>
+            <tr><td>ADC1_CH5</td><td>33</td><td></td></tr>
+            <tr><td>ADC1_CH6</td><td>34</td><td>Entrée seulement</td></tr>
+            <tr><td>ADC1_CH7</td><td>35</td><td>Entrée seulement</td></tr>
+            <tr><td>ADC2_CH0</td><td>4</td><td>WiFi peut interférer</td></tr>
+            <tr><td>ADC2_CH2</td><td>2</td><td>WiFi peut interférer</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ESP8266 Spécifique -->
+      <section id="esp8266">
+        <h2>ESP8266 - Spécifications et fonctions</h2>
+        
+        <div class="info-box">
+          <h4><i class="fas fa-info-circle"></i> Caractéristiques principales ESP8266</h4>
+          <ul>
+            <li><strong>CPU :</strong> Tensilica L106 (80-160 MHz)</li>
+            <li><strong>WiFi :</strong> 802.11 b/g/n (2.4 GHz)</li>
+            <li><strong>Bluetooth :</strong> Non</li>
+            <li><strong>RAM :</strong> 80 KB (utilisateur)</li>
+            <li><strong>Flash :</strong> 4 MB (typique)</li>
+            <li><strong>GPIO :</strong> 11 broches (NodeMCU)</li>
+            <li><strong>ADC :</strong> 10 bits (1 canal)</li>
+            <li><strong>PWM :</strong> Toutes les broches</li>
+          </ul>
+        </div>
+
+        <h3>Fonctions spécifiques ESP8266</h3>
+        
+        <div class="reference-category">
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Fonction</th>
+                <th>Description</th>
+                <th>Bibliothèque</th>
+                <th>Exemple</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>ESP.restart()</code></td>
+                <td>Redémarre l'ESP</td>
+                <td>ESP8266WiFi</td>
+                <td><code>ESP.restart();</code></td>
+              </tr>
+              <tr>
+                <td><code>ESP.getFreeHeap()</code></td>
+                <td>Mémoire libre</td>
+                <td>ESP8266WiFi</td>
+                <td><code>int mem = ESP.getFreeHeap();</code></td>
+              </tr>
+              <tr>
+                <td><code>ESP.getChipId()</code></td>
+                <td>ID unique du chip</td>
+                <td>ESP8266WiFi</td>
+                <td><code>uint32_t id = ESP.getChipId();</code></td>
+              </tr>
+              <tr>
+                <td><code>ESP.deepSleep()</code></td>
+                <td>Mise en veille profonde</td>
+                <td>ESP8266WiFi</td>
+                <td><code>ESP.deepSleep(30e6);</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Broches NodeMCU ESP8266</h3>
+        
+        <table class="function-table">
+          <thead>
+            <tr>
+              <th>Broche NodeMCU</th>
+              <th>GPIO ESP8266</th>
+              <th>Fonction</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>D0</td><td>16</td><td>GPIO, wakeup</td><td>Pas de pull-up</td></tr>
+            <tr><td>D1</td><td>5</td><td>GPIO, I2C SCL</td><td></td></tr>
+            <tr><td>D2</td><td>4</td><td>GPIO, I2C SDA</td><td></td></tr>
+            <tr><td>D3</td><td>0</td><td>GPIO, flash</td><td>Boot mode</td></tr>
+            <tr><td>D4</td><td>2</td><td>GPIO, LED intégrée</td><td>Boot mode</td></tr>
+            <tr><td>D5</td><td>14</td><td>GPIO, SPI SCK</td><td></td></tr>
+            <tr><td>D6</td><td>12</td><td>GPIO, SPI MISO</td><td></td></tr>
+            <tr><td>D7</td><td>13</td><td>GPIO, SPI MOSI</td><td></td></tr>
+            <tr><td>D8</td><td>15</td><td>GPIO, SPI SS</td><td>Boot mode</td></tr>
+            <tr><td>RX</td><td>3</td><td>UART RX</td><td>Boot mode</td></tr>
+            <tr><td>TX</td><td>1</td><td>UART TX</td><td>Boot mode</td></tr>
+            <tr><td>A0</td><td>ADC0</td><td>Entrée analogique</td><td>0-1V (max 3.3V)</td></tr>
+          </tbody>
+        </table>
+
+        <div class="warning-box">
+          <h4><i class="fas fa-exclamation-triangle"></i> Limitations ESP8266</h4>
+          <ul>
+            <li><strong>ADC :</strong> Seulement 1 entrée analogique (A0)</li>
+            <li><strong>Tension ADC :</strong> 0-1V (utiliser un diviseur de tension)</li>
+            <li><strong>GPIO :</strong> Pas de broches DAC</li>
+            <li><strong>Mémoire :</strong> Limitée (préférez les Strings statiques)</li>
+            <li><strong>Boot mode :</strong> Certaines broches affectent le démarrage</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Compatibilité -->
+      <section id="compatibilite">
+        <h2>Tableau de compatibilité</h2>
+        <p>Comparaison des fonctionnalités entre différentes cartes.</p>
+        
+        <div class="table-container">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Fonctionnalité</th>
+                <th>Arduino Uno</th>
+                <th>Arduino Mega</th>
+                <th>ESP32</th>
+                <th>ESP8266</th>
+                <th>Arduino Nano</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Tension d'alimentation</strong></td>
+                <td>5V</td>
+                <td>5V</td>
+                <td>3.3V</td>
+                <td>3.3V</td>
+                <td>5V</td>
+              </tr>
+              <tr>
+                <td><strong>Tension logique</strong></td>
+                <td>5V</td>
+                <td>5V</td>
+                <td>3.3V</td>
+                <td>3.3V</td>
+                <td>5V</td>
+              </tr>
+              <tr>
+                <td><strong>GPIO numériques</strong></td>
+                <td>14</td>
+                <td>54</td>
+                <td>34</td>
+                <td>11</td>
+                <td>14</td>
+              </tr>
+              <tr>
+                <td><strong>Entrées analogiques</strong></td>
+                <td>6 (10-bit)</td>
+                <td>16 (10-bit)</td>
+                <td>18 (12-bit)</td>
+                <td>1 (10-bit)</td>
+                <td>8 (10-bit)</td>
+              </tr>
+              <tr>
+                <td><strong>Sorties PWM</strong></td>
+                <td>6</td>
+                <td>15</td>
+                <td>Toutes (16-bit)</td>
+                <td>Toutes (10-bit)</td>
+                <td>6</td>
+              </tr>
+              <tr>
+                <td><strong>Sorties DAC</strong></td>
+                <td>Non</td>
+                <td>Non</td>
+                <td>2 (8-bit)</td>
+                <td>Non</td>
+                <td>Non</td>
+              </tr>
+              <tr>
+                <td><strong>WiFi intégré</strong></td>
+                <td>Non</td>
+                <td>Non</td>
+                <td>Oui</td>
+                <td>Oui</td>
+                <td>Non</td>
+              </tr>
+              <tr>
+                <td><strong>Bluetooth</strong></td>
+                <td>Non</td>
+                <td>Non</td>
+                <td>Oui (Classic+Ble)</td>
+                <td>Non</td>
+                <td>Non</td>
+              </tr>
+              <tr>
+                <td><strong>CPU fréquence</strong></td>
+                <td>16 MHz</td>
+                <td>16 MHz</td>
+                <td>240 MHz</td>
+                <td>80-160 MHz</td>
+                <td>16 MHz</td>
+              </tr>
+              <tr>
+                <td><strong>Flash mémoire</strong></td>
+                <td>32 KB</td>
+                <td>256 KB</td>
+                <td>4-16 MB</td>
+                <td>4 MB</td>
+                <td>32 KB</td>
+              </tr>
+              <tr>
+                <td><strong>SRAM</strong></td>
+                <td>2 KB</td>
+                <td>8 KB</td>
+                <td>520 KB</td>
+                <td>80 KB</td>
+                <td>2 KB</td>
+              </tr>
+              <tr>
+                <td><strong>EEPROM</strong></td>
+                <td>1 KB</td>
+                <td>4 KB</td>
+                <td>Émulation</td>
+                <td>Émulation</td>
+                <td>1 KB</td>
+              </tr>
+              <tr>
+                <td><strong>Interruptions</strong></td>
+                <td>2 broches</td>
+                <td>6 broches</td>
+                <td>Toutes</td>
+                <td>Toutes</td>
+                <td>2 broches</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3>Conseils de compatibilité</h3>
+          
+          <div class="cards">
+            <div class="card">
+              <i class="fas fa-bolt"></i>
+              <h4>Niveaux de tension</h4>
+              <p>Les ESP fonctionnent en 3.3V alors que les Arduino en 5V. Utilisez des convertisseurs de niveau.</p>
+            </div>
+            
+            <div class="card">
+              <i class="fas fa-microchip"></i>
+              <h4>Brochage GPIO</h4>
+              <p>Les broches spéciales (SPI, I2C) varient selon les cartes. Vérifiez le datasheet.</p>
+            </div>
+            
+            <div class="card">
+              <i class="fas fa-code"></i>
+              <h4>Code source</h4>
+              <p>Utilisez des directives de préprocesseur (#ifdef) pour gérer les différences.</p>
+            </div>
+            
+            <div class="card">
+              <i class="fas fa-plug"></i>
+              <h4>Bibliothèques</h4>
+              <p>Certaines bibliothèques sont spécifiques à une plateforme. Vérifiez la compatibilité.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dépannage -->
+      <section id="troubleshooting">
+        <h2>Dépannage et problèmes courants</h2>
+        
+        <div class="reference-category">
+          <h3>Problèmes de compilation</h3>
+          
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Erreur</th>
+                <th>Causes possibles</th>
+                <th>Solutions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>avrdude: stk500_getsync()</code></td>
+                <td>
+                  <ul>
+                    <li>Mauvais port COM</li>
+                    <li>Carte non reconnue</li>
+                    <li>Drivers manquants</li>
+                    <li>Baud rate incorrect</li>
+                  </ul>
+                </td>
+                <td>
+                  <ol>
+                    <li>Vérifiez le port dans Outils → Port</li>
+                    <li>Redémarrez l'IDE et la carte</li>
+                    <li>Installez les drivers CH340/FTDI</li>
+                    <li>Essayez un autre câble USB</li>
+                  </ol>
+                </td>
+              </tr>
+              <tr>
+                <td><code>sketch too big</code></td>
+                <td>
+                  <ul>
+                    <li>Mémoire insuffisante</li>
+                    <li>Bibliothèques trop grosses</li>
+                    <li>Tableaux trop grands</li>
+                  </ul>
+                </td>
+                <td>
+                  <ol>
+                    <li>Utilisez <code>PROGMEM</code> pour les constantes</li>
+                    <li>Optimisez le code</li>
+                    <li>Utilisez une carte avec plus de mémoire</li>
+                  </ol>
+                </td>
+              </tr>
+              <tr>
+                <td><code>not declared in this scope</code></td>
+                <td>
+                  <ul>
+                    <li>Variable non déclarée</li>
+                    <li>Faute de frappe</li>
+                    <li>Portée incorrecte</li>
+                  </ul>
+                </td>
+                <td>
+                  <ol>
+                    <li>Vérifiez l'orthographe</li>
+                    <li>Déclarez les variables au bon endroit</li>
+                    <li>Vérifiez les accolades</li>
+                  </ol>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3>Problèmes d'exécution</h3>
+          
+          <table class="function-table">
+            <thead>
+              <tr>
+                <th>Symptôme</th>
+                <th>Causes possibles</th>
+                <th>Solutions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>LED ne s'allume pas</td>
+                <td>
+                  <ul>
+                    <li>Broche incorrecte</li>
+                    <li>Résistance manquante</li>
+                    <li>LED inversée</li>
+                    <li>Alimentation insuffisante</li>
+                  </ul>
+                </td>
+                <td>
+                  <ol>
+                    <li>Vérifiez les connexions</li>
+                    <li>Ajoutez une résistance 220Ω</li>
+                    <li>Inversez la LED</li>
+                    <li>Vérifiez l'alimentation</li>
+                  </ol>
+                </td>
+              </tr>
+              <tr>
+                <td>Capteur non détecté</td>
+                <td>
+                  <ul>
+                    <li>Broches inversées</li>
+                    <li>Bibliothèque manquante</li>
+                    <li>Communication incorrecte</li>
+                    <li>Capteur défectueux</li>
+                  </ul>
+                </td>
+                <td>
+                  <ol>
+                    <li>Vérifiez VCC, GND, données</li>
+                    <li>Installez la bibliothèque</li>
+                    <li>Vérifiez le protocole (I2C/SPI)</li>
+                    <li>Testez avec un autre capteur</li>
+                  </ol>
+                </td>
+              </tr>
+              <tr>
+                <td>WiFi ne se connecte pas</td>
+                <td>
+                  <ul>
+                    <li>SSID/mot de passe incorrect</li>
+                    <li>Réseau non disponible</li>
+                    <li>Portail captif</li>
+                    <li>Signal faible</li>
+                  </ul>
+                </td>
+                <td>
+                  <ol>
+                    <li>Vérifiez les identifiants</li>
+                    <li>Redémarrez le routeur</li>
+                    <li>Désactivez le portail</li>
+                    <li>Rapprochez l'ESP</li>
+                  </ol>
+                </td>
+              </tr>
+              <tr>
+                <td>Redémarrages aléatoires</td>
+                <td>
+                  <ul>
+                    <li>Watchdog timer</li>
+                    <li>Buffer overflow</li>
+                    <li>Stack overflow</li>
+                    <li>Alimentation instable</li>
+                  </ul>
+                </td>
+                <td>
+                  <ol>
+                    <li>Utilisez <code>yield()</code></li>
+                    <li>Évitez les longues boucles</li>
+                    <li>Réduisez les variables globales</li>
+                    <li>Utilisez une alimentation stable</li>
+                  </ol>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reference-category">
+          <h3>Outils de débogage</h3>
+          
+          <div class="cards">
+            <div class="card">
+              <i class="fas fa-terminal"></i>
+              <h4>Moniteur série</h4>
+              <ul>
+                <li>Baud rate : 9600 (par défaut)</li>
+                <li>Utilisez <code>Serial.print()</code></li>
+                <li>Affichez les états des variables</li>
+                <li>Détectez les erreurs de logique</li>
+              </ul>
+            </div>
+            
+            <div class="card">
+              <i class="fas fa-bug"></i>
+              <h4>Étapes de débogage</h4>
+              <ol>
+                <li>Isoler le problème</li>
+                <li>Simplifier le code</li>
+                <li>Ajouter des messages de débogage</li>
+                <li>Tester par sections</li>
+                <li>Documenter les solutions</li>
+              </ol>
+            </div>
+            
+            <div class="card">
+              <i class="fas fa-tools"></i>
+              <h4>Multimètre</h4>
+              <ul>
+                <li>Vérifiez les tensions</li>
+                <li>Testez la continuité</li>
+                <li>Mesurez les courants</li>
+                <li>Détectez les courts-circuits</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <h4><i class="fas fa-lightbulb"></i> Bonnes pratiques de débogage</h4>
+          <ul>
+            <li><strong>Commencez simple :</strong> Testez chaque composant séparément</li>
+            <li><strong>Documentez :</strong> Notez chaque changement et son effet</li>
+            <li><strong>Isoler :</strong> Déconnectez les composants non essentiels</li>
+            <li><strong>Vérifiez l'alimentation :</strong> 90% des problèmes viennent de là</li>
+            <li><strong>Utilisez Google :</strong> Recherchez les messages d'erreur exacts</li>
+            <li><strong>Communiquez :</strong> Posez des questions sur les forums spécialisés</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Navigation buttons -->
+      <div class="nav-buttons">
+        <a href="index.html" class="nav-button prev"><i class="fas fa-arrow-left"></i> Retour à l'accueil</a>
+        <a href="exercice.html" class="nav-button next">Exercices pratiques <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>ArduinoLearn</h3>
+          <p>Référence technique complète pour Arduino et ESP. Documentation mise à jour régulièrement.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Liens rapides</h3>
+          <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="pratique.html">Pratique</a></li>
+            <li><a href="exemple.html">Exemples</a></li>
+            <li><a href="exercice.html">Exercices</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Ressources externes</h3>
+          <ul>
+            <li><a href="https://www.arduino.cc" target="_blank">Site officiel Arduino</a></li>
+            <li><a href="https://docs.espressif.com" target="_blank">Documentation ESP</a></li>
+            <li><a href="https://github.com" target="_blank">GitHub</a></li>
+            <li><a href="https://forum.arduino.cc" target="_blank">Forum Arduino</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>À propos</h3>
+          <p>Cette référence est maintenue par la communauté ArduinoLearn. Les informations sont vérifiées mais peuvent contenir des erreurs. Utilisez à vos risques.</p>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2023 ArduinoLearn. Tous droits réservés. | Dernière mise à jour : Décembre 2023</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Gestion de la navigation et des ancres
+    document.addEventListener('DOMContentLoaded', function () {
+      // Navigation par ancres
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          const targetId = this.getAttribute('href');
+          if (targetId === '#' || targetId === '#tutoriels') return;
+
+          // Si c'est un lien interne (commence par #)
+          if (targetId.startsWith('#')) {
+            e.preventDefault();
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+              // Scroll vers l'élément
+              window.scrollTo({
+                top: targetElement.offsetTop - 100,
+                behavior: 'smooth'
+              });
+
+              // Met à jour l'URL sans recharger la page
+              history.pushState(null, null, targetId);
+
+              // Met à jour le lien actif dans la sidebar
+              updateActiveSidebarLink(targetId);
+            }
+          }
+        });
+      });
+
+      // Fonction pour mettre à jour le lien actif dans la sidebar
+      function updateActiveSidebarLink(targetId) {
+        // Retire la classe active de tous les liens
+        document.querySelectorAll('.sidebar a').forEach(link => {
+          link.classList.remove('active');
+        });
+
+        // Ajoute la classe active au lien correspondant
+        const activeLink = document.querySelector(`.sidebar a[href="${targetId}"]`);
+        if (activeLink) {
+          activeLink.classList.add('active');
+        }
+      }
+
+      // Gestion de l'état actif au chargement de la page
+      if (window.location.hash) {
+        const targetElement = document.querySelector(window.location.hash);
+        if (targetElement) {
+          setTimeout(() => {
+            window.scrollTo({
+              top: targetElement.offsetTop - 100,
+              behavior: 'smooth'
+            });
+            updateActiveSidebarLink(window.location.hash);
+          }, 100);
+        }
+      }
+
+      // Met à jour l'URL lors du défilement
+      let sections = document.querySelectorAll('section[id]');
+      window.addEventListener('scroll', function () {
+        let current = '';
+        let scrollPosition = window.scrollY + 150;
+
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.clientHeight;
+
+          if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            current = '#' + section.getAttribute('id');
+          }
+        });
+
+        if (current) {
+          history.replaceState(null, null, current);
+          updateActiveSidebarLink(current);
+        }
+      });
+
+      // Recherche de fonctions
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', function () {
+          const searchTerm = this.value.toLowerCase();
+          if (searchTerm.length < 2) return;
+
+          // Recherche dans les tables
+          document.querySelectorAll('.function-table tr').forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(searchTerm)) {
+              row.style.backgroundColor = '#fff3cd';
+              // Scroll vers la première occurrence
+              if (!window.searched) {
+                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                window.searched = true;
+              }
+            } else {
+              row.style.backgroundColor = '';
+            }
+          });
+        });
+
+        // Reset search on blur
+        searchInput.addEventListener('blur', function () {
+          setTimeout(() => {
+            window.searched = false;
+          }, 1000);
+        });
+      }
+
+      // Sidebar sticky behavior
+      const sidebar = document.querySelector('.sidebar');
+      if (sidebar) {
+        const sidebarTop = sidebar.offsetTop;
+
+        window.addEventListener('scroll', function () {
+          if (window.innerWidth > 768) { // Desktop seulement
+            if (window.scrollY >= sidebarTop - 100) {
+              sidebar.style.position = 'sticky';
+              sidebar.style.top = '100px';
+            } else {
+              sidebar.style.position = 'static';
+            }
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
