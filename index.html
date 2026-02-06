@@ -907,6 +907,64 @@
 .hamburger-btn.active .fa-times {
   display: inline-block;
 }
+/* =========================================== */
+/* BADGES ESP/ARDUINO */
+/* =========================================== */
+.chip {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* Style pour ESP/ARDUINO */
+.chip {
+  background-color: #00979c;
+  color: white;
+}
+
+/* Style spécifique ESP */
+.chip-esp {
+  background-color: #cc0000; /* Rouge pour ESP */
+  color: white;
+}
+
+/* Badges pour sous-menu */
+.sub-menu .chip-sub {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.5rem;
+  margin-left: 5px;
+}
+
+/* Badges dans les liens de navigation */
+.sidebar ul li a .chip {
+ 
+  margin-top: 2px;
+}
+
+.sidebar .sub-menu li a .chip-sub {
+  float: right;
+  margin-top: 1px;
+}
+
+/* Responsive pour badges */
+@media (max-width: 768px) {
+  .chip {
+    font-size: 0.6rem;
+    padding: 0.15rem 0.4rem;
+    margin-left: 5px;
+  }
+  
+  .sub-menu .chip-sub {
+    font-size: 0.55rem;
+    padding: 0.1rem 0.3rem;
+  }
+}
   </style>
 </head>
 
@@ -925,7 +983,7 @@
       <nav>
         <ul>
           <li><a href="index.html" class="active"><i class="fas fa-home"></i> Accueil</a></li>
-          <li><a href="./pratique.html"><i class="fas fa-graduation-cap"></i> pratique</a></li>
+          <!-- <li><a href="./pratique.html"><i class="fas fa-graduation-cap"></i> pratique</a></li> -->
           <li><a href="./exemple.html"><i class="fas fa-code"></i> Exemples</a></li>
           <li><a href="./reference.html"><i class="fas fa-book"></i> Référence</a></li>
           <li><a href="./exercice.html"><i class="fas fa-pencil-alt"></i> Exercices</a></li>
@@ -952,136 +1010,138 @@
     <aside class="sidebar">
       <h3><i class="fas fa-list"></i> Navigation</h3>
       <ul>
-        <li><a href="#introduction"><i class="fas fa-play"></i> Introduction</a></li>
-        <li><a href="#premier-programme"><i class="fas fa-code"></i> Premier programme</a></li>
-
-        <li><a href="#structure" class="active"><i class="fas fa-sitemap"></i> Structure avancée</a></li>
-
+        <li><a href="#introduction"><i class="fas fa-play"></i> Introduction <span class="chip">ESP/ARDUINO</span></a></li>
+        <li><a href="#premier-programme"><i class="fas fa-code"></i> Premier programme <span class="chip">ESP/ARDUINO</span></a></li>
+    
+        <li><a href="#structure" class="active"><i class="fas fa-sitemap"></i> Structure avancée <span class="chip">ESP/ARDUINO</span></a></li>
+    
         <li>
-          <a href="#variables"><i class="fas fa-memory"></i> Variables et types</a>
+          <a href="#variables"><i class="fas fa-memory"></i> Variables et types <span class="chip">ESP/ARDUINO</span></a>
           <ul class="sub-menu">
-            <li><a href="#types-donnees">Types de données</a></li>
-            <li><a href="#declaration">Déclaration</a></li>
-            <li><a href="#portee">Portée des variables</a></li>
-            <li><a href="#constantes">Constantes</a></li>
-            <li><a href="#tableaux">Tableaux</a></li>
-            <li><a href="#structures">Structures</a></li>
+            <li><a href="#types-donnees">Types de données <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#declaration">Déclaration <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#portee">Portée des variables <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#constantes">Constantes <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#tableaux">Tableaux <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#structures">Structures <span class="chip-sub">ESP/ARDUINO</span></a></li>
           </ul>
         </li>
-
+    
         <li>
-          <a href="#fonctions"><i class="fas fa-cogs"></i> Fonctions de base</a>
+          <a href="#fonctions"><i class="fas fa-cogs"></i> Fonctions de base <span class="chip">ESP/ARDUINO</span></a>
           <ul class="sub-menu">
-            <li><a href="#fonctions-arduino">Fonctions Arduino</a></li>
-            <li><a href="#fonctions-personnalisees">Fonctions personnalisées</a></li>
-            <li><a href="#parametres-retour">Paramètres et retour</a></li>
-            <li><a href="#recursivite">Récursivité</a></li>
+            <li><a href="#fonctions-arduino">Fonctions Arduino <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#fonctions-personnalisees">Fonctions personnalisées <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#parametres-retour">Paramètres et retour <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#recursivite">Récursivité <span class="chip-sub">ESP/ARDUINO</span></a></li>
           </ul>
         </li>
-
+    
         <li>
-          <a href="#entrees-sorties"><i class="fas fa-exchange-alt"></i> Entrées/Sorties</a>
+          <a href="#entrees-sorties"><i class="fas fa-exchange-alt"></i> Entrées/Sorties <span class="chip">ESP/ARDUINO</span></a>
           <ul class="sub-menu">
-            <li><a href="#digital">Digital I/O</a></li>
-            <li><a href="#analog">Analog I/O</a></li>
-            <li><a href="#pwm">PWM</a></li>
-            <li><a href="#interruptions">Interruptions</a></li>
+            <li><a href="#digital">Digital I/O <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#analog">Analog I/O <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#pwm">PWM <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#interruptions">Interruptions <span class="chip-sub">ESP/ARDUINO</span></a></li>
           </ul>
         </li>
-
+    
         <li>
-          <a href="#allumer-led"><i class="fas fa-lightbulb"></i> Allumer une LED</a>
+          <a href="#allumer-led"><i class="fas fa-lightbulb"></i> Allumer une LED <span class="chip">ESP/ARDUINO</span></a>
           <ul class="sub-menu">
-            <li><a href="#led-simple">LED simple</a></li>
-            <li><a href="#led-clignotante">LED clignotante</a></li>
-            <li><a href="#led-pwm">LED PWM</a></li>
-            <li><a href="#led-rvb">LED RVB</a></li>
+            <li><a href="#led-simple">LED simple <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#led-clignotante">LED clignotante <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#led-pwm">LED PWM <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#led-rvb">LED RVB <span class="chip-sub">ESP/ARDUINO</span></a></li>
           </ul>
         </li>
-
+    
         <li>
-          <a href="#bibliotheques"><i class="fas fa-book"></i> Bibliothèques (.h)</a>
+          <a href="#bibliotheques"><i class="fas fa-book"></i> Bibliothèques (.h) <span class="chip">ESP/ARDUINO</span></a>
           <ul class="sub-menu">
-            <li><a href="#utilisation-biblio">Utilisation</a></li>
-            <li><a href="#creation-biblio">Création</a></li>
-            <li><a href="#biblio-standard">Bibliothèques standard</a></li>
+            <li><a href="#utilisation-biblio">Utilisation <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#creation-biblio">Création <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#biblio-standard">Bibliothèques standard <span class="chip-sub">ESP/ARDUINO</span></a></li>
           </ul>
         </li>
-
+    
         <li>
-          <a href="#structures-controle"><i class="fas fa-project-diagram"></i> Structures de contrôle</a>
+          <a href="#structures-controle"><i class="fas fa-project-diagram"></i> Structures de contrôle <span class="chip">ESP/ARDUINO</span></a>
           <ul class="sub-menu">
-            <li><a href="#conditions">Conditions</a></li>
-            <li><a href="#boucles">Boucles</a></li>
-            <li><a href="#switch-case">Switch Case</a></li>
+            <li><a href="#conditions">Conditions <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#boucles">Boucles <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#switch-case">Switch Case <span class="chip-sub">ESP/ARDUINO</span></a></li>
           </ul>
         </li>
-
+    
         <li>
-          <a href="#communication"><i class="fas fa-wifi"></i> Communication ESP</a>
+          <a href="#communication"><i class="fas fa-wifi"></i> Communication ESP <span class="chip chip-esp">ESP</span></a>
           <ul class="sub-menu">
-            <li><a href="#wifi">WiFi</a></li>
-            <li><a href="#bluetooth">Bluetooth</a></li>
-            <li><a href="#mqtt">MQTT</a></li>
-            <li><a href="#web-server">Serveur Web</a></li>
+            <li><a href="#wifi">WiFi <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#bluetooth">Bluetooth <span class="chip-sub chip-esp">ESP32</span></a></li>
+            <li><a href="#mqtt">MQTT <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#web-server">Serveur Web <span class="chip-sub chip-esp">ESP</span></a></li>
           </ul>
         </li>
+    
         <li>
-          <a href="#systeme-fichiers"><i class="fas fa-folder"></i> Système de fichiers</a>
+          <a href="#systeme-fichiers"><i class="fas fa-folder"></i> Système de fichiers <span class="chip chip-esp">ESP</span></a>
           <ul class="sub-menu">
-            <li><a href="#littlefs-spiffs">LittleFS/SPIFFS</a></li>
-            <li><a href="#gestion-fichiers">Gestion fichiers</a></li>
-            <li><a href="#sd-card">Carte SD</a></li>
-            <li><a href="#partitionnement">Partitionnement ESP</a></li>
-          </ul>
-        </li>
-        
-        <li>
-          <a href="#communication-avancee"><i class="fas fa-satellite-dish"></i> Communication avancée</a>
-          <ul class="sub-menu">
-            <li><a href="#websocket">WebSocket</a></li>
-            <li><a href="#webserial">WebSerial</a></li>
-            <li><a href="#ota">OTA (Mise à jour OTA)</a></li>
-            <li><a href="#ble-midi">BLE MIDI/Audio</a></li>
+            <li><a href="#littlefs-spiffs">LittleFS/SPIFFS <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#gestion-fichiers">Gestion fichiers <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#sd-card">Carte SD <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#partitionnement">Partitionnement <span class="chip-sub chip-esp">ESP32</span></a></li>
           </ul>
         </li>
         
         <li>
-          <a href="#optimisation"><i class="fas fa-tachometer-alt"></i> Optimisation</a>
+          <a href="#communication-avancee"><i class="fas fa-satellite-dish"></i> Communication avancée <span class="chip chip-esp">ESP</span></a>
           <ul class="sub-menu">
-            <li><a href="#gestion-memoire">Gestion mémoire</a></li>
-            <li><a href="#low-power">Mode basse consommation</a></li>
-            <li><a href="#debogage">Techniques de débogage</a></li>
-            <li><a href="#multitache">Multitâche (FreeRTOS)</a></li>
+            <li><a href="#websocket">WebSocket <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#webserial">WebSerial <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#ota">OTA (Mise à jour OTA) <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#ble-midi">BLE MIDI/Audio <span class="chip-sub chip-esp">ESP32</span></a></li>
           </ul>
         </li>
         
         <li>
-          <a href="#securite"><i class="fas fa-shield-alt"></i> Sécurité</a>
+          <a href="#optimisation"><i class="fas fa-tachometer-alt"></i> Optimisation <span class="chip chip-esp">ESP</span></a>
           <ul class="sub-menu">
-            <li><a href="#ssl-tls">SSL/TLS</a></li>
-            <li><a href="#authentification">Authentification</a></li>
-            <li><a href="#chiffrement">Chiffrement</a></li>
-            <li><a href="#best-practices">Bonnes pratiques</a></li>
+            <li><a href="#gestion-memoire">Gestion mémoire <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#low-power">Mode basse consommation <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#debogage">Techniques de débogage <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#multitache">Multitâche (FreeRTOS) <span class="chip-sub chip-esp">ESP32</span></a></li>
           </ul>
         </li>
         
         <li>
-          <a href="#integration-avancee"><i class="fas fa-cloud"></i> Intégration avancée</a>
+          <a href="#securite"><i class="fas fa-shield-alt"></i> Sécurité <span class="chip chip-esp">ESP</span></a>
           <ul class="sub-menu">
-            <li><a href="#home-assistant">Home Assistant</a></li>
-            <li><a href="#node-red">Node-RED</a></li>
-            <li><a href="#aws-iot">AWS IoT / Azure</a></li>
-            <li><a href="#api-rest">API REST avancée</a></li>
+            <li><a href="#ssl-tls">SSL/TLS <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#authentification">Authentification <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#chiffrement">Chiffrement <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#best-practices">Bonnes pratiques <span class="chip-sub">ESP/ARDUINO</span></a></li>
           </ul>
         </li>
+        
         <li>
-          <a href="#projets"><i class="fas fa-rocket"></i> Projets pratiques</a>
+          <a href="#integration-avancee"><i class="fas fa-cloud"></i> Intégration avancée <span class="chip chip-esp">ESP</span></a>
           <ul class="sub-menu">
-            <li><a href="#projet1">Station météo</a></li>
-            <li><a href="#projet2">Contrôle domotique</a></li>
-            <li><a href="#projet3">Robot suiveur</a></li>
-            <li><a href="#projet4">Système d'arrosage</a></li>
+            <li><a href="#home-assistant">Home Assistant <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#node-red">Node-RED <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#aws-iot">AWS IoT / Azure <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#api-rest">API REST avancée <span class="chip-sub chip-esp">ESP</span></a></li>
+          </ul>
+        </li>
+    
+        <li>
+          <a href="#projets"><i class="fas fa-rocket"></i> Projets pratiques <span class="chip">ESP/ARDUINO</span></a>
+          <ul class="sub-menu">
+            <li><a href="#projet1">Station météo <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#projet2">Contrôle domotique <span class="chip-sub chip-esp">ESP</span></a></li>
+            <li><a href="#projet3">Robot suiveur <span class="chip-sub">ESP/ARDUINO</span></a></li>
+            <li><a href="#projet4">Système d'arrosage <span class="chip-sub chip-esp">ESP</span></a></li>
           </ul>
         </li>
       </ul>
