@@ -1026,7 +1026,55 @@
             <li><a href="#web-server">Serveur Web</a></li>
           </ul>
         </li>
-
+        <li>
+          <a href="#systeme-fichiers"><i class="fas fa-folder"></i> Système de fichiers</a>
+          <ul class="sub-menu">
+            <li><a href="#littlefs-spiffs">LittleFS/SPIFFS</a></li>
+            <li><a href="#gestion-fichiers">Gestion fichiers</a></li>
+            <li><a href="#sd-card">Carte SD</a></li>
+            <li><a href="#partitionnement">Partitionnement ESP</a></li>
+          </ul>
+        </li>
+        
+        <li>
+          <a href="#communication-avancee"><i class="fas fa-satellite-dish"></i> Communication avancée</a>
+          <ul class="sub-menu">
+            <li><a href="#websocket">WebSocket</a></li>
+            <li><a href="#webserial">WebSerial</a></li>
+            <li><a href="#ota">OTA (Mise à jour OTA)</a></li>
+            <li><a href="#ble-midi">BLE MIDI/Audio</a></li>
+          </ul>
+        </li>
+        
+        <li>
+          <a href="#optimisation"><i class="fas fa-tachometer-alt"></i> Optimisation</a>
+          <ul class="sub-menu">
+            <li><a href="#gestion-memoire">Gestion mémoire</a></li>
+            <li><a href="#low-power">Mode basse consommation</a></li>
+            <li><a href="#debogage">Techniques de débogage</a></li>
+            <li><a href="#multitache">Multitâche (FreeRTOS)</a></li>
+          </ul>
+        </li>
+        
+        <li>
+          <a href="#securite"><i class="fas fa-shield-alt"></i> Sécurité</a>
+          <ul class="sub-menu">
+            <li><a href="#ssl-tls">SSL/TLS</a></li>
+            <li><a href="#authentification">Authentification</a></li>
+            <li><a href="#chiffrement">Chiffrement</a></li>
+            <li><a href="#best-practices">Bonnes pratiques</a></li>
+          </ul>
+        </li>
+        
+        <li>
+          <a href="#integration-avancee"><i class="fas fa-cloud"></i> Intégration avancée</a>
+          <ul class="sub-menu">
+            <li><a href="#home-assistant">Home Assistant</a></li>
+            <li><a href="#node-red">Node-RED</a></li>
+            <li><a href="#aws-iot">AWS IoT / Azure</a></li>
+            <li><a href="#api-rest">API REST avancée</a></li>
+          </ul>
+        </li>
         <li>
           <a href="#projets"><i class="fas fa-rocket"></i> Projets pratiques</a>
           <ul class="sub-menu">
@@ -5490,6 +5538,558 @@ server.<span class="code-function">send</span>(200, <span class="code-string">"a
 }</code></pre>
           </div>
         </section>
+        <!-- =========================================== -->
+<!-- SECTION SYSTÈME DE FICHIERS -->
+<!-- =========================================== -->
+<section id="systeme-fichiers">
+  <h2>Système de fichiers LittleFS/SPIFFS</h2>
+  <p>Les systèmes de fichiers embarqués permettent de stocker des données persistantes sur la mémoire flash.</p>
+
+  <h3 id="littlefs-spiffs">LittleFS vs SPIFFS</h3>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Fonctionnalité</th>
+          <th>SPIFFS</th>
+          <th>LittleFS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Performance écriture</td>
+          <td>Lente</td>
+          <td>Rapide</td>
+        </tr>
+        <tr>
+          <td>Usure mémoire</td>
+          <td>Élevée</td>
+          <td>Optimisée</td>
+        </tr>
+        <tr>
+          <td>Taille répertoire</td>
+          <td>Limitée</td>
+          <td>Illimitée</td>
+        </tr>
+        <tr>
+          <td>Support ESP32</td>
+          <td>✔️ (obsolète)</td>
+          <td>✔️ (recommandé)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Initialisation LittleFS sur ESP32</h4>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Initialisation et utilisation de LittleFS
+*/</span>
+<span class="code-keyword">#include</span> &lt;LittleFS.h&gt;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(115200);
+  
+  <span class="code-comment">// Initialisation LittleFS</span>
+  <span class="code-keyword">if</span> (!LittleFS.<span class="code-function">begin</span>(<span class="code-keyword">true</span>)) {
+    Serial.<span class="code-function">println</span>(<span class="code-string">"Erreur montage LittleFS"</span>);
+    <span class="code-keyword">return</span>;
+  }
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"LittleFS monte avec succes"</span>);
+  
+  <span class="code-comment">// Lister les fichiers</span>
+  File root = LittleFS.<span class="code-function">open</span>(<span class="code-string">"/"</span>);
+  File file = root.<span class="code-function">openNextFile</span>();
+  
+  <span class="code-keyword">while</span>(file) {
+    Serial.<span class="code-function">print</span>(<span class="code-string">"Fichier: "</span>);
+    Serial.<span class="code-function">print</span>(file.<span class="code-function">name</span>());
+    Serial.<span class="code-function">print</span>(<span class="code-string">" | Taille: "</span>);
+    Serial.<span class="code-function">println</span>(file.<span class="code-function">size</span>());
+    file.<span class="code-function">close</span>();
+    file = root.<span class="code-function">openNextFile</span>();
+  }
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// Sauvegarde de donnees</span>
+  <span class="code-function">sauvegarderDonnees</span>();
+  <span class="code-function">delay</span>(60000); <span class="code-comment">// Toutes les minutes</span>
+}
+
+<span class="code-keyword">void</span> <span class="code-function">sauvegarderDonnees</span>() {
+  File file = LittleFS.<span class="code-function">open</span>(<span class="code-string">"/data.json"</span>, <span class="code-string">"w"</span>);
+  
+  <span class="code-keyword">if</span> (!file) {
+    Serial.<span class="code-function">println</span>(<span class="code-string">"Erreur ouverture fichier"</span>);
+    <span class="code-keyword">return</span>;
+  }
+  
+  <span class="code-type">String</span> jsonData = <span class="code-string">"{\"temperature\":23.5,\"humidite\":65,\"timestamp\":"</span> + 
+                    <span class="code-type">String</span>(<span class="code-function">millis</span>()) + <span class="code-string">"}"</span>;
+  
+  file.<span class="code-function">print</span>(jsonData);
+  file.<span class="code-function">close</span>();
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Donnees sauvegardees"</span>);
+}</code></pre>
+  </div>
+
+  <h3 id="partitionnement">Partitionnement ESP32</h3>
+  <div class="code-example">
+    <h4>Configuration partitions.csv</h4>
+    <pre><code><span class="code-comment"># Fichier partitions.csv dans le dossier data de votre projet</span>
+<span class="code-comment"># Nom, Type, SousType, Offset, Taille, Flags</span>
+nvs,      data, nvs,     0x9000,  0x6000,
+otadata,  data, ota,     0xf000,  0x2000,
+app0,     app,  ota_0,   0x10000, 0x140000,
+app1,     app,  ota_1,   0x150000,0x140000,
+spiffs,   data, spiffs,  0x290000,0x160000,</code></pre>
+  </div>
+</section>
+<!-- =========================================== -->
+<!-- SECTION WEBSOCKET -->
+<!-- =========================================== -->
+<section id="websocket">
+  <h2>Communication WebSocket en temps réel</h2>
+  <p>WebSocket permet une communication bidirectionnelle en temps réel entre l'ESP et un navigateur web.</p>
+
+  <h3>Serveur WebSocket sur ESP32</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Serveur WebSocket pour dashboard temps réel
+*/</span>
+<span class="code-keyword">#include</span> &lt;WiFi.h&gt;
+<span class="code-keyword">#include</span> &lt;WebSocketsServer.h&gt;
+
+<span class="code-keyword">const</span> <span class="code-type">char</span>* ssid = <span class="code-string">"Votre_SSID"</span>;
+<span class="code-keyword">const</span> <span class="code-type">char</span>* password = <span class="code-string">"Votre_Mot_De_Passe"</span>;
+
+<span class="code-comment">// Port WebSocket (généralement 81)</span>
+WebSocketsServer webSocket = WebSocketsServer(81);
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(115200);
+  
+  <span class="code-comment">// Connexion WiFi</span>
+  WiFi.<span class="code-function">begin</span>(ssid, password);
+  <span class="code-keyword">while</span> (WiFi.<span class="code-function">status</span>() != WL_CONNECTED) {
+    <span class="code-function">delay</span>(500);
+    Serial.<span class="code-function">print</span>(<span class="code-string">"."</span>);
+  }
+  
+  Serial.<span class="code-function">println</span>();
+  Serial.<span class="code-function">print</span>(<span class="code-string">"IP: "</span>);
+  Serial.<span class="code-function">println</span>(WiFi.<span class="code-function">localIP</span>());
+  
+  <span class="code-comment">// Démarrage serveur WebSocket</span>
+  webSocket.<span class="code-function">begin</span>();
+  webSocket.<span class="code-function">onEvent</span>(webSocketEvent);
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Serveur WebSocket demarre"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  webSocket.<span class="code-function">loop</span>();
+  
+  <span class="code-comment">// Envoi périodique de données</span>
+  <span class="code-keyword">static</span> <span class="code-keyword">unsigned</span> <span class="code-keyword">long</span> lastSend = 0;
+  <span class="code-keyword">if</span> (<span class="code-function">millis</span>() - lastSend > 1000) {
+    lastSend = <span class="code-function">millis</span>();
+    
+    <span class="code-type">String</span> data = <span class="code-string">"{\"temp\":"</span> + <span class="code-type">String</span>(<span class="code-function">random</span>(20, 30)) + 
+                   <span class="code-string">",\"hum\":"</span> + <span class="code-type">String</span>(<span class="code-function">random</span>(40, 80)) + 
+                   <span class="code-string">",\"time\":"</span> + <span class="code-type">String</span>(<span class="code-function">millis</span>()) + <span class="code-string">"}"</span>;
+    
+    webSocket.<span class="code-function">broadcastTXT</span>(data);
+  }
+}
+
+<span class="code-keyword">void</span> <span class="code-function">webSocketEvent</span>(<span class="code-keyword">uint8_t</span> num, WStype_t type, <span class="code-type">uint8_t</span>* payload, <span class="code-keyword">size_t</span> length) {
+  <span class="code-keyword">switch</span>(type) {
+    <span class="code-keyword">case</span> WStype_DISCONNECTED:
+      Serial.<span class="code-function">printf</span>(<span class="code-string">"[%u] Deconnecte\n"</span>, num);
+      <span class="code-keyword">break</span>;
+      
+    <span class="code-keyword">case</span> WStype_CONNECTED: {
+      IPAddress ip = webSocket.<span class="code-function">remoteIP</span>(num);
+      Serial.<span class="code-function">printf</span>(<span class="code-string">"[%u] Connecte depuis %d.%d.%d.%d\n"</span>, 
+                    num, ip[0], ip[1], ip[2], ip[3]);
+      webSocket.<span class="code-function">sendTXT</span>(num, <span class="code-string">"{\"message\":\"Bienvenue!\"}"</span>);
+      } <span class="code-keyword">break</span>;
+      
+    <span class="code-keyword">case</span> WStype_TEXT:
+      Serial.<span class="code-function">printf</span>(<span class="code-string">"[%u] Message: %s\n"</span>, num, payload);
+      <span class="code-function">traiterCommande</span>((<span class="code-type">char</span>*)payload, num);
+      <span class="code-keyword">break</span>;
+      
+    <span class="code-keyword">case</span> WStype_BIN:
+      Serial.<span class="code-function">printf</span>(<span class="code-string">"[%u] Donnees binaires\n"</span>, num);
+      <span class="code-keyword">break</span>;
+  }
+}
+
+<span class="code-keyword">void</span> <span class="code-function">traiterCommande</span>(<span class="code-type">char</span>* commande, <span class="code-keyword">uint8_t</span> client) {
+  <span class="comment">// Parse JSON simple (en production utiliser ArduinoJson)</span>
+  <span class="keyword">if</span> (<span class="function-name">strstr</span>(commande, "\"led\":\"on\"")) {
+    <span class="function-name">digitalWrite</span>(LED_BUILTIN, HIGH);
+    webSocket.<span class="function-name">sendTXT</span>(client, "{\"status\":\"LED allumee\"}");
+  }
+  <span class="keyword">else if</span> (<span class="function-name">strstr</span>(commande, "\"led\":\"off\"")) {
+    <span class="function-name">digitalWrite</span>(LED_BUILTIN, LOW);
+    webSocket.<span class="function-name">sendTXT</span>(client, "{\"status\":\"LED eteinte\"}");
+  }
+}</code></pre>
+  </div>
+
+  <div class="info-box">
+    <h4>Avantages de WebSocket</h4>
+    <ul>
+      <li><strong>Temps réel</strong> : Pas besoin de polling</li>
+      <li><strong>Bidirectionnel</strong> : Communication full-duplex</li>
+      <li><strong>Faible latence</strong> : Parfait pour les dashboards</li>
+      <li><strong>Économique</strong> : Moins d'overhead que HTTP</li>
+    </ul>
+  </div>
+</section>
+<!-- =========================================== -->
+<!-- SECTION OTA (MISE À JOUR À DISTANCE) -->
+<!-- =========================================== -->
+<section id="ota">
+  <h2>Mise à jour OTA (Over-The-Air)</h2>
+  <p>Mettez à jour votre firmware sans brancher de câble USB.</p>
+
+  <h3>OTA Basic avec Arduino IDE</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Configuration OTA de base
+*/</span>
+<span class="code-keyword">#include</span> &lt;WiFi.h&gt;
+<span class="code-keyword">#include</span> &lt;ESPmDNS.h&gt;
+<span class="code-keyword">#include</span> &lt;WiFiUdp.h&gt;
+<span class="code-keyword">#include</span> &lt;ArduinoOTA.h&gt;
+
+<span class="code-keyword">const</span> <span class="code-type">char</span>* ssid = <span class="code-string">"Votre_SSID"</span>;
+<span class="code-keyword">const</span> <span class="code-type">char</span>* password = <span class="code-string">"Votre_Mot_De_Passe"</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(115200);
+  
+  <span class="code-comment">// Connexion WiFi</span>
+  WiFi.<span class="code-function">begin</span>(ssid, password);
+  <span class="code-keyword">while</span> (WiFi.<span class="code-function">status</span>() != WL_CONNECTED) {
+    <span class="code-function">delay</span>(1000);
+    Serial.<span class="code-function">println</span>(<span class="code-string">"Connexion WiFi..."</span>);
+  }
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"WiFi connecte"</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Adresse IP: "</span>);
+  Serial.<span class="code-function">println</span>(WiFi.<span class="code-function">localIP</span>());
+
+  <span class="code-comment">// Configuration OTA</span>
+  ArduinoOTA.<span class="code-function">setHostname</span>(<span class="code-string">"esp32-ota"</span>);
+  ArduinoOTA.<span class="code-function">setPassword</span>(<span class="code-string">"admin123"</span>); <span class="code-comment">// Mot de passe OTA</span>
+
+  ArduinoOTA
+    .<span class="code-function">onStart</span>([]() {
+      <span class="code-type">String</span> type;
+      <span class="code-keyword">if</span> (ArduinoOTA.<span class="code-function">getCommand</span>() == U_FLASH) {
+        type = <span class="code-string">"sketch"</span>;
+      } <span class="code-keyword">else</span> { <span class="code-comment">// U_SPIFFS</span>
+        type = <span class="code-string">"filesystem"</span>;
+        LittleFS.<span class="code-function">end</span>(); <span class="code-comment">// Démontage filesystem</span>
+      }
+      Serial.<span class="code-function">println</span>(<span class="code-string">"Début mise à jour "</span> + type);
+    })
+    .<span class="code-function">onEnd</span>([]() {
+      Serial.<span class="code-function">println</span>(<span class="code-string">"\nMise à jour terminée"</span>);
+    })
+    .<span class="code-function">onProgress</span>([](<span class="code-keyword">unsigned</span> <span class="code-keyword">int</span> progress, <span class="code-keyword">unsigned</span> <span class="code-keyword">int</span> total) {
+      Serial.<span class="code-function">printf</span>(<span class="code-string">"Progression: %u%%\r"</span>, (progress / (total / 100)));
+    })
+    .<span class="code-function">onError</span>([](ota_error_t error) {
+      Serial.<span class="code-function">printf</span>(<span class="code-string">"Erreur[%u]: "</span>, error);
+      <span class="code-keyword">if</span> (error == OTA_AUTH_ERROR) Serial.<span class="code-function">println</span>(<span class="code-string">"Authentification echouee"</span>);
+      <span class="code-keyword">else</span> <span class="code-keyword">if</span> (error == OTA_BEGIN_ERROR) Serial.<span class="code-function">println</span>(<span class="code-string">"Erreur debut"</span>);
+      <span class="code-keyword">else</span> <span class="code-keyword">if</span> (error == OTA_CONNECT_ERROR) Serial.<span class="code-function">println</span>(<span class="code-string">"Erreur connexion"</span>);
+      <span class="code-keyword">else</span> <span class="code-keyword">if</span> (error == OTA_RECEIVE_ERROR) Serial.<span class="code-function">println</span>(<span class="code-string">"Erreur reception"</span>);
+      <span class="code-keyword">else</span> <span class="code-keyword">if</span> (error == OTA_END_ERROR) Serial.<span class="code-function">println</span>(<span class="code-string">"Erreur fin"</span>);
+    });
+
+  ArduinoOTA.<span class="code-function">begin</span>();
+  
+  Serial.<span class="code-function">println</span>(<span class="code-string">"OTA pret"</span>);
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Pour mettre a jour, allez dans:"</span>);
+  Serial.<span class="code-function">print</span>(<span class="code-string">"  Outils → Port → esp32-ota.local ("</span>);
+  Serial.<span class="code-function">print</span>(WiFi.<span class="code-function">localIP</span>());
+  Serial.<span class="code-function">println</span>(<span class="code-string">")"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  ArduinoOTA.<span class="code-function">handle</span>();
+  <span class="comment">// Votre code normal ici</span>
+  <span class="function-name">delay</span>(10);
+}</code></pre>
+  </div>
+</section>
+<!-- =========================================== -->
+<!-- SECTION MULTITÂCHE FREERTOS -->
+<!-- =========================================== -->
+<section id="multitache">
+  <h2>Multitâche avec FreeRTOS sur ESP32</h2>
+  <p>L'ESP32 utilise FreeRTOS pour exécuter plusieurs tâches simultanément.</p>
+
+  <h3>Création de tâches</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Multitâche avec FreeRTOS
+*/</span>
+<span class="code-keyword">#include</span> &lt;Arduino.h&gt;
+
+<span class="code-comment">// Poignées de tâches</span>
+TaskHandle_t Task1;
+TaskHandle_t Task2;
+
+<span class="code-comment">// Broches LED</span>
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> led1 = 2;
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> led2 = 4;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(115200);
+  
+  <span class="code-function">pinMode</span>(led1, OUTPUT);
+  <span class="code-function">pinMode</span>(led2, OUTPUT);
+
+  <span class="code-comment">// Création des tâches</span>
+  <span class="comment">// xTaskCreate(fonction, nom, taille pile, paramètres, priorité, handle)</span>
+  xTaskCreate(
+    tacheLED1,      <span class="code-comment">// Fonction</span>
+    "Tache_LED_1",  <span class="code-comment">// Nom</span>
+    10000,          <span class="code-comment">// Taille pile (bytes)</span>
+    NULL,           <span class="code-comment">// Paramètres</span>
+    1,              <span class="code-comment">// Priorité (1-24)</span>
+    &Task1          <span class="code-comment">// Handle</span>
+  );
+
+  xTaskCreate(
+    tacheLED2,
+    "Tache_LED_2",
+    10000,
+    NULL,
+    1,
+    &Task2
+  );
+
+  Serial.<span class="code-function">println</span>(<span class="code-string">"Tâches créées"</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="comment">// Tâche principale (core 1)</span>
+  <span class="function-name">delay</span>(1000);
+  Serial.<span class="function-name">print</span>("Core principal: ");
+  Serial.<span class="function-name">println</span>(xPortGetCoreID());
+}
+
+<span class="comment">// Tâche 1 (LED clignotante rapide)</span>
+<span class="type">void</span> <span class="function-name">tacheLED1</span>(<span class="type">void</span>* parameter) {
+  Serial.<span class="function-name">print</span>("Tache 1 démarrée sur core: ");
+  Serial.<span class="function-name">println</span>(xPortGetCoreID());
+  
+  <span class="keyword">for</span>(;;) {
+    <span class="function-name">digitalWrite</span>(led1, HIGH);
+    <span class="function-name">vTaskDelay</span>(100 / portTICK_PERIOD_MS);
+    <span class="function-name">digitalWrite</span>(led1, LOW);
+    <span class="function-name">vTaskDelay</span>(900 / portTICK_PERIOD_MS);
+  }
+}
+
+<span class="comment">// Tâche 2 (LED clignotante lente)</span>
+<span class="type">void</span> <span class="function-name">tacheLED2</span>(<span class="type">void</span>* parameter) {
+  Serial.<span class="function-name">print</span>("Tache 2 démarrée sur core: ");
+  Serial.<span class="function-name">println</span>(xPortGetCoreID());
+  
+  <span class="keyword">for</span>(;;) {
+    <span class="function-name">digitalWrite</span>(led2, HIGH);
+    <span class="function-name">vTaskDelay</span>(500 / portTICK_PERIOD_MS);
+    <span class="function-name">digitalWrite</span>(led2, LOW);
+    <span class="function-name">vTaskDelay</span>(1500 / portTICK_PERIOD_MS);
+    
+    <span class="comment">// Communication inter-tâche</span>
+    <span class="keyword">static</span> <span class="type">int</span> compteur = 0;
+    compteur++;
+    <span class="keyword">if</span> (compteur % 10 == 0) {
+      Serial.<span class="function-name">print</span>("Tache 2 compteur: ");
+      Serial.<span class="function-name">println</span>(compteur);
+    }
+  }
+}</code></pre>
+  </div>
+
+  <h3>Queues et Sémaphores</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+Communication inter-tâches avec queue
+*/</span>
+<span class="code-keyword">#include</span> &lt;Arduino.h&gt;
+
+<span class="comment">// Queue pour communication</span>
+QueueHandle_t queue;
+
+<span class="type">void</span> <span class="function-name">setup</span>() {
+  Serial.<span class="function-name">begin</span>(115200);
+  
+  <span class="comment">// Création queue (10 éléments de 20 bytes)</span>
+  queue = xQueueCreate(10, sizeof(<span class="type">int</span>));
+  
+  <span class="function-name">xTaskCreate</span>(tacheProducteur, "Producteur", 10000, NULL, 1, NULL);
+  <span class="function-name">xTaskCreate</span>(tacheConsommateur, "Consommateur", 10000, NULL, 1, NULL);
+}
+
+<span class="type">void</span> <span class="function-name">loop</span>() {
+  <span class="function-name">vTaskDelete</span>(NULL); <span class="comment">// Supprime la tâche loop car inutile</span>
+}
+
+<span class="type">void</span> <span class="function-name">tacheProducteur</span>(<span class="type">void</span>* parameter) {
+  <span class="type">int</span> valeur = 0;
+  
+  <span class="keyword">for</span>(;;) {
+    valeur++;
+    
+    <span class="comment">// Envoi dans la queue (attente max 100ms)</span>
+    <span class="keyword">if</span> (<span class="function-name">xQueueSend</span>(queue, &valeur, 100 / portTICK_PERIOD_MS) == pdPASS) {
+      Serial.<span class="function-name">print</span>("Produit: ");
+      Serial.<span class="function-name">println</span>(valeur);
+    }
+    
+    <span class="function-name">vTaskDelay</span>(1000 / portTICK_PERIOD_MS);
+  }
+}
+
+<span class="type">void</span> <span class="function-name">tacheConsommateur</span>(<span class="type">void</span>* parameter) {
+  <span class="type">int</span> valeurRecue;
+  
+  <span class="keyword">for</span>(;;) {
+    <span class="comment">// Réception depuis la queue (attente infinie)</span>
+    <span class="keyword">if</span> (<span class="function-name">xQueueReceive</span>(queue, &valeurRecue, portMAX_DELAY) == pdPASS) {
+      Serial.<span class="function-name">print</span>("Consommé: ");
+      Serial.<span class="function-name">println</span>(valeurRecue);
+    }
+  }
+}</code></pre>
+  </div>
+</section>
+<!-- =========================================== -->
+<!-- SECTION HOME ASSISTANT -->
+<!-- =========================================== -->
+<section id="home-assistant">
+  <h2>Intégration avec Home Assistant</h2>
+  <p>Connectez votre ESP32 à Home Assistant pour la domotique.</p>
+
+  <h3>Configuration MQTT Discovery</h3>
+  <div class="code-example">
+    <pre><code><span class="code-comment">/*
+ESP32 + Home Assistant via MQTT Discovery
+*/</span>
+<span class="code-keyword">#include</span> &lt;WiFi.h&gt;
+<span class="code-keyword">#include</span> &lt;PubSubClient.h&gt;
+
+<span class="code-comment">// Configuration</span>
+<span class="code-keyword">const</span> <span class="code-type">char</span>* mqtt_server = <span class="code-string">"homeassistant.local"</span>;
+<span class="code-keyword">const</span> <span class="code-type">char</span>* mqtt_user = <span class="code-string">"mqtt"</span>;
+<span class="code-keyword">const</span> <span class="code-type">char</span>* mqtt_password = <span class="code-string">"votre_mot_de_passe"</span>;
+
+<span class="code-keyword">const</span> <span class="code-keyword">int</span> ledPin = 2;
+<span class="code-keyword">bool</span> ledState = <span class="code-keyword">false</span>;
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  Serial.<span class="code-function">begin</span>(115200);
+  <span class="code-function">pinMode</span>(ledPin, OUTPUT);
+  
+  <span class="code-function">setup_wifi</span>();
+  client.<span class="code-function">setServer</span>(mqtt_server, 1883);
+  client.<span class="code-function">setCallback</span>(callback);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-keyword">if</span> (!client.<span class="code-function">connected</span>()) {
+    <span class="code-function">reconnect</span>();
+  }
+  client.<span class="code-function">loop</span>();
+}
+
+<span class="code-keyword">void</span> <span class="code-function">reconnect</span>() {
+  <span class="keyword">while</span> (!client.<span class="function-name">connected</span>()) {
+    Serial.<span class="function-name">print</span>("Connexion MQTT...");
+    
+    <span class="type">String</span> clientId = "ESP32Client-";
+    clientId += <span class="function-name">String</span>(<span class="function-name">random</span>(0xffff), HEX);
+    
+    <span class="keyword">if</span> (client.<span class="function-name">connect</span>(clientId.<span class="function-name">c_str</span>(), mqtt_user, mqtt_password)) {
+      Serial.<span class="function-name">println</span>("connecté");
+      
+      <span class="comment">// Publication configuration auto-discovery</span>
+      <span class="function-name">publishDiscoveryConfig</span>();
+      
+      <span class="comment">// Abonnement aux topics de commande</span>
+      client.<span class="function-name">subscribe</span>("home/bureau/led/command");
+    } <span class="keyword">else</span> {
+      Serial.<span class="function-name">print</span>("échec, rc=");
+      Serial.<span class="function-name">print</span>(client.<span class="function-name">state</span>());
+      Serial.<span class="function-name">println</span>(" réessai dans 5s");
+      <span class="function-name">delay</span>(5000);
+    }
+  }
+}
+
+<span class="type">void</span> <span class="function-name">publishDiscoveryConfig</span>() {
+  <span class="comment">// Configuration auto-discovery pour Home Assistant</span>
+  <span class="type">String</span> discoveryTopic = "homeassistant/light/bureau_led/config";
+  
+  <span class="type">String</span> config = "{";
+  config += "\"name\":\"Lampe Bureau\",";
+  config += "\"unique_id\":\"esp32_bureau_led\",";
+  config += "\"command_topic\":\"home/bureau/led/command\",";
+  config += "\"state_topic\":\"home/bureau/led/state\",";
+  config += "\"brightness\":false,";
+  config += "\"retain\":true,";
+  config += "\"device\":{";
+  config += "\"identifiers\":[\"esp32_bureau\"],";
+  config += "\"name\":\"ESP32 Bureau\",";
+  config += "\"manufacturer\":\"DIY\",";
+  config += "\"model\":\"ESP32\"";
+  config += "}}";
+  
+  client.<span class="function-name">publish</span>(discoveryTopic.<span class="function-name">c_str</span>(), config.<span class="function-name">c_str</span>(), <span class="keyword">true</span>);
+  Serial.<span class="function-name">println</span>("Configuration discovery publiée");
+}
+
+<span class="type">void</span> <span class="function-name">callback</span>(<span class="type">char</span>* topic, <span class="type">byte</span>* payload, <span class="type">unsigned</span> <span class="type">int</span> length) {
+  <span class="type">String</span> message;
+  <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < length; i++) {
+    message += (<span class="type">char</span>)payload[i];
+  }
+  
+  Serial.<span class="function-name">print</span>("Message reçu: ");
+  Serial.<span class="function-name">println</span>(message);
+  
+  <span class="keyword">if</span> (message == "ON") {
+    <span class="function-name">digitalWrite</span>(ledPin, HIGH);
+    ledState = <span class="keyword">true</span>;
+  } <span class="keyword">else if</span> (message == "OFF") {
+    <span class="function-name">digitalWrite</span>(ledPin, LOW);
+    ledState = <span class="keyword">false</span>;
+  }
+  
+  <span class="comment">// Publication état</span>
+  client.<span class="function-name">publish</span>("home/bureau/led/state", ledState ? "ON" : "OFF", <span class="keyword">true</span>);
+}</code></pre>
+  </div>
+</section>
+
       </section>
 
       <!-- =========================================== -->
