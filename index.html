@@ -1162,30 +1162,49 @@
       <!-- Introduction -->
       <section id="introduction">
         <h2>Introduction à Arduino et ESP</h2>
-        <p>Arduino est une plateforme de prototypage électronique open-source basée sur du matériel et des logiciels
-          faciles à utiliser. Les modules ESP (ESP32, ESP8266) ajoutent des capacités WiFi et Bluetooth aux projets
-          Arduino.</p>
-
+      
+        <p>
+          Arduino est une plateforme de prototypage électronique open-source basée sur du matériel et des logiciels
+          simples à utiliser. Elle permet de créer facilement des projets interactifs.
+          Les modules ESP (ESP32, ESP8266) vont plus loin en ajoutant des fonctionnalités modernes comme le WiFi et le Bluetooth,
+          idéales pour les projets connectés (IoT).
+        </p>
+      
         <h3>Pourquoi apprendre Arduino et ESP ?</h3>
         <ul>
-          <li><strong>Accessible aux débutants</strong> : Pas besoin d'être expert en électronique</li>
-          <li><strong>Large communauté</strong> : Des milliers de tutoriels et projets</li>
-          <li><strong>Polyvalent</strong> : Domotique, robotique, IoT, etc.</li>
-          <li><strong>Économique</strong> : Matériel abordable et logiciels gratuits</li>
-          <li><strong>Connectivité</strong> (ESP) : WiFi, Bluetooth, communication Internet</li>
+          <li><strong>Accessible aux débutants</strong> : Pas besoin d’être expert en électronique ou en programmation</li>
+          <li><strong>Large communauté</strong> : Tutoriels, forums, exemples et projets open-source</li>
+          <li><strong>Polyvalent</strong> : Domotique, robotique, automatisation, objets connectés</li>
+          <li><strong>Économique</strong> : Matériel peu coûteux et logiciels gratuits</li>
+          <li><strong>Connectivité avancée</strong> (ESP) : WiFi, Bluetooth, serveur web embarqué</li>
         </ul>
-
+      
+        <h3>Différences entre Arduino et ESP</h3>
+        <ul>
+          <li><strong>Arduino</strong> : Idéal pour apprendre les bases (LED, boutons, capteurs simples)</li>
+          <li><strong>ESP8266</strong> : Microcontrôleur WiFi, bon marché, parfait pour les projets IoT simples</li>
+          <li><strong>ESP32</strong> : Plus puissant, WiFi + Bluetooth, double cœur, plus de mémoire et de périphériques</li>
+          <li><strong>Tension</strong> : Arduino (5V) / ESP (3.3V ⚠️ important)</li>
+        </ul>
+      
+        <div class="info-box">
+          <p>
+            <strong>À savoir :</strong> Ne jamais alimenter un ESP directement en 5V sur les broches de données,
+            cela peut endommager la carte.
+          </p>
+        </div>
+      
         <h3>Matériel nécessaire pour commencer</h3>
         <div class="cards">
           <div class="card">
             <i class="fas fa-microchip"></i>
             <h4>Carte Arduino</h4>
-            <p>Uno, Nano, Mega selon vos besoins</p>
+            <p>Uno, Nano ou Mega pour l’apprentissage</p>
           </div>
           <div class="card">
             <i class="fas fa-wifi"></i>
             <h4>Module ESP</h4>
-            <p>ESP32 ou ESP8266 pour la connectivité</p>
+            <p>ESP8266 ou ESP32 pour les projets connectés</p>
           </div>
           <div class="card">
             <i class="fas fa-usb"></i>
@@ -1195,15 +1214,60 @@
           <div class="card">
             <i class="fas fa-lightbulb"></i>
             <h4>Composants</h4>
-            <p>LEDs, résistances, boutons, capteurs</p>
+            <p>LED, résistances, boutons, capteurs</p>
           </div>
         </div>
-
+      
+        <h3>Éditeurs de code recommandés</h3>
+        <p>
+          Pour programmer Arduino et ESP, il est important d’utiliser un bon éditeur de texte adapté au développement.
+        </p>
+      
+        <ul>
+          <li><strong>Arduino IDE</strong> : Simple, idéal pour débuter, installation rapide</li>
+          <li><strong>Visual Studio Code (VS Code)</strong> : Plus puissant et professionnel</li>
+        </ul>
+      
+        <h3>Extensions utiles pour VS Code</h3>
+        <ul>
+          <li><strong>PlatformIO IDE</strong> : Extension essentielle pour Arduino et ESP</li>
+          <li><strong>C/C++</strong> : Coloration syntaxique et auto-complétion</li>
+          <li><strong>Arduino</strong> : Support Arduino (optionnel si PlatformIO est utilisé)</li>
+          <li><strong>Serial Monitor</strong> : Pour lire les messages envoyés par la carte</li>
+        </ul>
+      
         <div class="info-box">
-          <p><strong>Conseil :</strong> Commencez avec un kit Arduino débutant qui contient tous les composants
-            essentiels pour apprendre.</p>
+          <p>
+            <strong>Conseil :</strong> PlatformIO est recommandé pour les projets sérieux,
+            car il gère automatiquement les bibliothèques et les cartes.
+          </p>
+        </div>
+      
+        <h3>Choses importantes à savoir avant de coder</h3>
+        <ul>
+          <li>Comprendre le rôle de <code>setup()</code> et <code>loop()</code></li>
+          <li>Savoir ce qu’est un port série (Serial)</li>
+          <li>Identifier les broches (GPIO)</li>
+          <li>Lire un schéma simple avant de brancher</li>
+          <li>Toujours vérifier la tension et le courant</li>
+        </ul>
+      
+        <h3>Avant de passer à la pratique</h3>
+        <p>
+          Avant d’écrire votre première ligne de code ou de brancher un composant,
+          prenez le temps de comprendre comment fonctionne la carte, comment elle est alimentée
+          et comment le programme est exécuté.
+          Une bonne compréhension évite les erreurs et les dégâts matériels.
+        </p>
+      
+        <div class="info-box">
+          <p>
+            <strong>Objectif de ce site :</strong> Vous apprendre Arduino et ESP étape par étape,
+            avec des explications simples, des exemples clairs et des exercices pratiques.
+          </p>
         </div>
       </section>
+      
       <!-- Installation IDE -->
       <section id="installation">
         <h2>Installation de l'IDE Arduino</h2>
