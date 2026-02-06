@@ -690,10 +690,10 @@
       <nav>
         <ul>
           <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
-          <li><a href="exercice.html"><i class="fas fa-pencil-alt"></i> Exercices</a></li>
-          <li><a href="exemple.html"><i class="fas fa-code"></i> Exemples</a></li>
-          <li><a href="reference.html"><i class="fas fa-book"></i> Référence</a></li>
-          <li><a href="idee.html" class="active"><i class="fas fa-comments"></i> Zone d'Échange</a></li>
+          <li><a href="./exercice.html"><i class="fas fa-pencil-alt"></i> Exercices</a></li>
+          <li><a href="./exemple.html"><i class="fas fa-code"></i> Exemples</a></li>
+          <li><a href="./reference.html"><i class="fas fa-book"></i> Référence</a></li>
+          <li><a href="./ide.html" class="active"><i class="fas fa-comments"></i> Zone d'Échange</a></li>
         </ul>
       </nav>
     </div>
@@ -833,7 +833,7 @@
       </div>
       <div>
         <p style="opacity: 0.8; font-size: 0.9rem;">
-          © 2024 ArduinoLearn. Tous droits réservés.
+          © 2026 ArduinoLearn. Tous droits réservés.
         </p>
       </div>
     </div>
@@ -920,12 +920,7 @@
       </div>
     </div>
   </div>
-
-  <!-- Firebase SDK -->
-    <!-- Firebase SDK -->
-    <!-- Firebase SDK -->
-      <!-- Firebase SDK -->
-  <script type="module">
+  <!-- <script type="module">
     // Import Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
@@ -1683,7 +1678,92 @@
     window.addEventListener('error', (e) => {
       console.error('Erreur globale:', e.error);
     });
+  </script> -->
+<!-- Inclure Firebase et Analytics -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyAcVQXQOV84D8WOkJqniFrBOBUD2gFW64w",
+      authDomain: "learnesparduino.firebaseapp.com",
+      projectId: "learnesparduino",
+      storageBucket: "learnesparduino.firebasestorage.app",
+      messagingSenderId: "1033188785105",
+      appId: "1:1033188785105:web:017ea020f0f47709bb7ef0",
+      measurementId: "G-WVYGRP4BRT"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
   </script>
-
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hamburgerBtn = document.querySelector('.hamburger-btn');
+        const nav = document.querySelector('nav');
+        const navLinks = document.querySelectorAll('.nav-menu a');
+        let mobileOverlay = document.querySelector('.mobile-overlay');
+      
+        // Crée l'overlay s'il n'existe pas
+        if (!mobileOverlay) {
+          mobileOverlay = document.createElement('div');
+          mobileOverlay.className = 'mobile-overlay';
+          document.body.appendChild(mobileOverlay);
+        }
+      
+        // Fonction pour ouvrir/fermer le menu
+        function toggleMenu() {
+          hamburgerBtn.classList.toggle('active');
+          nav.classList.toggle('active');
+          mobileOverlay.classList.toggle('active');
+          document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+        }
+      
+        // Événement sur le bouton hamburger
+        hamburgerBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          toggleMenu();
+        });
+      
+        // Ferme le menu en cliquant sur l'overlay
+        mobileOverlay.addEventListener('click', function() {
+          if (nav.classList.contains('active')) {
+            toggleMenu();
+          }
+        });
+      
+        // Ferme le menu en cliquant sur un lien
+        navLinks.forEach(link => {
+          link.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+              toggleMenu();
+            }
+          });
+        });
+      
+        // Ferme le menu en appuyant sur Échap
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && nav.classList.contains('active')) {
+            toggleMenu();
+          }
+        });
+      
+        // Ajuste le menu lors du redimensionnement
+        window.addEventListener('resize', function() {
+          if (window.innerWidth > 768) {
+            // Sur desktop, s'assure que le menu est visible
+            hamburgerBtn.classList.remove('active');
+            nav.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+          }
+        });
+      });
+      
+  </script>
+  
+  <!-- Inclure votre fichier JS -->
+  <script src="comment.js"></script>
 </body>
 </html>

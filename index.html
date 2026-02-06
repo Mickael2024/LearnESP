@@ -103,6 +103,7 @@
 
     /* Hero Section */
     .hero {
+      background:linear-gradient(135deg, var(--primary-color), var(--secondary-color)) ;
       color: white;
       padding: 3rem 0;
       text-align: center;
@@ -989,11 +990,8 @@
           <li><a href="./exemple.html"><i class="fas fa-code"></i> Exemples</a></li>
           <li><a href="./reference.html"><i class="fas fa-book"></i> Référence</a></li>
           <li><a href="./exercice.html"><i class="fas fa-pencil-alt"></i> Exercices</a></li>
-          <li>
-            <a href="./ide.html">
-              <i class="fas fa-lightbulb"></i> Idée
-            </a>
-          </li>
+         
+          <li><a href="./ide.html"><i class="fas fa-comments"></i> Zone d'Échange</a></li>
           
         </ul>
       </nav>
@@ -8541,6 +8539,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+
+
 document.addEventListener('DOMContentLoaded', function() {
   // Crée le bouton s'il n'existe pas
   if (!document.querySelector('.scroll-toggle-btn')) {
@@ -8674,28 +8674,8 @@ document.addEventListener('DOMContentLoaded', function() {
   `;
   document.head.appendChild(style);
 });
-const header = document.querySelector(".hero");
 
-const images = [
-    "./image/closeup-electronic-circuit-board-with-cpu-microchip-electronic-components-background.jpg",
-    "./image/top-view-wires-tech-background.jpg",
-    "./image/using-pliers-circuit-board.jpg",
-    "./image/father-son-making-robot.jpg",
-    "./image/robot-style-car-with-joystick.jpg"
-];
 
-let index = 0;
-
-function changeHeaderBackground() {
-    header.style.backgroundImage = `url('${images[index]}')`;
-    index = (index + 1) % images.length;
-}
-
-// image au chargement
-changeHeaderBackground();
-
-// changer toutes les 3 secondes
-setInterval(changeHeaderBackground, 3000);
   </script>
 </body>
 
