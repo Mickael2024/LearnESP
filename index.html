@@ -103,7 +103,6 @@
 
     /* Hero Section */
     .hero {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
       color: white;
       padding: 3rem 0;
       text-align: center;
@@ -113,7 +112,7 @@
       background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        transition: background-image 1s ease-in-out;
+        transition: background-image 1s ease-out;
     }
 
     .hero h1 {
@@ -990,6 +989,12 @@
           <li><a href="./exemple.html"><i class="fas fa-code"></i> Exemples</a></li>
           <li><a href="./reference.html"><i class="fas fa-book"></i> Référence</a></li>
           <li><a href="./exercice.html"><i class="fas fa-pencil-alt"></i> Exercices</a></li>
+          <li>
+            <a href="./ide.html">
+              <i class="fas fa-lightbulb"></i> Idée
+            </a>
+          </li>
+          
         </ul>
       </nav>
     </div>
@@ -1164,47 +1169,51 @@
         <h2>Introduction à Arduino et ESP</h2>
       
         <p>
-          Arduino est une plateforme de prototypage électronique open-source basée sur du matériel et des logiciels
-          simples à utiliser. Elle permet de créer facilement des projets interactifs.
-          Les modules ESP (ESP32, ESP8266) vont plus loin en ajoutant des fonctionnalités modernes comme le WiFi et le Bluetooth,
-          idéales pour les projets connectés (IoT).
+          Arduino et ESP sont des plateformes de développement utilisées pour créer des projets électroniques
+          interactifs et intelligents. Elles permettent de contrôler des composants (LED, moteurs, capteurs)
+          et de communiquer avec le monde extérieur (WiFi, Bluetooth, Internet).
+        </p>
+      
+        <p>
+          Ce site a pour objectif de vous accompagner <strong>pas à pas</strong>, depuis les bases,
+          jusqu’à des projets concrets en Arduino et ESP, même si vous êtes débutant.
         </p>
       
         <h3>Pourquoi apprendre Arduino et ESP ?</h3>
         <ul>
-          <li><strong>Accessible aux débutants</strong> : Pas besoin d’être expert en électronique ou en programmation</li>
-          <li><strong>Large communauté</strong> : Tutoriels, forums, exemples et projets open-source</li>
-          <li><strong>Polyvalent</strong> : Domotique, robotique, automatisation, objets connectés</li>
-          <li><strong>Économique</strong> : Matériel peu coûteux et logiciels gratuits</li>
-          <li><strong>Connectivité avancée</strong> (ESP) : WiFi, Bluetooth, serveur web embarqué</li>
+          <li><strong>Facile à apprendre</strong> : idéal pour débuter en électronique et en programmation</li>
+          <li><strong>Très utilisé</strong> : enseignement, industrie, domotique, IoT</li>
+          <li><strong>Grande communauté</strong> : aide, exemples et bibliothèques</li>
+          <li><strong>Peu coûteux</strong> : cartes et composants abordables</li>
+          <li><strong>Connectivité</strong> : WiFi et Bluetooth avec ESP</li>
         </ul>
       
         <h3>Différences entre Arduino et ESP</h3>
         <ul>
-          <li><strong>Arduino</strong> : Idéal pour apprendre les bases (LED, boutons, capteurs simples)</li>
-          <li><strong>ESP8266</strong> : Microcontrôleur WiFi, bon marché, parfait pour les projets IoT simples</li>
-          <li><strong>ESP32</strong> : Plus puissant, WiFi + Bluetooth, double cœur, plus de mémoire et de périphériques</li>
-          <li><strong>Tension</strong> : Arduino (5V) / ESP (3.3V ⚠️ important)</li>
+          <li><strong>Arduino Uno / Nano</strong> : parfait pour apprendre les bases (LED, boutons, capteurs)</li>
+          <li><strong>ESP8266</strong> : microcontrôleur avec WiFi intégré</li>
+          <li><strong>ESP32</strong> : plus puissant, WiFi + Bluetooth, multi-cœur</li>
+          <li><strong>Tension logique</strong> : Arduino = 5V / ESP = 3.3V ⚠️</li>
         </ul>
       
         <div class="info-box">
           <p>
-            <strong>À savoir :</strong> Ne jamais alimenter un ESP directement en 5V sur les broches de données,
-            cela peut endommager la carte.
+            <strong>Important :</strong> Une mauvaise tension peut endommager votre ESP.
+            Vérifiez toujours les niveaux logiques avant de connecter un composant.
           </p>
         </div>
       
-        <h3>Matériel nécessaire pour commencer</h3>
+        <h3>Matériel nécessaire pour débuter</h3>
         <div class="cards">
           <div class="card">
             <i class="fas fa-microchip"></i>
             <h4>Carte Arduino</h4>
-            <p>Uno, Nano ou Mega pour l’apprentissage</p>
+            <p>Uno, Nano ou Mega</p>
           </div>
           <div class="card">
             <i class="fas fa-wifi"></i>
             <h4>Module ESP</h4>
-            <p>ESP8266 ou ESP32 pour les projets connectés</p>
+            <p>ESP8266 ou ESP32</p>
           </div>
           <div class="card">
             <i class="fas fa-usb"></i>
@@ -1220,53 +1229,100 @@
       
         <h3>Éditeurs de code recommandés</h3>
         <p>
-          Pour programmer Arduino et ESP, il est important d’utiliser un bon éditeur de texte adapté au développement.
+          Pour programmer Arduino et ESP, vous aurez besoin d’un éditeur de code adapté.
+          Deux solutions sont principalement utilisées.
         </p>
       
         <ul>
-          <li><strong>Arduino IDE</strong> : Simple, idéal pour débuter, installation rapide</li>
-          <li><strong>Visual Studio Code (VS Code)</strong> : Plus puissant et professionnel</li>
+          <li>
+            <strong>Arduino IDE</strong> : simple et idéal pour les débutants
+          </li>
+          <li>
+            <strong>Visual Studio Code (VS Code)</strong> : plus puissant et professionnel
+          </li>
         </ul>
       
-        <h3>Extensions utiles pour VS Code</h3>
+        <h3>Téléchargements utiles</h3>
         <ul>
-          <li><strong>PlatformIO IDE</strong> : Extension essentielle pour Arduino et ESP</li>
-          <li><strong>C/C++</strong> : Coloration syntaxique et auto-complétion</li>
-          <li><strong>Arduino</strong> : Support Arduino (optionnel si PlatformIO est utilisé)</li>
-          <li><strong>Serial Monitor</strong> : Pour lire les messages envoyés par la carte</li>
+          <li>
+            🔗 VS Code :
+            <a href="https://code.visualstudio.com/" target="_blank">
+              https://code.visualstudio.com/
+            </a>
+          </li>
+          <li>
+            🔗 Arduino IDE :
+            <a href="https://www.arduino.cc/en/software" target="_blank">
+              https://www.arduino.cc/en/software
+            </a>
+          </li>
+        </ul>
+      
+        <h3>PlatformIO (recommandé)</h3>
+        <p>
+          PlatformIO est un environnement de développement moderne intégré à VS Code.
+          Il simplifie la gestion des cartes, des bibliothèques et des projets Arduino/ESP.
+        </p>
+      
+        <ul>
+          <li>Installation automatique des bibliothèques</li>
+          <li>Support Arduino, ESP32, ESP8266 et bien plus</li>
+          <li>Compilation rapide et fiable</li>
+          <li>Moniteur série intégré</li>
+        </ul>
+      
+        <h3>Liens utiles PlatformIO</h3>
+        <ul>
+          <li>
+            🔗 Site officiel :
+            <a href="https://platformio.org/" target="_blank">
+              https://platformio.org/
+            </a>
+          </li>
+          <li>
+            🔗 Documentation :
+            <a href="https://docs.platformio.org/" target="_blank">
+              https://docs.platformio.org/
+            </a>
+          </li>
+          <li>
+            🔗 Installation VS Code :
+            <a href="https://platformio.org/install/ide?install=vscode" target="_blank">
+              https://platformio.org/install/ide?install=vscode
+            </a>
+          </li>
         </ul>
       
         <div class="info-box">
           <p>
-            <strong>Conseil :</strong> PlatformIO est recommandé pour les projets sérieux,
-            car il gère automatiquement les bibliothèques et les cartes.
+            <strong>Conseil :</strong> Si vous débutez totalement, commencez avec Arduino IDE.
+            Si vous voulez travailler comme un développeur professionnel, utilisez VS Code + PlatformIO.
           </p>
         </div>
       
-        <h3>Choses importantes à savoir avant de coder</h3>
+        <h3>Choses à comprendre avant de coder</h3>
         <ul>
-          <li>Comprendre le rôle de <code>setup()</code> et <code>loop()</code></li>
-          <li>Savoir ce qu’est un port série (Serial)</li>
-          <li>Identifier les broches (GPIO)</li>
-          <li>Lire un schéma simple avant de brancher</li>
-          <li>Toujours vérifier la tension et le courant</li>
+          <li>Le rôle de <code>setup()</code> et <code>loop()</code></li>
+          <li>Les broches GPIO (entrée / sortie)</li>
+          <li>Le port série (Serial Monitor)</li>
+          <li>La différence entre alimentation et données</li>
+          <li>La lecture d’un schéma simple</li>
         </ul>
       
         <h3>Avant de passer à la pratique</h3>
         <p>
-          Avant d’écrire votre première ligne de code ou de brancher un composant,
-          prenez le temps de comprendre comment fonctionne la carte, comment elle est alimentée
-          et comment le programme est exécuté.
-          Une bonne compréhension évite les erreurs et les dégâts matériels.
+          Prenez le temps de comprendre le fonctionnement de la carte et de l’environnement de développement.
+          Une bonne base évite les erreurs, les bugs et les composants endommagés.
         </p>
       
         <div class="info-box">
           <p>
-            <strong>Objectif de ce site :</strong> Vous apprendre Arduino et ESP étape par étape,
-            avec des explications simples, des exemples clairs et des exercices pratiques.
+            <strong>Objectif du site :</strong> Apprendre Arduino et ESP de façon simple,
+            progressive et pratique, avec des exemples clairs et des exercices guidés.
           </p>
         </div>
       </section>
+      
       
       <!-- Installation IDE -->
       <section id="installation">
