@@ -1,0 +1,52 @@
+[debug] [2026-02-16T15:09:25.730Z] ----------------------------------------------------------------------
+[debug] [2026-02-16T15:09:25.738Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Client\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init hosting
+[debug] [2026-02-16T15:09:25.739Z] CLI Version:   15.5.1
+[debug] [2026-02-16T15:09:25.739Z] Platform:      win32
+[debug] [2026-02-16T15:09:25.740Z] Node Version:  v22.11.0
+[debug] [2026-02-16T15:09:25.741Z] Time:          Mon Feb 16 2026 18:09:25 GMT+0300 (heure normale d’Afrique de l’Est)
+[debug] [2026-02-16T15:09:25.743Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-02-16T15:09:25.751Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\ESP
+
+Before we get started, keep in mind:
+
+  * You are currently outside your home directory
+  * You are initializing within an existing Firebase project directory
+
+[debug] [2026-02-16T15:09:30.948Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-02-16T15:09:30.949Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] 
+[debug] [2026-02-16T15:09:31.753Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-16T15:09:31.754Z] > authorizing via signed-in user (fortico261@gmail.com)
+[debug] [2026-02-16T15:09:31.760Z] Checked if tokens are valid: false, expires at: 1770536944223
+[debug] [2026-02-16T15:09:31.761Z] Checked if tokens are valid: false, expires at: 1770536944223
+[debug] [2026-02-16T15:09:31.761Z] > refreshing access token with scopes: []
+[debug] [2026-02-16T15:09:31.766Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-16T15:09:31.766Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-16T15:09:32.518Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-16T15:09:32.519Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-16T15:09:32.534Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/learnesparduino [none]
+[debug] [2026-02-16T15:09:33.413Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/learnesparduino 403
+[debug] [2026-02-16T15:09:33.413Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/learnesparduino {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-02-16T15:09:33.414Z] Request to https://firebase.googleapis.com/v1beta1/projects/learnesparduino had HTTP Error: 403, The caller does not have permission
+[debug] [2026-02-16T15:09:34.185Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/learnesparduino had HTTP Error: 403, The caller does not have permission
+    at responseToError (C:\Users\Client\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\Client\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:330:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[error] 
+[error] Error: Failed to get Firebase project learnesparduino. Please make sure the project exists and your account has permission to access it.
