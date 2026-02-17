@@ -687,7 +687,7 @@
 
     .progress-bar {
       height: 100%;
-      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      background: green;
       width: 0%;
       transition: width 0.5s ease;
     }
@@ -780,10 +780,20 @@
         <li>Votre progression est sauvegardée automatiquement</li>
       </ul>
       <p style="font-weight: bold; color: var(--primary-color);">
-        <i class="fas fa-trophy"></i> Votre progression: <span id="progress-text">0/30 quiz complétés</span>
+        <i class="fas fa-trophy"></i> Votre progression: <span id="progress-text">0/30 quiz code complétés 🏆</span>
       </p>
       <div class="progress-container">
         <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <div style="margin-top: 3rem; padding: 2rem; color: black; border-radius: 10px; text-align: center;">
+        <h3 style="margin-bottom: 1rem;">Résumé de votre progression</h3>
+        <div style="font-size: 2rem; font-weight: bold;color:var(--primary-color)" id="global-score">0/0 questions réussies</div>
+        <div class="progress-container" style="margin: 1rem 0; background-color: rgba(255,255,255,0.3);">
+          <div class="progress-bar" id="global-progress-bar" style="width: 0%;"></div>
+        </div>
+        <button class="control-btn" onclick="resetAllQuestions()" style="background-color: white; color: var(--primary-color); margin-top: 1rem;">
+          <i class="fas fa-redo"></i> Réinitialiser toutes les questions
+        </button>
       </div>
     </div>
 
@@ -807,16 +817,7 @@
   <div id="multiple-choice-quiz-container"></div>
   
   <!-- Résumé global -->
-  <div style="margin-top: 3rem; padding: 2rem; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; border-radius: 10px; text-align: center;">
-    <h3 style="margin-bottom: 1rem;">Résumé de votre progression</h3>
-    <div style="font-size: 2rem; font-weight: bold;" id="global-score">0/0 questions réussies</div>
-    <div class="progress-container" style="margin: 1rem 0; background-color: rgba(255,255,255,0.3);">
-      <div class="progress-bar" id="global-progress-bar" style="background-color: var(--accent-color); width: 0%;"></div>
-    </div>
-    <button class="control-btn" onclick="resetAllQuestions()" style="background-color: white; color: var(--primary-color); margin-top: 1rem;">
-      <i class="fas fa-redo"></i> Réinitialiser toutes les questions
-    </button>
-  </div>
+  
 </div>
     <!-- Quiz Grid -->
     <div class="quiz-grid" id="quiz-grid"></div>
@@ -1640,7 +1641,7 @@
       const completed = completedQuizzes.length;
       const percent = (completed / total) * 100;
       
-      document.getElementById('progress-text').textContent = `${completed}/${total} quiz complétés`;
+      document.getElementById('progress-text').textContent = `${completed}/${total} quiz code complétés 🏆`;
       document.getElementById('progress-bar').style.width = `${percent}%`;
       
       // Mise à jour des statuts dans la grille
@@ -2111,7 +2112,7 @@ function updateGlobalScore() {
   
   const percentage = Math.round((correct / total) * 100);
   
-  document.getElementById('global-score').textContent = `${correct}/${total} questions réussies`;
+  document.getElementById('global-score').textContent = `${correct}/${total} questions réussies 🏆`;
   document.getElementById('global-progress-bar').style.width = `${percentage}%`;
 }
 
@@ -2459,7 +2460,8 @@ document.addEventListener('DOMContentLoaded', function() {
   `;
   document.head.appendChild(style);
 });
-    // ==================== SYSTÈME DE NOTIFICATION MODERNE ====================
+ 
+// ==================== SYSTÈME DE NOTIFICATION MODERNE ====================
 function showNotification(message, type = 'info', duration = 3000) {
   // Créer l'élément de notification s'il n'existe pas
   let notification = document.getElementById('custom-notification');

@@ -677,6 +677,146 @@
         align-items: flex-start;
       }
     }
+     /* =========================================== */
+    /* BOUTON HAMBURGER POUR MOBILE */
+    /* =========================================== */
+    .hamburger-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      z-index: 1001;
+    }
+
+    .hamburger-btn:focus {
+      outline: 2px solid var(--accent-color);
+      border-radius: 4px;
+    }
+
+    /* Menu mobile */
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      transition: all 0.3s ease;
+    }
+
+    /* Overlay pour mobile */
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 999;
+    }
+
+    .mobile-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* =========================================== */
+    /* RESPONSIVE HEADER */
+    /* =========================================== */
+    @media (max-width: 768px) {
+      .hamburger-btn {
+        display: block;
+      }
+
+      nav {
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        width: 280px;
+        height: calc(100vh - 70px);
+        background-color: var(--primary-color);
+        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+      }
+
+      nav.active {
+        left: 0;
+      }
+
+      nav ul {
+        margin-top: 1rem;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        flex-direction: column;
+        align-content: flex-start;
+        line-height: 4;
+        font-size: unset;
+      }
+
+      .nav-menu {
+        flex-direction: column;
+        padding: 1rem 0;
+        width: 100%;
+      }
+
+      .nav-menu li {
+        margin: 0;
+        width: 100%;
+      }
+
+      .nav-menu li a {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        width: 100%;
+        font-size: 1rem;
+      }
+
+      .nav-menu li a i {
+        width: 24px;
+        margin-right: 12px;
+        font-size: 1.1rem;
+      }
+
+      .nav-menu li a:hover,
+      .nav-menu li a.active {
+        background-color: rgba(255, 255, 255, 0.15);
+        padding-left: 2rem;
+      }
+
+      .header-content {
+        justify-content: space-between;
+      }
+    }
+
+    @media (max-width: 480px) {
+      nav {
+        width: 50%;
+        left: -100%;
+      }
+
+      .nav-menu li a {
+        padding: 1.2rem 1.5rem;
+      }
+    }
+
+    .hamburger-btn .fa-times {
+      display: none;
+    }
+
+    .hamburger-btn.active .fa-bars {
+      display: none;
+    }
+
+    .hamburger-btn.active .fa-times {
+      display: inline-block;
+    }
+
   </style>
 </head>
 <body>
@@ -684,6 +824,9 @@
   <header>
     <div class="container header-content">
       <div class="logo">
+        <button class="hamburger-btn" aria-label="Menu">
+          <i class="fas fa-bars"></i>
+        </button>
         <i class="fas fa-microchip"></i>
         <div><span>Arduino</span>Learn</div>
       </div>
@@ -1759,6 +1902,201 @@
             document.body.style.overflow = '';
           }
         });
+      });
+      document.addEventListener('DOMContentLoaded', function() {
+        
+        
+        // Menu hamburger
+        const hamburgerBtn = document.querySelector('.hamburger-btn');
+        const nav = document.querySelector('nav');
+        let mobileOverlay = document.querySelector('.mobile-overlay');
+        
+        if (!mobileOverlay) {
+          mobileOverlay = document.createElement('div');
+          mobileOverlay.className = 'mobile-overlay';
+          document.body.appendChild(mobileOverlay);
+        }
+        
+        // FORCER LES STYLES CORRECTS POUR L'OVERLAY
+        mobileOverlay.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 999;
+          display: none;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          pointer-events: none;
+        `;
+      
+        // FORCER LES STYLES CORRECTS POUR LE NAV EN MOBILE
+        function applyMobileStyles() {
+          if (window.innerWidth <= 768) {
+            nav.style.position = 'fixed';
+            nav.style.top = '70px';
+            nav.style.left = '-280px';
+            nav.style.width = '280px';
+            nav.style.height = 'calc(100vh - 70px)';
+            nav.style.backgroundColor = 'var(--primary-color)';
+            nav.style.transition = 'left 0.3s ease';
+            nav.style.zIndex = '1000';
+            nav.style.overflowY = 'auto';
+            nav.style.boxShadow = '2px 0 10px rgba(0,0,0,0.1)';
+            
+            // Style des liens
+            document.querySelectorAll('.nav-menu a').forEach(link => {
+              link.style.display = 'block';
+              link.style.padding = '15px 20px';
+              link.style.color = 'white';
+              link.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+            });
+          } else {
+            // Reset pour desktop
+            nav.style.position = '';
+            nav.style.top = '';
+            nav.style.left = '';
+            nav.style.width = '';
+            nav.style.height = '';
+            nav.style.backgroundColor = '';
+            nav.style.transition = '';
+            nav.style.zIndex = '';
+            nav.style.overflowY = '';
+            nav.style.boxShadow = '';
+          }
+        }
+      
+        applyMobileStyles();
+      
+        function toggleMenu() {
+          const isActive = nav.classList.contains('active');
+          
+          if (!isActive) {
+            // Ouvrir le menu
+            nav.classList.add('active');
+            nav.style.left = '0';
+            mobileOverlay.style.display = 'block';
+            setTimeout(() => {
+              mobileOverlay.style.opacity = '1';
+              mobileOverlay.style.pointerEvents = 'auto';
+            }, 10);
+            document.body.style.overflow = 'hidden';
+            hamburgerBtn.classList.add('active');
+            hamburgerBtn.innerHTML = '<i class="fas fa-times"></i>';
+          } else {
+            // Fermer le menu
+            nav.classList.remove('active');
+            nav.style.left = '-280px';
+            mobileOverlay.style.opacity = '0';
+            mobileOverlay.style.pointerEvents = 'none';
+            setTimeout(() => {
+              mobileOverlay.style.display = 'none';
+            }, 300);
+            document.body.style.overflow = '';
+            hamburgerBtn.classList.remove('active');
+            hamburgerBtn.innerHTML = '<i class="fas fa-bars"></i>';
+          }
+        }
+      
+        // Event listeners
+        hamburgerBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleMenu();
+        });
+      
+        mobileOverlay.addEventListener('click', function() {
+          if (nav.classList.contains('active')) {
+            toggleMenu();
+          }
+        });
+      
+        // Fermer avec les liens du menu
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+          link.addEventListener('click', function() {
+            if (window.innerWidth <= 768 && nav.classList.contains('active')) {
+              setTimeout(() => toggleMenu(), 150);
+            }
+          });
+        });
+      
+        // Touche Echap
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && nav.classList.contains('active')) {
+            toggleMenu();
+          }
+        });
+      
+        // Redimensionnement
+        window.addEventListener('resize', function() {
+          applyMobileStyles();
+          if (window.innerWidth > 768) {
+            nav.classList.remove('active');
+            nav.style.left = '';
+            mobileOverlay.style.display = 'none';
+            mobileOverlay.style.opacity = '0';
+            mobileOverlay.style.pointerEvents = 'none';
+            document.body.style.overflow = '';
+            hamburgerBtn.classList.remove('active');
+            hamburgerBtn.innerHTML = '<i class="fas fa-bars"></i>';
+          }
+        });
+      
+        // AJOUTER CE CSS POUR RÉSOUDRE LES PROBLÈMES D'OPACITÉ
+        const style = document.createElement('style');
+        style.textContent = `
+          /* Reset des styles existants qui causent des problèmes */
+          .mobile-overlay {
+            display: none !important;
+          }
+          
+          .mobile-overlay.active {
+            display: block !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+          }
+          
+          /* S'assurer que le contenu principal n'est pas affecté */
+          .main-content, .hero, header {
+            transition: none !important;
+            filter: none !important;
+            opacity: 1 !important;
+          }
+          
+          /* Style spécifique pour mobile */
+          @media (max-width: 768px) {
+            .hamburger-btn {
+              display: block !important;
+              background: none;
+              border: none;
+              color: white;
+              font-size: 24px;
+              cursor: pointer;
+              z-index: 1001;
+              position: relative;
+            }
+            
+            nav.active + * {
+              filter: none !important;
+              opacity: 1 !important;
+            }
+            
+            /* Empêcher le contenu de devenir transparent */
+            body:has(nav.active) .container {
+              opacity: 1 !important;
+              filter: none !important;
+            }
+            
+            /* Correction pour le header */
+            header {
+              position: sticky;
+              z-index: 1001;
+            }
+          }
+        `;
+        document.head.appendChild(style);
       });
       
   </script>
